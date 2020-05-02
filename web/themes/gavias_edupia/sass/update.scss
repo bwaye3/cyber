@@ -1,0 +1,15 @@
+@import "vars/_theme_variables";
+
+@import "mixins/mixins";
+@import "mixins/template";
+@import "rtl/rtl";
+
+@media (min-width: 768px) and (min-width: 992px){
+   .navigation .gva_menu .sub-menu li:hover > ul {
+      -webkit-transform: rotateX(0);
+      -moz-transform: rotateX(0);
+      -ms-transform: rotateX(0);
+      -o-transform: rotateX(0);
+      transform: rotateX(0);
+   }
+}

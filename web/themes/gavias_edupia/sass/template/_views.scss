@@ -1,0 +1,220 @@
+.item-list{
+  ul{
+    overflow: hidden;
+    padding: 0;
+    li.view-list-item{
+      margin:0 0 30px;
+      overflow: hidden;
+      list-style-type: none;
+      .post-block{
+        margin: 0;
+      }
+      &:last-child{
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+.padding-small{
+  .item-list ul li.view-list-item{
+    margin-bottom: 20px!important;
+    &:last-child{
+      margin-bottom: 0!important;
+    }
+  }
+}
+
+ul[data-drupal-views-infinite-scroll-pager]{
+  list-style-type: none;
+  padding-left: 0;
+  &.pager{
+    margin: 10px 0 30px;
+    a{
+      font-family: $font-second;
+      font-size: 12px;
+      text-transform: capitalize;
+      font-weight: 600; 
+      border: 1px solid $theme_color;
+      background: $theme_color;
+      display: inline-block;
+      color: $white;
+      padding: 5px 15px;
+      @include border-radius(30px);
+      @include transition(all 0.35s);
+      &:hover, &:active, &:focus{
+        background: $white;
+        color: $theme_color;
+      }
+    }
+  }
+}
+
+.more-link{
+  text-align: center;
+  margin-top: 35px;
+  a{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 2px solid $theme_color;
+    display: inline-block;
+    padding: 5px 15px;
+    @include border-radius(30px);
+    @include transition(all 0.35s);
+    &:hover{
+      background: $theme_color;
+      color: $white;
+    }
+  }
+}
+
+.views-view-grid{
+  .views-row{
+    width: auto;
+    clear: none;
+    float: none!important;
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
+}
+
+.post-masonry-style > div.views-col{
+  margin-bottom: 10px;
+}
+
+.no-padding{
+  .gva-portfolio-items{
+    .row{
+      margin: 0!important;
+    }
+    .isotope-items{
+      > div{
+        padding: 0!important;
+        .isotope-item{
+          margin-bottom: 0!important;
+        }
+      }
+    }
+  }
+}
+
+.brand-grid{
+  .views-view-grid{
+    .views-row{
+      margin-bottom: 65px;
+      .views-field-field-image{
+        text-align: center;
+        @include media-breakpoint-down(sm){
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}
+
+.category-list{
+  .item-list{
+    ul{
+      li{
+        border: none;
+        margin: 0 0 10px!important;
+        padding: 0!important;
+        border: none!important;
+        a{
+          padding: 8px 10px 8px 15px;
+          display: block;
+          border: 1px solid $border-color;
+          text-transform: none;
+          font-size: 14px;
+          overflow: hidden;
+          @include transition(all 0.35s);
+          position: relative;
+          font-weight: 600;
+          font-family: $font-second;
+          &:hover, &:focus, &:active{
+            color: $theme_color;
+          }
+        }
+      }
+    }
+  }
+}
+
+//============== Gallery ======================
+.slider-gallery-v1{
+    margin-left: -3px!important;
+    margin-right: -3px!important;
+    .carousel-item{
+      float: left;
+      padding-right: 3px!important;
+    }
+    img{
+      -ms-transform-style: none!important;
+      -webkit-transform-style: none!important;
+      -o-transform-style: none!important;
+      transform-style: none!important;
+      -ms-transform: none!important; 
+      -webkit-transform: none!important; 
+      transform: none!important; 
+    }
+    .gallery-large{
+      background: $white;
+      width: 66.66667%;
+      float: left;
+    }
+    .gallery-small{
+      width: 33.33333%;
+      float: left;
+    }
+}
+
+.small-list{
+  .item-list ul > li{
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 15px!important;
+    padding-bottom: 15px;
+    a{
+      font-size: 12px;
+      text-transform: uppercase;
+      color: $black;
+      font-weight: 500;
+      &:hover{
+        color: $theme_color;
+      }
+    }
+    &:last-child{
+      border: none;
+      margin-bottom: 0!important;
+      padding-bottom: 0;
+    }
+  }
+}
+
+
+.tags-list{
+  .item-list > ul{
+    > li{
+      margin-bottom: 5px;
+      display: inline-block;
+      float: left;
+      margin-right: 10px;
+      a{
+        background: $theme_color;
+        font-weight: 600;
+        color: $white;
+        padding: 5px 10px;
+        overflow: hidden;
+        text-transform: capitalize;
+        font-size: 12px;
+        display: inline-block;
+        font-family: $font-second;
+        &:hover, &:focus, &:active{
+          color: $theme_color;
+          background: #f5f5f5;
+        }
+      }
+    }
+  }
+}

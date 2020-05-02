@@ -1,0 +1,95 @@
+gavias_content_builder.admin:
+  path: '/admin/structure/gavias-content-builder'
+  defaults:
+    _title: 'Gavias Content Builder'
+    _controller: '\Drupal\gavias_content_builder\Controller\GaviasContentBuilderController::gavias_content_builder_list'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.add:
+  path: '/admin/structure/gavias-content-builder/form/{bid}'
+  defaults:
+    _title: 'Add Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\AddForm'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.add_popup:
+  path: '/admin/structure/gavias-content-builder/add_popup/{random}'
+  defaults:
+    _title: 'Add Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\AddFormPopup'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.duplicate_popup:
+  path: '/admin/structure/gavias_content_builder/duplicate_popup/{bid}/{random}'
+  defaults:
+    _title: 'Add Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\DuplicateFormPopup'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.import_popup:
+  path: '/admin/structure/gavias-content-builder/import_popup/{bid}'
+  defaults:
+    _title: 'Add Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\ImportFormPopup'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.import:
+  path: '/admin/structure/gavias-content-builder/import/{bid}'
+  defaults:
+    _title: 'Import Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\ImportForm'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.edit:
+  path: '/admin/structure/gavias-content-builder/edit/{bid}'
+  defaults:
+    _title: 'Edit Gavias Content Builder'
+    _controller: '\Drupal\gavias_content_builder\Controller\GaviasContentBuilderController::gavias_content_builder_edit'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.delete:
+  path: '/admin/structure/gavias-content-builder/delete/{bid}'
+  defaults:
+    _title: 'Delete Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\DelForm'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.delete_popup:
+  path: '/admin/structure/gavias_content_builder/delete_popup/{bid}/{random}'
+  defaults:
+    _title: 'Delete Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\DelFormPopup'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.save:
+  path: '/admin/structure/gavias-content-builder/save'
+  defaults:
+    _title: 'Save Configuration of Gavias BlockBuilder'
+    _controller: '\Drupal\gavias_content_builder\Controller\GaviasContentBuilderController::gavias_content_builder_save'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.export:
+  path: '/admin/structure/gavias-content-builder/export/{bid}'
+  defaults:
+    _title: 'Save configuration of Gavias BlockBuilder'
+    _controller: '\Drupal\gavias_content_builder\Controller\GaviasContentBuilderController::gavias_content_builder_export'
+  requirements:
+    _permission: 'administer gavias_content_builder'
+
+gavias_content_builder.admin.clone:
+  path: '/admin/structure/gavias-content-builder/clone/{bid}'
+  defaults:
+    _title: 'Clone Gavias Content Builder'
+    _form: '\Drupal\gavias_content_builder\Form\CloneForm'
+  requirements:
+    _permission: 'administer gavias_content_builder'

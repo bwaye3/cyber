@@ -1,0 +1,28 @@
+.gsc-our-gallery{
+  .item{
+    .content-inner{
+      .title{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.6);
+        color: $black;
+        font-family: $font-second;
+        font-weight: 600;
+        font-size: 16px;
+        text-transform: capitalize;
+      }
+    } 
+  }
+  .owl-nav{
+    .owl-prev{
+      margin-left: 10px!important;
+    }
+    .owl-next{
+      margin-right: 10px!important;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{% if gva_node_index == 1 %}
+  <div class="course-block-heading-2 clearfix">      
+    <div class="course-title">{{ "Courses program"|t }}</a></div>
+    <div class="course-category">{{ "Category"|t }}</a></div>
+    <div class="course-instructor">{{ "Instructor"|t }}</a></div>
+    <div class="course-price">{{ "Price"|t }}</a></div>
+  </div>
+{% endif %}  
+
+<div class="course-block-v2 clearfix">      
+  <div class="course-title"><a href="{{ product_url }}" rel="bookmark">{{ title }}</a></div>
+  <div class="course-category">{{ product.field_course_category }}</div>
+  <div class="course-teacher">{{ product.field_course_teacher }}</div>
+  <div class="content-action">
+    <div class="price">
+      {% if price_display %}
+        {{ price_display }}
+      {% else %}  
+        {{ product.variation_price }}
+      {% endif %}  
+    </div>
+    <div class="enroll"><a href="{{ product_url }}">{{ 'Enroll'|t }}</a></div>
+  </div>
+</div>

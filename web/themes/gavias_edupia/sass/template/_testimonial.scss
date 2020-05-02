@@ -1,0 +1,211 @@
+.testimonial-node-v1{
+  background: none;
+  position: relative;
+  margin-top: 0;
+  .video{
+    margin-bottom: 10px;
+    .popup-video{
+      display: inline-block;
+      font-family: $font-second;
+      @include transition(all 0.35s);
+      font-size: 12px;
+      color: $text-color;
+      .icon{
+        line-height: 42px;
+        @include size(42px, 42px);
+        background: $theme_color;
+        @include border-radius(50%);
+        display: inline-block;
+        color: $white;
+        text-align: center;
+        margin-right: 6px;
+        font-size: 16px;
+        @include transition(all 0.35s);
+      }
+      &:hover, &:focus, &:active{
+        .icon{
+          background: lighten($theme_color, 10%);
+        }
+      }
+    }
+  }
+  .content-top{
+    @include box-shadow(2px 2px 10px rgba(0, 0, 0, 0.1));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    background: $white;
+    position: relative;
+    &:after{
+      content: '';
+      border: 10px solid transparent;
+      border-top-color: $border-color;
+      position: absolute;
+      top: 100%;
+      left: 20px;
+      z-index: 9;
+    }
+    .quote{
+      font-size: 16px;
+      line-height: 34px;
+      font-weight: 400;
+      color: $black;
+      font-family: $font-second;
+    }
+  }
+  .info{
+    margin-top: 30px;
+    .left{
+      float: left;
+      width: 60px;
+      img{
+        width: 60px;
+        @include border-radius(50%);
+      }
+    }
+    .right{
+      padding-left: 75px;
+    }
+  }
+  .title{
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 15px;
+    font-family: $font-second;
+    color: $black;
+  }
+  .job{
+    font-size: 12px;
+    font-family: $font-second;
+  }
+}
+
+.testimonial-node-v2{
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto;
+  .avatar{
+    img{
+      max-height: 80px;
+      @include border-radius(50%);
+    }
+  } 
+  .quote{
+    font-size: 16px;
+    line-height: 32px;
+    position: relative;
+    padding-top: 20px;
+    color: $black;
+    text-align: center;
+    font-family: $font-second;
+    font-weight: 500;
+  }
+  .info{
+    margin-top: 10px;
+  }
+  .job{
+    color: #717171;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+    font-family: $font-second;
+    font-weight: 500;
+  }
+  .title{
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $black;  
+    display: block;
+    font-family: $font-second;
+    text-align: center;
+    text-transform: uppercase;
+  } 
+}
+
+.view-testimonial-v2{
+  position: relative;
+  float: left;
+  width: 100%;
+  .owl-dots{
+    text-align: left;
+    position: relative;
+    margin-top: 20px;
+    float: left;
+    width: 100%;
+    .owl-dot{
+      display: inline-block;
+      padding: 0;
+      margin: 5px;
+      background: none;
+      @include size(45px, 45px);
+      @include border-radius(0);
+      border: 2px solid $border-color;
+      @include box-shadow(none);
+      text-align: center;
+      position: relative;
+      z-index: 9;
+      &.active{
+        border-color: $theme_color;
+      }
+    }
+  }
+  .owl-nav{
+    display: none;
+  }
+}
+
+.testimonial-grid{
+  .item-grid{
+    margin-bottom: 45px;
+    @include clearfix();
+    .testimonials-quote{
+      font-size: 16px;
+      color: $black;
+      padding: 30px;
+      border: 1px solid $border-color;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .testimonials-profile{
+      display: inline-block;
+      position: relative;
+      margin-left: 30px;
+      float: left;
+      padding-top: 20px;
+      &:after{
+        content: "";
+        position: absolute;
+        @include size(50px, 2px);
+        background: $theme_color;
+        top: -1px;
+        left: 0;
+        z-index: 1;
+      }
+      .right{
+        padding-left: 70px;
+        .name{
+          font-size: 16px;
+          font-weight: 500;
+          color: #000000;
+          margin: 0;
+          text-transform: uppercase;
+        }
+        .job{
+          font-size: 12px;
+          font-weight: 900;
+          color: $theme_color;
+          text-transform: uppercase;
+        }
+      }
+      .left{
+        display: inline-block;
+        float: left;
+        img{
+          @include border-radius(50%);
+          width: 50px;
+          height: auto;
+        }
+      }
+    }
+  }
+}

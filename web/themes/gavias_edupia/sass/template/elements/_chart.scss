@@ -1,0 +1,46 @@
+.gsc-chart{
+   text-align: center;
+   .easyPieChart {
+      font-size: 24px;
+      font-weight: 400;
+      position: relative;
+      text-align: center;
+      display: inline-block;
+      &:last-child {
+         margin-right: 0;
+      }
+      span {
+         line-height: 20px;
+         font-size: 20px;
+         font-weight: 600;
+         text-transform: capitalize;
+         font-family: $font-second;  
+         color: $black;  
+      }
+      canvas {
+         position: absolute;
+         top: 0;
+         left: 0;
+      }
+   }
+   .content{
+     text-align: center;
+     > div{
+       display: block;
+     }
+     .icon{
+       font-size: 25px;
+       margin-top: 5px;
+     }
+   .title{
+     text-transform: capitalize;
+     font-size: 18px;
+     font-weight: 600;    
+     position: relative;
+     margin-bottom: 10px;
+     margin-top: 20px; 
+     font-family: $font-second;  
+     color: $black;  
+   }
+ }
+}

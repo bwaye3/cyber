@@ -1,0 +1,518 @@
+
+#footer .remove-bold .navigation .gva_menu > li li:nth-child(1) a,
+#footer .remove-bold .navigation .gva_menu > li li:nth-child(2) a {
+  font-weight: 300;
+}
+
+#footer .navigation .gva_menu > li:nth-child(1) a {
+  font-weight: 700 !important;
+}
+
+#footer .navigation .gva_menu > li li:nth-child(2) a {
+  font-weight: 300 !important;
+}
+
+.footer-second.col-xl-7.col-lg-7.col-md-12.col-sm-12.col-xs-12.column {
+  margin: 11px 0 0;
+}
+
+.breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+  line-height: 1.1;
+  letter-spacing: 5px !important;
+}
+
+.page-user-login .main-page, .page-user-register .main-page, .page-user-pass .main-page {
+  background: #000;
+}
+
+.gva-body-page input[type="text"] {
+  color: #000;
+}
+
+.page-user-login .bg, .page-user-register .bg, .page-user-pass .bg {
+  background-image: url("/themes/gavias_edupia/images/breadcrumb.jpg");
+  background-position: center center;
+  background-repeat: repeat;
+}
+
+.toolbar-menu-administration ul li {
+  margin-bottom: 0;
+}
+
+.gavias_sliderlayer .fa-chevron-down::before {
+  content: "\f078";
+  color: #70e800;
+  font-size: 50px;
+}
+
+.gavias_sliderlayer .fa-chevron-down:hover::before {
+  color: #fff;
+}
+
+#backtotop {
+  background: url("/sites/default/files/2020-02/green-up.png") no-repeat center center !important;
+  border-radius: 50px;
+}
+
+@media (min-width: 768px) and (min-width: 992px) {
+  .navigation .gva_menu .sub-menu li:hover > ul {
+    -webkit-transform: rotateX(0);
+    transform: rotateX(0); }
+}
+
+.gsc-icon-box .highlight_content .desc p {
+  margin-bottom: 0;
+  line-height: 1.7;
+  font-size: 12px;
+  color: #fff;
+}
+
+/* BREADCRUMB */
+.breadcrumb-content-inner .gva-breadcrumb-content .gva-block-breadcrumb .breadcrumb-style {
+  padding: 30px 0 100px 0 !important;
+}
+
+.breadcrumb-subtitle {
+  position: absolute;
+  color: #fff;
+  z-index: 10 !important;
+  line-height: 1.3;
+  font-size: 18px !important;
+  font-weight: 400;
+}
+
+.page-node-194 .breadcrumb-subtitle,
+.page-node-195 .breadcrumb-subtitle,
+.page-node-196 .breadcrumb-subtitle,
+.page-node-197 .breadcrumb-subtitle,
+.page-node-198 .breadcrumb-subtitle {
+  top: 160px !important;
+  margin: 0 0 0 45% !important;
+}
+
+.page-node-185 .breadcrumb-subtitle {
+  top: 190px !important;
+  max-width: 50%;
+  margin: 0 0 0 22% !important;
+}
+
+
+.breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+  margin: 120px 0 30px 7%;
+  text-transform: uppercase;
+}
+
+.page-node-210 .breadcrumb-subtitle {
+  top: 144px;
+  margin: 0 0 0 37% !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.page-node-210 .node--view-mode-full p {
+  line-height: 1.4;
+  font-size: 14px !important;
+}
+@media (max-width: 991.98px) {
+
+  .page-node-185 .breadcrumb-subtitle {
+    top: 180px !important;
+    margin: 0 0 0 16% !important;
+  }
+
+  .page-node-194 .breadcrumb-subtitle,
+  .page-node-195 .breadcrumb-subtitle,
+  .page-node-196 .breadcrumb-subtitle,
+  .page-node-197 .breadcrumb-subtitle,
+  .page-node-198 .breadcrumb-subtitle {
+    top: 170px !important;
+    margin: 0 0 0 20% !important;
+  }
+
+  .page-node-210 .breadcrumb-subtitle {
+    top: 178px;
+    margin: 0 0 0 16% !important;
+    max-width: 50%;
+  }
+
+  header.header-v2 {
+    position: relative;
+    background: transparent;
+  }
+  .site-branding-logo img {
+    max-width: 100%;
+  }
+
+  .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+    margin: 50px 0 30px 7%;
+  }
+
+  .gva-offcanvas-mobile .gva-navigation .gva_menu > li {
+    border-bottom: none;
+    text-align: left;
+  }
+
+  .gva-offcanvas-mobile,
+  .gva-offcanvas-mobile a,
+  header.header-v2 .navigation .gva_menu > li > a {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  .gva-offcanvas-mobile .close-offcanvas i {
+    color: #b3b3b3 !important;
+  }
+
+  .gva-offcanvas-mobile .gva-navigation .gva_menu li a .icaret {
+    right: 25px;
+    font-size: 20px;
+    color: #b3b3b3 !important;
+  }
+}
+
+@media (max-width: 780px) {
+
+  .page-node-185 .breadcrumb-subtitle {
+    top: 190px !important;
+    margin: 0 0 0 116px !important;
+  }
+
+  .page-node-194 .breadcrumb-subtitle {
+    top: 175px !important;
+    margin: 0 0 0 116px !important;
+  }
+
+  .page-node-194 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-196 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-197 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-198 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+    margin: 30px 0 30px 10%;
+  }
+
+  .page-node-210 .breadcrumb-subtitle {
+    top: 198px;
+    margin: 0 0 0 14% !important;
+  }
+
+  .site-branding-logo img {
+    max-width: 200px;
+  }
+
+  header .area-main-menu .gva-search-region {
+    top: 35%;
+  }
+  .menu-bar {
+    margin-top: 25px;
+    top: 0;
+    right: 20%;
+  }
+
+  .gva-offcanvas-mobile .gva-navigation .gva_menu > li ul.menu.sub-menu li a {
+    background: transparent;
+  }
+
+  .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+    margin: 50px 0 30px 7%;
+  }
+
+}
+
+@media (max-width: 458px) {
+
+  .page-node-185 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+    margin: 30px 0 30px 10%;
+  }
+
+  .page-node-185 .breadcrumb-subtitle {
+    top: 175px !important;
+    margin: 0 0 0 50px !important;
+    max-width: 90%;
+  }
+
+  .page-node-194 .breadcrumb-subtitle,
+  .page-node-195 .breadcrumb-subtitle,
+  .page-node-196 .breadcrumb-subtitle,
+  .page-node-197 .breadcrumb-subtitle,
+  .page-node-198 .breadcrumb-subtitle {
+    top: 180px !important;
+    margin: 0 0 0 30px !important;
+    max-width: 90%;
+  }
+
+  .page-node-194 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-195 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-196.breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-197 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+  .page-node-198 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+    margin: 30px 0 30px 15px;
+    font-size: 25px;
+  }
+
+
+  .page-node-210 .breadcrumb-subtitle {
+    top: 198px;
+    margin: 0 0 0 14% !important;
+  }
+
+  .site-branding-logo img {
+    max-width: 200px;
+  }
+}
+
+
+.gavias_sliderlayer .btn-slide.inner,
+.gavias_sliderlayer .btn-slide a,
+.gavias_sliderlayer .btn-slide-white.inner,
+.gavias_sliderlayer .btn-slide-white a,
+#gavias_slider_single .btn-slide.inner,
+#gavias_slider_single .btn-slide a,
+#gavias_slider_single .btn-slide-white.inner,
+#gavias_slider_single .btn-slide-white a {
+  color: #70e800 !important;
+  background: #000 !important;
+  border: 1px solid #70e800 !important;
+}
+
+.gavias_sliderlayer .btn-slide.inner:hover,
+.gavias_sliderlayer .btn-slide a:hover,
+.gavias_sliderlayer .btn-slide-white.inner:hover,
+.gavias_sliderlayer .btn-slide-white a:hover,
+#gavias_slider_single .btn-slide.inner:hover,
+#gavias_slider_single .btn-slide a:hover,
+#gavias_slider_single .btn-slide-white.inner:hover,
+#gavias_slider_single .btn-slide-white a:hover {
+  color: #000 !important;
+  background: #70e800 !important;
+  border: 1px solid #70e800 !important;
+  text-decoration: none !important;
+}
+
+header.header-v2 .navigation .gva_menu > li.menu-item--active-trail > a {
+  color: #70e800 !important;
+}
+
+body {
+  font-size: 16px !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6,
+.pager ul.pager__items > li a,
+.topbar .topbar-right ul.gva_topbar_menu > li a,
+.gva-user-region .user-top .account-name,
+.gva-user-region .user-content,
+.quick-cart .cart-count,
+.quick-cart .cart-block-contents-links a,
+.gavias_sliderlayer .slide-style-1,
+#gavias_slider_single .slide-style-1,
+.gavias_sliderlayer .slide-style-2,
+#gavias_slider_single .slide-style-2,
+.gavias_sliderlayer .slide-style-3,
+#gavias_slider_single .slide-style-3,
+.gavias_sliderlayer .slide-style-4,
+#gavias_slider_single .slide-style-4,
+.gavias_sliderlayer .btn-slide,
+.gavias_sliderlayer .btn-slide-white,
+#gavias_slider_single .btn-slide,
+#gavias_slider_single .btn-slide-white,
+.gavias_sliderlayer .btn-slide.inner,
+.gavias_sliderlayer .btn-slide a,
+.gavias_sliderlayer .btn-slide-white.inner,
+.gavias_sliderlayer .btn-slide-white a,
+#gavias_slider_single .btn-slide.inner,
+#gavias_slider_single .btn-slide a,
+#gavias_slider_single .btn-slide-white.inner,
+#gavias_slider_single .btn-slide-white a,
+.post-block .post-title a, .post-block .post-meta,
+.post-block .post-action a,
+.post-slider.post-block .post-meta-wrap .post-title a,
+.post-slider.post-block .post-categories a,
+.portfolio-filter ul.nav-tabs > li > a,
+.portfolio-v1 .content-inner .title a,
+.portfolio-single .content-top .post-categories a,
+.portfolio-single .portfolio-informations .item-information span:first-child,
+.team-teaser-1 .team-name,
+.team-teaser-1 .team-job,
+.team-teaser-2 .team-name,
+.team-teaser-2 .team-job,
+.team-teaser-3 .team-content,
+.team-teaser-4 .team-content,
+.team-single-page .team-name .job,
+.team-single-page .heading,
+.team-single-page .team-quote,
+.testimonial-node-v1 .video .popup-video,
+.testimonial-node-v1 .content-top .quote,
+.testimonial-node-v1 .title,
+.testimonial-node-v1 .job,
+.testimonial-node-v2 .quote,
+.testimonial-node-v2 .job,
+.testimonial-node-v2 .title,
+.course-block .image .image-popup,
+.course-block .image .video-link,
+.course-block .course-content .content-inner .categories,
+.course-block .course-content .course-footer,
+.course-block .course-content .course-footer .left .course-price,
+.course-block .course-content .course-footer .left .course-price,
+.views-exposed-form .form-item select,
+.views-exposed-form .form-item input[type="text"],
+.views-exposed-form .form-item input[type="text"],
+.views-exposed-form .form-item input[type="tel"],
+.views-exposed-form .form-item input[type="password"],
+.views-exposed-form .form-item input[type="email"],
+.views-exposed-form .form-actions select,
+.views-exposed-form .form-actions input[type="text"],
+.views-exposed-form .form-actions input[type="text"],
+.views-exposed-form .form-actions input[type="tel"],
+.views-exposed-form .form-actions input[type="password"],
+.views-exposed-form .form-actions input[type="email"],
+.views-exposed-form .form-item label,
+.views-exposed-form .form-actions label,
+.views-exposed-form .form-actions input,
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item select,
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item input[type="text"],
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item input[type="text"],
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item input[type="tel"],
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item input[type="password"],
+.form-fullwidth #views-exposed-form-courses-course-filter .form-item input[type="email"],
+.categories-course-list .view-content-wrap .item a,
+.course-block-heading-2 > div,
+.course-block-v2 > div.course-title,
+.course-block-v2 > div.course-category .field .field__item a,
+.course-block-v2 > div.course-teacher,
+.course-block-v2 > div.content-action,
+.featured-course-2 .image .image-popup,
+.featured-course-2 .image .video-link,
+.featured-course-2 .right .teacher a,
+.featured-course-2 .right .course-features .field__items .field__item,
+.view-courses-featured-2 .carousel-nav .content-inner .info .right,
+.single-course .block-course-title,
+.single-course .course-right .course-meta .meta-item .content .lab,
+.single-course .course-right .course-meta .meta-item .content .val,
+.single-course .course-right .course-meta .meta-item .content .val a,
+.single-course .course-right .add-to-cart-content-inner .field--name-price,
+.single-course .course-right .add-to-cart-content-inner .user-registered,
+.single-course .icon-expand,
+.single-course .video-link,
+.single-course .course-features .field__label,
+.single-course .course-features .field__items .field__item,
+.lesson-block .lesson-content .lesson-title,
+.lesson-single .lessons .back-to-course,
+.event-block .event-image .date,
+.event-block .event-content .event-info .title,
+.event-block-list .event-date span.day,
+.event-block-list .event-title a,
+.nav-tabs > li > a,
+input[type="button"],
+.btn, .btn-white,
+.btn-theme,
+.btn-black,
+input.js-form-submit,
+a.button-action,
+.progress-label,
+.pricing-table .plan-name .title,
+.pricing-table .content-wrap .plan-price .price-value,
+.pricing-table .content-wrap .plan-price .price-value .value,
+.user-form .form-item:not(.js-form-type-checkbox) label,
+.user-form details summary,
+.company-presentation .title,
+.most-search-block ul > li,
+.navigation .gva_menu > li > a,
+.navigation .gva_menu .megamenu > .sub-menu > li > a,
+.navigation .gva_menu .sub-menu > li > a,
+ul[data-drupal-views-infinite-scroll-pager].pager a,
+.category-list .item-list ul li a,
+.tags-list .item-list > ul > li a,
+.widget.gsc-video-box.style-1 .video-content .left,
+.widget.gsc-video-box.style-2 .video-content .link-video strong,
+.widget.gsc-video-box.style-2 .video-content .button-review a,
+.widget.milestone-block .milestone-number,
+.widget.milestone-block .milestone-text,
+.widget.milestone-block.position-icon-left .milestone-number,
+.gsc-box-hover .backend .box-title,
+.gsc-box-hover .backend .link-action a,
+.gsc-box-hover .box-title,
+.gsc-carousel-content.style-1 .content-box .content-inner .title,
+.gsc-carousel-content.style-2 .content-box .content-inner .title,
+.gsc-countdown .gva-countdown .countdown-times > div,
+.gsc-countdown .gva-countdown .countdown-times > div b,
+.gsc-call-to-action .title,
+.gsc-chart .easyPieChart span,
+.gsc-chart .content .title,
+.gsc-our-gallery .item .content-inner .title,
+.gsc-heading .sub-title,
+.gsc-icon-box .highlight_content .title,
+.gsc-image-content.skin-v2 .box-content .read-more a,
+.gsc-image-content.skin-v3 .box-content .title,
+.gsc-instagram .widget-heading .title,
+.gva-job-box .content-inner .job-type,
+.gva-job-box .content-inner .box-title .title,
+.gsc-our-partners .content-inner .title,
+.gsc-our-partners .content-inner .info,
+.gsc-quotes-rotator .cbp-qtrotator .cbp-qtcontent .content-title,
+.gsc-services-box .item-service-box .content-inner .title,
+.gsc-tab-views.style-2 .list-links-tabs .nav-tabs > li a,
+.gsc-tabs .tabs_wrapper.tabs_horizontal .nav-tabs > li a,
+.gsc-tabs .tabs_wrapper.tabs_vertical .nav-tabs > li a,
+.gva-offcanvas-mobile .gva-navigation .gva_menu > li > a,
+.gva-offcanvas-mobile .gva-navigation .gva_menu > li ul.menu.sub-menu li a {
+  font-family: "Russo One", sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 3px;
+}
+
+.gsc-icon-box .highlight_content .title {
+  font-size: 16px !important;
+  color: #b3b3b3 !important;
+  letter-spacing: 1px;
+  text-shadow: 1px 2px 2px rgba(0, 0, 0, 1);
+  font-family: "acumin-pro", "Roboto", sans-serif !important;
+  font-style: normal;
+  font-weight: 100;
+}
+
+.gsc-icon-box .highlight_content .desc p {
+  font-size: 16px !important;
+  color: #b3b3b3 !important;
+  letter-spacing: 1px;
+  text-shadow: 1px 2px 2px rgba(0, 0, 0, 1);
+  font-family: "acumin-pro", "Roboto", sans-serif !important;
+  font-style: normal;
+  font-weight: 100;
+}
+
+.acumin-pro,
+.acumin-pro p {
+  font-family: "acumin-pro", "Roboto", sans-serif !important;
+  font-style: normal;
+  font-weight: 100;
+  letter-spacing: 1px;
+  font-size: 16px !important;
+}
+
+.vertical-navigation-2, #vertical-navigation {
+  margin: 6px 35px 0 0 !important;
+}
+
+body, .node--view-mode-full p, p {
+  letter-spacing: 1px;
+  font-family: "acumin-pro-wide", "Roboto", sans-serif !important;
+}
+
+#webform-submission-contact-node-200-add-form {
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+.gsc-icon-box.icon-image.top-center .fa-4x .icon img {
+  margin-top: 25px;
+}
+
+.gsc-button.medium, .gsc-button.medium a {
+  font-family: "Russo One", sans-serif !important;
+  font-weight: 300 !important;
+}
+
+
+.page-node-219 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+.page-node-220 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
+.page-node-221 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
+  color: #70e800 !important;
+}

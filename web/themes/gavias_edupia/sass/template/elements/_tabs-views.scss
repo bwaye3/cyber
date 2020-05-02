@@ -1,0 +1,92 @@
+.gsc-tab-views{
+  &.style-1{
+    .list-links-tabs{
+      position: relative;
+      margin-bottom: 10px;
+      text-align: center;
+      .nav-tabs{
+        z-index: 1;
+        border: none;
+        justify-content: center;
+        margin-bottom: 20px;
+        > li{
+          margin: 0;
+          a{
+            border: none!important;
+            background: none!important; 
+            position: relative;
+            font-weight: 600;
+            text-align: center;
+            padding-top: 0;
+            padding-bottom: 0;
+            font-size: 14px;
+            &:after{
+              content: '';
+              @include size(1px, 15px);
+              background: $border-color;
+              position: absolute;
+              right: 0;
+              top: 50%;
+              margin-top: -7.5px;
+              z-index: 1;
+            }
+          }
+          &:last-child{
+            a{
+              &:after{
+                display: none;
+              }
+            } 
+          }
+          &.active{
+            a{
+              color: $theme_color;
+            }
+          }
+        }
+      }
+    }
+  }
+  &.style-2{
+    .list-links-tabs{
+      position: relative;
+      margin-bottom: 20px;
+      .nav-tabs{
+        z-index: 1;
+        border: none;
+        width: 100%;
+        > li{
+          margin: 0;
+          @include transition(all 0.35s);
+          a{
+            border: none!important;
+            color: $black;
+            padding: 0 0 2px!important;
+            margin: 0 30px 0 0!important;
+            background: none!important; 
+            position: relative;
+            font-weight: 600;
+            font-family: $font-second;
+            font-size: 14px;
+            text-transform: capitalize;
+          }
+          &:last-child{
+            a{
+               margin-left: 0!important;
+            }
+          }
+          &:hover, &:focus, &:active{
+            a{
+              color: $theme_color;
+            }
+          }
+          &.active{
+            a{
+              color: $theme_color;
+            }
+          }
+        }
+      }
+    }
+  }
+}

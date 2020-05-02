@@ -1,0 +1,50 @@
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <div class="row">
+        
+        <div class="topbar-left col-xl-8 col-lg-8 col-md-8 col-sm-8 col-xs-6">
+          {% if page.topbar %}
+          <div class="topbar-left-content">
+            {{ page.topbar }}
+          </div>
+        {% endif %}
+        </div>
+
+        <div class="topbar-right col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
+          
+          <div class="gva-user-region user-region">
+            <div class="user-top">
+              {% if custom_account %}
+                <span class="account-name">{{ custom_account|raw }}</span>
+              {% endif %}
+              <span class="icon">
+                {% if user_picture %}
+                  <img src="{{ file_url(user_picture) }}" alt=""/>
+                {% else %}  
+                  <i class="fa fa-user"></i>
+                {% endif %}
+              </span>
+            </div>  
+            <div class="user-content">  
+              {% if custom_account %}
+                <div class="account-message">{{ custom_account|raw }}</div>
+              {% endif %}  
+              <ul class="user-links">
+                {% if custom_account %}
+                  <li><a href="{{ path('user.page') }}">{{ '+ My Account'|t }}</a></li>
+                  <li><a href="{{ path('user.logout') }}">{{ '+ Logout'|t }}</a></li>
+                {% else %}
+                  <li><a href="{{ path('user.login') }}">{{ '+ Login'|t }}</a></li>
+                  <li><a href="{{ path('user.register') }}">{{ '+ Register'|t }}</a></li>
+                {% endif %}  
+              </ul>
+            </div>  
+          </div>
+
+        </div>
+
+      </div>
+    </div>  
+  </div>  
+</div>

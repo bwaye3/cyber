@@ -1,0 +1,38 @@
+gavias_content_builder.assets.admin:
+  version: 1.x
+  css:
+    theme:
+      dist/css/admin.css: {}
+      vendor/font-awesome/css/font-awesome.min.css: {}
+      vendor/notify/styles/metro/notify-metro.css: {}
+      dist/css/admin.css: {}
+      dist/css/libs.css: {}
+  js:
+    vendor/jquery-migrate.min.js: {}
+    dist/js/admin.js: { scope: footer }
+  dependencies:
+    - imce/drupal.imce.input
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once
+    - core/jquery.ui.dialog 
+
+gavias_content_builder.assets.field:
+  version: 1.x
+  css:
+    theme:
+      vendor/magnific/magnific-popup.css: {}
+      dist/css/field.css: {}
+  js:
+    vendor/magnific/jquery.magnific-popup.js: { scope: footer }
+    dist/js/admin.field.js: { scope: footer }
+
+gavias_content_builder.assets.frontend:
+  version: 1.x
+  css: 
+    theme:
+      dist/css/frontend.css: {}
+  js:
+    vendor/skrollr.min.js: {cope: footer}
+    vendor/main.js: {cope: footer}

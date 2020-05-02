@@ -1,0 +1,144 @@
+<?php
+use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Form\FormStateInterface;
+
+define( 'GAVIAS_CONTENT_BUILDER_PATH', drupal_get_path('module', 'gavias_content_builder') );
+
+module_load_include('php','gavias_content_builder', 'includes/core/model');
+module_load_include('php','gavias_content_builder', 'includes/define');
+module_load_include('php','gavias_content_builder', 'includes/utilities');
+module_load_include('php','gavias_content_builder', 'includes/frontend');
+
+function gavias_content_builder_theme_name(){
+  $default_theme = \Drupal::config('system.theme')->get('default');
+  $theme_name = $default_theme;
+  $sub_theme = false;
+  $theme_handler = \Drupal::service('theme_handler');
+  if($theme_handler->themeExists($default_theme)){
+    $theme_handler = $theme_handler->getTheme($default_theme);
+    $theme_info = $theme_handler->info;
+    if(isset($theme_info['base theme']) && !empty($theme_info['base theme']) && strpos($theme_info['base theme'], 'avias_')){
+      $theme_name = $theme_info['base theme'];
+      $sub_theme = $default_theme;
+    }
+  }
+  return array('theme_name' => $theme_name, 'sub_theme' => $sub_theme);
+}
+
+$theme_load_elements = gavias_content_builder_theme_name();
+if(file_exists(drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/_elements.php')){
+  require drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/_elements.php';
+  $elements = [];
+  if(function_exists('gavias_content_builder_set_elements')){
+    $elements = gavias_content_builder_set_elements();
+  }
+  if($theme_load_elements['sub_theme']){ //If use sub theme
+    foreach( $elements as $el ){
+      $sc_path = '';
+      if(file_exists(drupal_get_path('theme', $theme_load_elements['sub_theme']) . '/gva_content_builder/' . $el . '.php')){
+        $sc_path = drupal_get_path('theme', $theme_load_elements['sub_theme']) . '/gva_content_builder/' . $el . '.php';
+      }elseif(file_exists(drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/' . $el . '.php')){
+        $sc_path = drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/' . $el . '.php';
+      }
+      if($sc_path){
+        require($sc_path);
+      }
+    }
+  }else{
+    foreach( $elements as $el ){ //if don't use sub theme
+      if(file_exists(drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/' . $el . '.php')){
+        $sc_path = drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/' . $el . '.php';
+        require($sc_path);
+      }
+    }
+  }  
+}
+
+function gavias_pagebuilder_get_el_fields(){
+  $el_fields = array();
+  $theme_load_elements = gavias_content_builder_theme_name();
+  if(function_exists('gavias_content_builder_set_elements')){
+    $elements = gavias_content_builder_set_elements();
+    foreach( $elements as $el ){
+      if(file_exists(drupal_get_path('theme', $theme_load_elements['theme_name']) . '/gva_content_builder/' . $el . '.php')){
+        $_class = 'element_' . $el;
+        if( class_exists($_class) ){
+          $s = new $_class;
+          if(method_exists($s, 'render_form')){
+             $el_fields[$el] = $s->render_form();
+          }
+        }
+      }
+    }
+  }
+  return $el_fields;
+}
+
+
+function gavias_content_builder_theme($existing, $type, $theme, $path) {
+  $items['gcb-admin-form'] = array(
+    'variables' => array(
+      'content' => '',
+    ),
+    'path' => $path . '/templates/backend',
+  );
+  $items['builder'] = array(
+     'variables'  => array(
+      'content'   => '',
+      'edit_url'  => ''
+    ),
+     'path' => $path . '/templates/frontend',
+  );
+  return $items;
+}  
+
+function gavias_content_builder_preprocess_html(&$vars){
+   if(isset($_GET['gva_iframe']) && $_GET['gva_iframe'] == 'on'){
+      $vars['attributes']['class'][] = "gva_iframe_on";
+  }
+  $vars['attributes']['class'][] = "gavias-content-builder";
+  $vars['#attached']['library'][] = 'gavias_content_builder/gavias_content_builder.assets.frontend';
+  
+}
+
+function gavias_content_builder_block_view($delta = '') {
+  $block = array();
+  if (str_replace('gavias_content_builder_block____', '', $delta) != $delta) {
+    $bid = str_replace('gavias_content_builder_block____', '', $delta);
+    $block['content'] = menu_tree($delta);
+    $block['content']['#markup'] = gavias_content_builder_block_content($bid);
+    $block['content']['#contextual_links']['menu'] = array('admin/structure/menu/manage', array($delta));
+  }
+  return $block;
+}
+
+function gavias_content_builder_preprocess_blockbuilder(&$vars){
+  require_once GAVIAS_CONTENT_BUILDER_PATH .'/includes/frontend.php';
+  $vars['theme_hook_suggestions'][] = 'blockbuilder__block';
+  $params = $vars['params'];
+  $id = $vars['id'];
+	$html_id = drupal_html_id('gavias-blockbuilder-' . $id);
+	$vars['id'] = $html_id;
+	$vars['attributes_array']['id'] = $html_id;
+	$vars['content'] = $params;
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for \Drupal\node\NodeForm.
+ */
+function gavias_content_builder_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+  if($is_admin){
+    $form['#attached']['library'][] = 'gavias_content_builder/gavias_content_builder.assets.field';
+  }
+}
+
+function gavias_content_builder_preprocess_node(&$variables){
+  $variables['#cache'] = array('max-age' => 0);
+}
+
+
+function gavias_content_builder_update_projects_alter(&$projects){
+  unset($projects['gavias_content_builder']);
+}

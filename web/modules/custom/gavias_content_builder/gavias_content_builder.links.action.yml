@@ -1,0 +1,7 @@
+gavias_content_builder_add_action:
+   route_name: gavias_content_builder.admin.add
+   title: 'Add Gavias Content Builder'
+   route_parameters:
+        bid: '0'
+   appears_on:
+      - gavias_content_builder.admin

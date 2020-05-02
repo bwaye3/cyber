@@ -1,0 +1,5 @@
+gavias_content_builder.admin:
+  title: 'Gavias Content Builder'
+  description: 'List of Gavias Content Builder items'
+  parent: system.admin_structure
+  route_name: gavias_content_builder.admin

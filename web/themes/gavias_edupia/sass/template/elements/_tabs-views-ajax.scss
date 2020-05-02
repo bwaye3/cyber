@@ -1,0 +1,41 @@
+.gsc-tabs-views-ajax{
+  &.ajaxloadding{
+    .ajax-loading{
+      display: block;
+    }
+    .tabs-container{
+      &:after{
+        display: block;
+        @include opacity(1);
+        visibility: visible;
+        @include transition(all 0.35s);
+      }
+    }
+  }
+  .ajax-loading{
+    width: 100%;
+    display: block;
+    top: 50px;
+    left: 50%;
+    margin-left: -23px;
+    @include size(46px, 46px);
+    background: url('#{$base-theme-image-path}/preloader/preloader-18.gif') no-repeat center center $nocolor;  
+    position: absolute;
+    z-index: 111;
+    display: none;
+  }
+  .tabs-container{
+    position: relative;
+    &:after{
+      content: '';
+      @include size(100%, 100%);
+      background: rgba(255, 255, 255, 0.8);
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 99;
+      @include opacity(0);
+      visibility: hidden;
+    }
+  }
+}

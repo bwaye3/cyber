@@ -1,0 +1,65 @@
+.gsc-services-box{
+  text-align: center;
+  .item-service-box{
+    position: relative;
+    margin-bottom: 30px;
+    &:after{
+      content: '';
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 0;
+      z-index: 1;
+      height: 50px;
+      border-radius: 50%;
+      @include box-shadow(0 10px 14px 0 rgba(0, 0, 0, 0.08));
+      @include transition(all 0.3s ease);
+    }
+    .content-inner{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $white;
+      @include border-radius(6px);
+      text-align: center;
+      min-height: 180px;
+      padding: 0 18px 0;
+      margin-top: 10px;
+      @include transition(all 0.35s);
+      position: relative;
+      z-index: 9;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      .icon{
+        display: block;
+        i{
+          font-size: 40px;
+          color: $theme_color;
+          line-height: 68px;
+        }
+      }
+      .title{
+        display: block;
+        font-weight: 600;
+        line-height: 22px;
+        font-family: $font-second;
+        text-transform: capitalize;
+      }
+      &:hover, &:focus, &:active{
+        box-shadow: 0px 6px 21px 3px rgba(0, 0, 0, 0.1);
+        background: $white;
+        border-color: transparent;
+      }
+      &.has-bg-color{
+        .icon i{
+          color: $white;
+        }
+        .title a{
+          color: $white;
+        }
+      }
+    }
+  }
+  .read-more{
+    margin-top: 30px;
+  }
+}

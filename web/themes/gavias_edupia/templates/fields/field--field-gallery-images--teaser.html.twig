@@ -1,0 +1,18 @@
+{% set i = 0 %}
+<div{{ attributes }}>
+  {%- for item in items -%}
+    {% set i = i + 1 %}
+      {% if i == 1 %}
+        <div class="image-item">
+          <a href="{{file_url(item.content['#item'].entity.uri.value)}}" class="image-popup">
+            <span class="icon-expand"><i class="fas fa-expand"></i></span>
+          </a>
+          {{ item.content }}
+        </div>
+      {% else %}
+        <div class="image-item">
+          <a href="{{file_url(item.content['#item'].entity.uri.value)}}" class="image-popup"></a>
+        </div>
+      {% endif %}
+  {%- endfor -%}
+</div>
