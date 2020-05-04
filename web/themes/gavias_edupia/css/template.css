@@ -414,6 +414,10 @@ body .body-page {
   font-weight: 100;
 }
 
+body .body-page a {
+  color: #70e800;
+}
+
 body.boxed div.body-page {
   background: #000;
   color: #b3b3b3;
