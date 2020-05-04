@@ -510,9 +510,13 @@ body, .node--view-mode-full p, p {
   font-weight: 300 !important;
 }
 
-
 .page-node-219 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
 .page-node-220 .breadcrumb-content-inner .gva-breadcrumb-content .page-title,
 .page-node-221 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
   color: #70e800 !important;
+}
+
+.offscreen {
+  position: absolute;
+  left: -999em;
 }
