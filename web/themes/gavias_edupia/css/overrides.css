@@ -437,7 +437,7 @@ body.logged-in.toolbar-horizontal .header-v2 {
 }
 
 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
-  color: #fff !important;
+  color: #fff;
 }
 .green-title {
   color: #70e800 !important;
