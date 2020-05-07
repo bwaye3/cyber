@@ -487,7 +487,7 @@
   Drupal.eu_cookie_compliance.setStatus = function (status) {
     var date = new Date();
     var domain = drupalSettings.eu_cookie_compliance.domain ? drupalSettings.eu_cookie_compliance.domain : '';
-    var path = drupalSettings.path.baseUrl;
+    var path = drupalSettings.eu_cookie_compliance.domain_all_sites ? '/' : drupalSettings.path.baseUrl;
     var cookieName = (typeof drupalSettings.eu_cookie_compliance.cookie_name === 'undefined' || drupalSettings.eu_cookie_compliance.cookie_name === '') ? 'cookie-agreed' : drupalSettings.eu_cookie_compliance.cookie_name;
     if (path.length > 1) {
       var pathEnd = path.length - 1;

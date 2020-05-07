@@ -331,6 +331,41 @@ function eu_cookie_compliance_update_8111() {
 }
 
 /**
+ * Renaming variables show_disagree_button and popup_disagree_button_message.
+ */
+function eu_cookie_compliance_update_8115() {
+  $show_disagree_button = \Drupal::configFactory()
+    ->getEditable('eu_cookie_compliance.settings')
+    ->get('show_disagree_button');
+  $popup_disagree_button_message = \Drupal::configFactory()
+    ->getEditable('eu_cookie_compliance.settings')
+    ->get('popup_disagree_button_message');
+
+  if (!empty($show_disagree_button)) {
+    \Drupal::configFactory()
+      ->getEditable('eu_cookie_compliance.settings')
+      ->set('show_more_info', $show_disagree_button)
+      ->save();
+    \Drupal::configFactory()
+      ->getEditable('eu_cookie_compliance.settings')
+      ->clear('show_disagree_button')
+      ->save();
+
+  }
+
+  if (!empty($popup_disagree_button_message)) {
+    \Drupal::configFactory()
+      ->getEditable('eu_cookie_compliance.settings')
+      ->set('popup_more_info_button_message', $popup_disagree_button_message)
+      ->save();
+    \Drupal::configFactory()
+      ->getEditable('eu_cookie_compliance.settings')
+      ->clear('popup_disagree_button_message')
+      ->save();
+  }
+}
+
+/**
  * Add config variables for the "Opt-in with categories" feature.
  */
 function eu_cookie_compliance_update_8112() {

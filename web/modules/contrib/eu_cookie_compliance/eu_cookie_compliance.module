@@ -14,7 +14,6 @@ use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\smart_ip\SmartIp;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Component\Serialization\Json;
@@ -84,7 +83,7 @@ function eu_cookie_compliance_page_attachments(&$attachments) {
   if (!empty($config->get('exclude_paths'))) {
     // Check both the URL path and the URL alias against the list to exclude.
     $path = Drupal::service('path.current')->getPath();
-    $url_alias_path = \Drupal::service('path.alias_manager')->getAliasByPath($path);
+    $url_alias_path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
     $path_match = Drupal::service('path.matcher')->matchPath($path, $config->get('exclude_paths'));
     $path_match_url_alias = Drupal::service('path.matcher')->matchPath($url_alias_path, $config->get('exclude_paths'));
     $path_match = $path_match || $path_match_url_alias;
@@ -212,11 +211,15 @@ function eu_cookie_compliance_page_attachments(&$attachments) {
     $popup_text_info = str_replace(["\r", "\n"], '', Xss::filterAdmin($config->get('popup_info.value')));
     $popup_text_agreed = str_replace(["\r", "\n"], '', Xss::filterAdmin($config->get('popup_agreed.value')));
     $withdraw_markup = str_replace(["\r", "\n"], '', Xss::filterAdmin($config->get('withdraw_message.value')));
+
+    // @NOTE: disagree_button is a legacy variable name renamed
+    // to more_info_button, keeped it to avoid problems in customs templates.
     $html_info = [
       '#theme' => $popup_info_template,
       '#message' => check_markup($popup_text_info, $config->get('popup_info.format')),
       '#agree_button' => $primary_button_label,
-      '#disagree_button' => ($config->get('show_disagree_button') == TRUE) ? $config->get('popup_disagree_button_message') : FALSE,
+      '#disagree_button' => ($config->get('show_more_info') == TRUE) ? $config->get('popup_more_info_button_message') : FALSE,
+      '#more_info_button' => ($config->get('show_more_info') == TRUE) ? $config->get('popup_more_info_button_message') : FALSE,
       '#secondary_button_label' => $secondary_button_label,
       '#primary_button_class' => $primary_button_class,
       '#secondary_button_class' => $secondary_button_class,
@@ -232,7 +235,8 @@ function eu_cookie_compliance_page_attachments(&$attachments) {
       '#theme' => $popup_info_template,
       '#message' => check_markup($mobile_popup_text_info, $config->get('popup_info.format')),
       '#agree_button' => $primary_button_label,
-      '#disagree_button' => ($config->get('show_disagree_button') == TRUE) ? $config->get('popup_disagree_button_message') : FALSE,
+      '#disagree_button' => ($config->get('show_more_info') == TRUE) ? $config->get('popup_more_info_button_message') : FALSE,
+      '#more_info_button' => ($config->get('show_more_info') == TRUE) ? $config->get('popup_more_info_button_message') : FALSE,
       '#secondary_button_label' => $secondary_button_label,
       '#primary_button_class' => $primary_button_class,
       '#secondary_button_class' => $secondary_button_class,
@@ -247,7 +251,7 @@ function eu_cookie_compliance_page_attachments(&$attachments) {
       '#theme' => 'eu_cookie_compliance_popup_agreed',
       '#message' => check_markup($popup_text_agreed, $config->get('popup_agreed.format')),
       '#hide_button' => $config->get('popup_hide_button_message'),
-      '#find_more_button' => ($config->get('show_disagree_button') == TRUE) ? $config->get('popup_find_more_button_message') : FALSE,
+      '#find_more_button' => ($config->get('show_more_info') == TRUE) ? $config->get('popup_find_more_button_message') : FALSE,
     ];
     $withdraw_markup = [
       '#theme' => 'eu_cookie_compliance_withdraw',
@@ -462,6 +466,7 @@ function eu_cookie_compliance_theme($existing, $type, $theme, $path) {
         'message' => NULL,
         'agree_button' => NULL,
         'disagree_button' => NULL,
+        'more_info_button' => NULL,
         'secondary_button_label' => NULL,
         'primary_button_class' => NULL,
         'secondary_button_class' => NULL,
@@ -576,11 +581,20 @@ function eu_cookie_compliance_user_in_eu() {
 
   $ip_address = Drupal::request()->getClientIp();
 
+  // Try to get country_code by php extension.
   $country_code = extension_loaded('geoip') ? geoip_country_code_by_name($ip_address) : '';
+
+  // Try to get country_code by smart_ip module.
   if (Drupal::moduleHandler()->moduleExists('smart_ip')) {
     $location_service = \Drupal::service('smart_ip.smart_ip_location');
     $smart_ip_session = $location_service->get();
     $country_code = isset($smart_ip_session['countryCode']) ? $smart_ip_session['countryCode'] : NULL;
+  }
+  // Try to get country_code by geoip module.
+  elseif (Drupal::moduleHandler()->moduleExists('geoip')) {
+    $geo_location_service = \Drupal::service('geoip.geolocation');
+    $geo_ip_session = $geo_location_service->geolocate($ip_address);
+    $country_code = !empty($geo_ip_session) ? $geo_ip_session : NULL;
   }
 
   // If the CloudFlare provided country header is available, use it as a
@@ -610,13 +624,69 @@ function eu_cookie_compliance_js_alter(&$javascript, AttachedAssetsInterface $as
 
   foreach ($disabled_javascripts as $script) {
     // Remove 'category:' if present.
-    $parts = explode(':', $script);
-    $script = end($parts);
+    $parts = explode('%3A', $script);
+    if (count($parts) > 2) {
+      array_shift($parts);
+      $script = implode(':', $parts);
+    }
+    else {
+      $script = end($parts);
+    }
     // Parse the string and drop the parameter that is a behavior name.
     @list($script, $attach_name) = explode('|', $script);
     _eu_cookie_compliance_convert_relative_uri($script);
 
     unset($javascript[$script]);
+  }
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function eu_cookie_compliance_page_attachments_alter(array &$attachments) {
+  $config = Drupal::config('eu_cookie_compliance.settings');
+  $disabled_javascripts = $config->get('disabled_javascripts');
+  $disabled_javascripts = _eu_cookie_compliance_explode_multiple_lines($disabled_javascripts);
+
+  foreach ($disabled_javascripts as $script) {
+    // Remove 'category:' if present.
+    $parts = explode('%3A', $script);
+    // The script can use filesystem stream wrappers, so considerate them.
+    if (count($parts) > 2) {
+      array_shift($parts);
+      $script = implode(':', $parts);
+    }
+    else {
+      $script = end($parts);
+    }
+
+    // Parse the string and drop the parameter that is a behavior name.
+    @list($script, $attach_name) = explode('|', $script);
+    if (!UrlHelper::isExternal($script)) {
+      _eu_cookie_compliance_convert_relative_uri($script);
+      $script = '/' . $script;
+    }
+
+    if (!empty($attachments['#attached']['html_head'])) {
+      // html_head is a 2 level array.
+      foreach ($attachments['#attached']['html_head'] as &$head_section) {
+        array_walk($head_section, function(&$html_head, $key) use ($script) {
+          // Filter only script tags.
+          if (!empty($html_head['#attributes']['src']) && !empty($html_head['#tag']) && $html_head['#tag'] === 'script') {
+            // Remove possible querystring.
+            $head_script = $html_head['#attributes']['src'];
+            $query_string_pos = strpos($head_script, '?');
+
+            if ($query_string_pos !== FALSE) {
+              $head_script = substr($head_script, 0, $query_string_pos);
+            }
+            if ($head_script === $script) {
+              $html_head['#access'] = FALSE;
+            }
+          }
+        });
+      }
+    }
   }
 }
 
@@ -658,17 +728,17 @@ function _eu_cookie_compliance_find_privacy_policy() {
 
   if ($database_type === 'sqlsrv') {
     $query = \Drupal::database()->query(
-      "select nid from {node_field_data} where 
-      title LIKE 'Privacy%' OR 
-      title LIKE 'Privacy policy%' OR 
-      title LIKE 'Privacy Policy%' OR 
-      title LIKE 'Cookie policy%' OR 
-      title LIKE 'Cookie Policy%' OR 
-      title LIKE 'Terms of use%' OR 
-      title LIKE 'Terms of Use%' OR 
-      title LIKE 'Terms of service%' OR 
-      title LIKE 'Terms of Service%' OR 
-      title LIKE 'Terms and conditions%' OR 
+      "select nid from {node_field_data} where
+      title LIKE 'Privacy%' OR
+      title LIKE 'Privacy policy%' OR
+      title LIKE 'Privacy Policy%' OR
+      title LIKE 'Cookie policy%' OR
+      title LIKE 'Cookie Policy%' OR
+      title LIKE 'Terms of use%' OR
+      title LIKE 'Terms of Use%' OR
+      title LIKE 'Terms of service%' OR
+      title LIKE 'Terms of Service%' OR
+      title LIKE 'Terms and conditions%' OR
       title LIKE 'Terms and Conditions%'
       "
     );

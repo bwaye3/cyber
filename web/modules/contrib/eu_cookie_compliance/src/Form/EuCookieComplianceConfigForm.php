@@ -79,7 +79,7 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('path.validator'),
       $container->get('router.request_context'),
-      $container->get('entity.manager')->getStorage('user_role'),
+      $container->get('entity_type.manager')->getStorage('user_role'),
       $container->get('module_handler')
     );
   }
@@ -278,7 +278,7 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
       '#type' => 'radios',
       '#title' => $this->t('Info banner template'),
       '#options' => [
-        'legacy' => t('Cookie policy button in popup-buttons section and styled similarly to the Agree button, 
+        'legacy' => t('Cookie policy button in popup-buttons section and styled similarly to the Agree button,
         as in earlier versions of this module'),
         'new' => t('Cookie policy button in popup-text section, styled differently than Agree button.'),
       ],
@@ -428,10 +428,24 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
       '#title' => $this->t('Agree button label'),
       '#default_value' => $config->get('popup_agree_button_message'),
       '#size' => 30,
-      '#required' => TRUE,
       '#states' => [
         'visible' => [
-          "input[name='enable_save_preferences_button']" => ['!checked' => TRUE],
+          [
+            "input[name='enable_save_preferences_button']" => ['checked' => FALSE],
+            "input[name='method']" => ['value' => 'categories'],
+          ],
+          [
+            "input[name='method']" => ['!value' => 'categories'],
+          ],
+        ],
+        'required' => [
+          [
+            "input[name='enable_save_preferences_button']" => ['checked' => FALSE],
+            "input[name='method']" => ['value' => 'categories'],
+          ],
+          [
+            "input[name='method']" => ['!value' => 'categories'],
+          ],
         ],
       ],
     ];
@@ -720,12 +734,12 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
       '#title' => t('EU countries'),
     ];
 
-    if ($this->moduleHandler->moduleExists('smart_ip') || extension_loaded('geoip')) {
+    if ($this->moduleHandler->moduleExists('smart_ip') || $this->moduleHandler->moduleExists('geoip') || extension_loaded('geoip')) {
       $form['eu_only']['eu_only'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Only display banner in EU countries.'),
         '#default_value' => !empty($config->get('eu_only')) ? $config->get('eu_only') : 0,
-        '#description' => $this->t('You can limit the number of countries for which the banner is displayed by checking this option. If you want to provide a list of countries other than current EU states, you may place an array in <code>$config[\'eu_cookie_compliance.settings\'][\'eu_countries\']</code> in your <code>settings.php</code> file. Using the <a href="http://drupal.org/project/smart_ip">smart_ip</a> module or the <a href="http://www.php.net/manual/en/function.geoip-country-code-by-name.php">geoip_country_code_by_name()</a> PHP function.'),
+        '#description' => $this->t('You can limit the number of countries for which the banner is displayed by checking this option. If you want to provide a list of countries other than current EU states, you may place an array in <code>$config[\'eu_cookie_compliance.settings\'][\'eu_countries\']</code> in your <code>settings.php</code> file. Using the <a href="http://drupal.org/project/smart_ip">smart_ip</a> module or using the <a href="http://drupal.org/project/geoip">geoip</a> module or the <a href="http://www.php.net/manual/en/function.geoip-country-code-by-name.php">geoip_country_code_by_name()</a> PHP function.'),
       ];
       $form['eu_only']['eu_only_js'] = [
         '#type' => 'checkbox',
@@ -736,7 +750,7 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
     }
     else {
       $form['eu_only']['info'] = [
-        '#markup' => t('You can choose to show the banner only to visitors from EU countries. In order to achieve this, you need to install the <a href="http://drupal.org/project/smart_ip">smart_ip</a> module or enable the <a href="http://www.php.net/manual/en/function.geoip-country-code-by-name.php">geoip_country_code_by_name()</a> PHP function.'),
+        '#markup' => t('You can choose to show the banner only to visitors from EU countries. In order to achieve this, you need to install the <a href="http://drupal.org/project/smart_ip">smart_ip</a> module or install the <a href="http://drupal.org/project/geoip">geoip</a> module or enable the <a href="http://www.php.net/manual/en/function.geoip-country-code-by-name.php">geoip_country_code_by_name()</a> PHP function.'),
       ];
     }
 
@@ -976,8 +990,8 @@ class EuCookieComplianceConfigForm extends ConfigFormBase {
       ->set('popup_scrolling_confirmation', $form_state->getValue('popup_scrolling_confirmation'))
       ->set('popup_position', $form_state->getValue('popup_position'))
       ->set('popup_agree_button_message', $form_state->getValue('popup_agree_button_message'))
-      ->set('show_disagree_button', $form_state->getValue('disagree_button'))
-      ->set('popup_disagree_button_message', $form_state->getValue('popup_disagree_button_message'))
+      ->set('show_more_info', $form_state->getValue('show_more_info'))
+      ->set('popup_more_info_button_message', $form_state->getValue('popup_more_info_button_message'))
       ->set('popup_info', $form_state->getValue('popup_info'))
       ->set('popup_info_template', $form_state->getValue('popup_info_template'))
       ->set('use_mobile_message', $form_state->getValue('use_mobile_message'))

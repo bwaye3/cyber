@@ -54,7 +54,7 @@ eu_cookie_compliance.settings:
     popup_agree_button_message:
       type: label
       label: 'Agree button message'
-    popup_disagree_button_message:
+    popup_more_info_button_message:
       type: label
       label: 'Cookie Policy button message'
     mobile_breakpoint:
@@ -100,7 +100,7 @@ eu_cookie_compliance.settings:
     popup_delay:
       type: integer
       label: 'Banner sliding animation time in milliseconds'
-    show_disagree_button:
+    show_more_info:
       type: boolean
       label: 'Show "Cookie Policy" and "More info" buttons'
     popup_bg_hex:
