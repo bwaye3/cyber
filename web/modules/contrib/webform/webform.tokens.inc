@@ -1142,7 +1142,8 @@ function _webform_token_get_interval_wait($interval_setting, BubbleableMetadata 
   // Get last submission completed time.
   /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
   $submission_storage = \Drupal::entityTypeManager()->getStorage('webform_submission');
-  $last_submission = $submission_storage->getLastSubmission($webform, $source_entity, $account);
+  $options = ['access_check' => FALSE];
+  $last_submission = $submission_storage->getLastSubmission($webform, $source_entity, $account, $options);
   if (!$last_submission) {
     return '';
   }

@@ -15,6 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url as UrlGenerator;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -906,6 +907,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       $errors = $form_state->getErrors();
       $key = $element['#webform_key'];
       if (isset($errors[$key])
+        && $errors[$key] instanceof TranslatableMarkup
         && $errors[$key]->getUntranslatedString() === '@name field is required.') {
         $errors[$key]->__construct($element['#required_error']);
       }
