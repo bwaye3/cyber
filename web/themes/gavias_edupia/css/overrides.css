@@ -197,7 +197,7 @@ h1, h2, h3, h4, h5, h6 {
 .text-green p,
 .green-text,
 .green-text p, h1, h2, h3, h4, h5, h6 {
-  color: #70e800 !important;
+  color: #70e800;
   font-weight: bold;
   letter-spacing: 4px;
 }
@@ -440,7 +440,7 @@ body.logged-in.toolbar-horizontal .header-v2 {
   color: #fff;
 }
 .green-title {
-  color: #70e800 !important;
+  color: #70e800;
 }
 
 
