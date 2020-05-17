@@ -640,6 +640,7 @@ b, strong {
   padding: 5px 20px;
   border-radius: 10px;
   border: 1px solid #70e800;
+  color: #000 !important;
 }
 
 #edit-help-link:hover {
@@ -647,6 +648,8 @@ b, strong {
   padding: 5px 20px;
   border-radius: 10px;
   border: 1px solid #70e800;
+  text-decoration: none;
+  color: #70e800 !important;
 }
 
 #edit-basic {
