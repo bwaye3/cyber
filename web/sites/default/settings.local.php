@@ -757,7 +757,7 @@ $settings['entity_update_backup'] = TRUE;
 # }
 
 $databases['default']['default'] = array (
-  'database' => 'cyber',
+  'database' => 'cyber2',
   'username' => 'root',
   'password' => 'root',
   'prefix' => '',
