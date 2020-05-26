@@ -96,7 +96,6 @@
   margin: 0 0 0 22% !important;
 }
 
-
 .breadcrumb-content-inner .gva-breadcrumb-content .page-title {
   margin: 120px 0 30px 7%;
   text-transform: uppercase;
@@ -113,6 +112,13 @@
   line-height: 1.4;
   font-size: 14px !important;
 }
+
+.page-node-223 .breadcrumb-subtitle {
+  top: 190px !important;
+  max-width: 50%;
+  margin: 0 0 0 18% !important;
+}
+
 @media (max-width: 991.98px) {
 
   .page-node-185 .breadcrumb-subtitle {
@@ -214,6 +220,10 @@
     margin: 50px 0 30px 7%;
   }
 
+  .page-node-223 .breadcrumb-subtitle {
+    font-size: 15px !important;
+  }
+
 }
 
 @media (max-width: 458px) {
@@ -255,6 +265,10 @@
 
   .site-branding-logo img {
     max-width: 200px;
+  }
+
+  .page-node-223 .breadcrumb-subtitle {
+    display:none !important;
   }
 }
 

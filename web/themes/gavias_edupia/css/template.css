@@ -18,8 +18,8 @@ a:hover, a:focus, a:active {
   -moz-transition: all 0.35s;
   -ms-transition: all 0.35s;
   outline: none !important;
-  color: #b3b3b3 !important;
-  text-decoration: underline !important;
+  color: #b3b3b3;
+  text-decoration: underline;
 }
 
 input:hover, input:focus, input:active, select:hover, select:focus, select:active, textarea:hover, textarea:focus, textarea:active {
@@ -8442,11 +8442,25 @@ input[type="button"] .button--inverted, .btn .button--inverted, .btn-white .butt
 .panel .panel-heading .panel-title > a {
   display: block;
   letter-spacing: 0;
-  color: #000;
+  color: #fff;
   position: relative;
   background: #b3b3b3;
   line-height: 28px;
   font-weight: 600;
+  font-size: 1rem;
+}
+
+.panel .panel-heading .panel-title > a:hover {
+  color: #70e800 !important;
+  text-decoration: none !important;
+}
+
+.panel .panel-heading .panel-title > a:hover,
+.panel .panel-heading .panel-title > a:active,
+.panel .panel-heading .panel-title > a:visited,
+.panel .panel-heading .panel-title > a:focus-visible {
+  color: #70e800 !important;
+  text-decoration: none !important;
 }
 
 .panel .panel-heading .panel-title > a:after {
@@ -8457,7 +8471,7 @@ input[type="button"] .button--inverted, .btn .button--inverted, .btn-white .butt
   top: 0;
   right: -20px;
   z-index: 1;
-  color: #b3b3b3;
+  color: #70e800;
   font-weight: 400;
 }
 
@@ -12421,24 +12435,33 @@ ul[data-drupal-views-infinite-scroll-pager].pager a:hover, ul[data-drupal-views-
 }
 
 .gsc-accordion .panel-group.skin-dark {
-  background: #f5f5f5;
+  background: #000;
 }
 
 .gsc-accordion .panel-group.skin-dark .panel {
-  background: #f5f5f5;
-  border-bottom: 1px solid #e2e2e2 !important;
+  background: #000;
+  border: 1px solid #575757 !important;
+  margin: 0 0 10px;
 }
 
 .gsc-accordion .panel-group.skin-dark .panel .panel-title {
-  background: #f5f5f5 !important;
+  background: #000 !important;
 }
 
 .gsc-accordion .panel-group.skin-dark .panel .panel-title a {
   background: none !important;
 }
+.gsc-accordion .panel-group.skin-dark .panel .panel-title a:active,
+.gsc-accordion .panel-group.skin-dark .panel .panel-title a:visited,
+.gsc-accordion .panel-group.skin-dark .panel .panel-title a:focus-visible,
+.gsc-accordion .panel-group.skin-dark .panel .panel-title a:focus {
+  background: none !important;
+  color: #70e800 !important;
+  text-decoration: none !important;
+}
 
 .gsc-accordion .panel-group.skin-dark .panel:last-child {
-  border-bottom: none !important;
+  border: 1px solid #565656 !important;
 }
 
 .gsc-accordion .panel-group.skin-white-border {

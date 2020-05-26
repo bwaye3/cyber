@@ -891,3 +891,12 @@ footer p {
 #slide-9-layer-1 {
   letter-spacing: 1px !important;
 }
+
+.panel .panel-heading .panel-title > a:hover,
+.panel .panel-heading .panel-title > a:active,
+.panel .panel-heading .panel-title > a:visited,
+.panel .panel-heading .panel-title > a:focus-visible,
+.panel .panel-heading .panel-title > a:focus {
+  color: #70e800 !important;
+  text-decoration: none !important;
+}
