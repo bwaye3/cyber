@@ -900,3 +900,7 @@ footer p {
   color: #70e800 !important;
   text-decoration: none !important;
 }
+
+.page-user-login input, .page-user-register input, .page-user-pass input {
+  color: #000 !important;
+}
