@@ -904,3 +904,82 @@ footer p {
 .page-user-login input, .page-user-register input, .page-user-pass input {
   color: #000 !important;
 }
+
+.page-user-login input, .page-user-register input, .page-user-pass input {
+  max-width: 100%;
+  color: #000 !important;
+}
+
+.page-node-223 .breadcrumb-subtitle,
+.page-node-224 .breadcrumb-subtitle,
+.page-node-225 .breadcrumb-subtitle,
+.page-node-226 .breadcrumb-subtitle {
+  top: 190px !important;
+  max-width: 50%;
+  margin: 0 0 0 18% !important;
+}
+
+.page-user-login input, .page-user-register input, .page-user-pass input {
+  max-width: 100%;
+  color: #000 !important;
+}
+
+.page-node-223 .breadcrumb-subtitle,
+.page-node-224 .breadcrumb-subtitle,
+.page-node-225 .breadcrumb-subtitle,
+.page-node-226 .breadcrumb-subtitle {
+  top: 190px !important;
+  max-width: 50%;
+  margin: 0 0 0 18% !important;
+}
+
+@media (max-width: 780px) {
+
+  .tp-mask-wrap {
+    top: 0 !important;
+    padding: 0 0 0 50px!important;
+  }
+
+  #slide-9-layer-1,
+  .gavias_sliderlayer .tp-caption, #gavias_slider_single .tp-caption {
+    color: #70e800 !important;
+  }
+
+  .tp-caption .tp-resizeme text .slide-style-2  {
+    line-height: 50px !important;
+  }
+
+  #slide-9-layer-2 {
+    color: #fff !important;
+  }
+
+  .vertical-navigation-2, #vertical-navigation {
+    margin: 0 !important;
+    padding: 30px;
+  }
+
+  .gsc-column ul li::before {
+    display: none;
+  }
+
+  .gsc-column  {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+  }
+
+  #block-gavias-edupia-mainnavigation.navigation .gva_menu {
+    float: right;
+    margin: 0;
+  }
+
+  .breadcrumb-subtitle {
+    display: none;
+  }
+  .box9.card p {
+    display: none;
+  }
+
+  .gsc-button.medium, .gsc-button.medium a {
+    padding: 0 15px;
+  }
+}
