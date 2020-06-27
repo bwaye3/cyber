@@ -1692,17 +1692,17 @@
         },
         {
             "name": "drupal/admin_toolbar",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-                "reference": "8.x-2.2"
+                "reference": "8.x-2.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-2.2.zip",
-                "reference": "8.x-2.2",
-                "shasum": "41ea0e3321e6d1e190c486be49a99e60446d8dd7"
+                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-2.3.zip",
+                "reference": "8.x-2.3",
+                "shasum": "cf8ee1aa8adfc604db4394655e3ba4c423d5f24a"
             },
             "require": {
                 "drupal/core": "^8.8.0 || ^9.0"
@@ -1710,8 +1710,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.2",
-                    "datestamp": "1585017179",
+                    "version": "8.x-2.3",
+                    "datestamp": "1592535714",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1720,7 +1720,7 @@
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -1764,7 +1764,7 @@
                 "Toolbar"
             ],
             "support": {
-                "source": "http://cgit.drupalcode.org/admin_toolbar",
+                "source": "https://git.drupalcode.org/project/admin_toolbar",
                 "issues": "https://www.drupal.org/project/issues/admin_toolbar"
             }
         },
@@ -3750,17 +3750,17 @@
         },
         {
             "name": "drupal/webform",
-            "version": "5.16.0",
+            "version": "5.18.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/webform.git",
-                "reference": "8.x-5.16"
+                "reference": "8.x-5.18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.16.zip",
-                "reference": "8.x-5.16",
-                "shasum": "a8bfe83d56ffd0fce16af9aa7eb4209247e5d420"
+                "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.18.zip",
+                "reference": "8.x-5.18",
+                "shasum": "539d0ba5bacc402cf6ea2a3419ae164703a09aa0"
             },
             "require": {
                 "drupal/core": "^8.8"
@@ -3770,20 +3770,23 @@
                 "drupal/bootstrap": "~3.0",
                 "drupal/captcha": "~1.0",
                 "drupal/chosen": "~2.0",
-                "drupal/devel": "*",
-                "drupal/entity_print": "*",
+                "drupal/clientside_validation": "~3.0",
+                "drupal/clientside_validation_jquery": "*",
+                "drupal/devel": "~3.0",
+                "drupal/entity_print": "~2.0",
                 "drupal/gnode": "*",
-                "drupal/group": "*",
-                "drupal/lingotek": "~2.0",
+                "drupal/group": "~1.0",
+                "drupal/lingotek": "~3.0",
                 "drupal/mailsystem": "~4.0",
                 "drupal/paragraphs": "~1.0",
                 "drupal/select2": "~1.0",
                 "drupal/smtp": "~1.0",
                 "drupal/styleguide": "~1.0",
                 "drupal/telephone_validation": "~2.0",
-                "drupal/token": "*",
+                "drupal/token": "~1.0",
                 "drupal/webform_access": "*",
                 "drupal/webform_attachment": "*",
+                "drupal/webform_clientside_validation": "*",
                 "drupal/webform_devel": "*",
                 "drupal/webform_entity_print": "*",
                 "drupal/webform_group": "*",
@@ -3796,8 +3799,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-5.16",
-                    "datestamp": "1591198998",
+                    "version": "8.x-5.18",
+                    "datestamp": "1593034084",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4037,16 +4040,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "10.2.2",
+            "version": "10.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "8307a4e7dae9c63a279d8b59b9dca6c1973576c2"
+                "reference": "166dade258c1f1771354c001c0f73a37b3d214c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/8307a4e7dae9c63a279d8b59b9dca6c1973576c2",
-                "reference": "8307a4e7dae9c63a279d8b59b9dca6c1973576c2",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/166dade258c1f1771354c001c0f73a37b3d214c9",
+                "reference": "166dade258c1f1771354c001c0f73a37b3d214c9",
                 "shasum": ""
             },
             "require": {
@@ -4054,7 +4057,7 @@
                 "composer/semver": "^1.4",
                 "consolidation/config": "^1.2",
                 "consolidation/filter-via-dot-access-data": "^1",
-                "consolidation/robo": "^1 || ^2",
+                "consolidation/robo": "^1.4.11 || ^2",
                 "consolidation/site-alias": "^3.0.0@stable",
                 "consolidation/site-process": "^2.1 || ^4",
                 "ext-dom": "*",
@@ -4073,6 +4076,7 @@
             "require-dev": {
                 "composer/installers": "^1.7",
                 "cweagans/composer-patches": "~1.0",
+                "david-garcia/phpwhois": "4.3.0",
                 "drupal/alinks": "1.0.0",
                 "drupal/core-recommended": "^8.8",
                 "g1a/composer-test-scenarios": "^3",
@@ -4162,7 +4166,13 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2020-02-26T21:07:53+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/weitzman",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-06-22T14:57:31+00:00"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -6867,16 +6877,16 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.17.0",
+            "version": "v1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "5e30b2799bc1ad68f7feb62b60a73743589438dd"
+                "reference": "4a5b6bba3259902e386eb80dd1956181ee90b5b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/5e30b2799bc1ad68f7feb62b60a73743589438dd",
-                "reference": "5e30b2799bc1ad68f7feb62b60a73743589438dd",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/4a5b6bba3259902e386eb80dd1956181ee90b5b2",
+                "reference": "4a5b6bba3259902e386eb80dd1956181ee90b5b2",
                 "shasum": ""
             },
             "require": {
@@ -6886,6 +6896,10 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.17-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -6939,7 +6953,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-12T16:47:27+00:00"
+            "time": "2020-06-06T08:46:27+00:00"
         },
         {
             "name": "symfony/polyfill-util",
