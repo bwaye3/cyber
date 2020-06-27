@@ -298,7 +298,7 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
       $start = time();
       for ($i = 1; $i <= $values['num']; $i++) {
         $this->generateSubmission($values);
-        if (function_exists('drush_log') && $i % drush_get_option('feedback', 1000) == 0) {
+        if (function_exists('drush_log') && $i % drush_get_option('feedback', 1000) === 0) {
           $now = time();
           $dt_args = [
             '@feedback' => drush_get_option('feedback', 1000),
@@ -411,7 +411,7 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
       return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid webform name: @name', ['@name' => $webform_id]));
     }
 
-    if ($this->isNumber($values['num']) == FALSE) {
+    if ($this->isNumber($values['num']) === FALSE) {
       return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of submissions: @num', ['@num' => $values['num']]));
     }
 

@@ -35,7 +35,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     $projects = $this->projects;
     if ($category) {
       foreach ($projects as $project_name => $project) {
-        if ($project['category'] != $category) {
+        if ($project['category'] !== $category) {
           unset($projects[$project_name]);
         }
       }
@@ -526,7 +526,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: GitLab API with Library.
     $projects['gitlab_api'] = [
       'title' => $this->t('GitLab API with Library'),
-      'description' => $this->t(' Integrates your Drupal site into GitLab using the GitLab API.'),
+      'description' => $this->t('Integrates your Drupal site into GitLab using the GitLab API.'),
       'url' => Url::fromUri('https://www.drupal.org/project/gitlab_api'),
       'category' => 'integration',
     ];
