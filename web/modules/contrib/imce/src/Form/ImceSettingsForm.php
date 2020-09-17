@@ -3,13 +3,11 @@
 namespace Drupal\imce\Form;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\Core\Url;
+use Drupal\imce\ImceSettersTrait;
 use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Imce settings form.
  */
 class ImceSettingsForm extends ConfigFormBase {
+
+  use ImceSettersTrait;
 
   /**
    * Manages entity type plugin definitions.
@@ -26,6 +26,13 @@ class ImceSettingsForm extends ConfigFormBase {
   protected $entityTypeManager;
 
   /**
+   * The system file config.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $configSystemFile;
+
+  /**
    * Provides a StreamWrapper manager.
    *
    * @var Drupal\Core\StreamWrapper\StreamWrapperManagerInterface
@@ -33,31 +40,18 @@ class ImceSettingsForm extends ConfigFormBase {
   protected $streamWrapperManager;
 
   /**
-   * Constructs a \Drupal\system\ConfigFormBase object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   Manages entity type plugin definitions.
-   * @param \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface $stream_wrapper_manager
-   *   Provides a StreamWrapper manager.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, StreamWrapperManagerInterface $stream_wrapper_manager) {
-    parent::__construct($config_factory);
-
-    $this->entityTypeManager = $entity_type_manager;
-    $this->streamWrapperManager = $stream_wrapper_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('entity_type.manager'),
-      $container->get('stream_wrapper_manager')
-    );
+    /**
+     * @var \Drupal\imce\Form\ImceSettingsForm
+     */
+    $instance = parent::create($container);
+    $instance->setConfigSystemFile($container->get('config.factory')->get('system.file'));
+    $instance->setEntityTypeManager($container->get('entity_type.manager'));
+    $instance->setStreamWrapperManager($container->get('stream_wrapper_manager'));
+
+    return $instance;
   }
 
   /**
@@ -127,6 +121,12 @@ class ImceSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
+  /**
+   * Get the profile options.
+   *
+   * @return array
+   *   The profile options.
+   */
   public function getProfileOptions() {
     // Prepare profile options.
     $options = ['' => '-' . $this->t('None') . '-'];
@@ -146,7 +146,7 @@ class ImceSettingsForm extends ConfigFormBase {
     $wrappers = $this->streamWrapperManager->getNames(StreamWrapperInterface::WRITE_VISIBLE);
     $imce_url = Url::fromRoute('imce.page')->toString();
     $rp_table['#header'] = [$this->t('Role')];
-    $default = file_default_scheme();
+    $default = $this->configSystemFile->get('default_scheme');
     foreach ($wrappers as $scheme => $name) {
       $url = $scheme === $default ? $imce_url : $imce_url . '/' . $scheme;
       $rp_table['#header'][]['data'] = ['#markup' => '<a href="' . $url . '">' . Html::escape($name) . '</a>'];
@@ -155,6 +155,9 @@ class ImceSettingsForm extends ConfigFormBase {
     return $rp_table;
   }
 
+  /**
+   * Create tables profiles rows.
+   */
   public function buildRowsProfilesTables($roles, $roles_profiles, $wrappers) {
     // Prepare roles.
     $rp_table = [];
@@ -190,7 +193,7 @@ class ImceSettingsForm extends ConfigFormBase {
 
     // Add description.
     $rp_table['#prefix'] = '<h3>' . $this->t('Role-profile assignments') . '</h3>';
-    $rp_table['#suffix'] = '<div class="description">' . $this->t('Assign configuration profiles to user roles for available file systems. Users with multiple roles get the bottom most profile.') . ' ' . $this->t('The default file system %name is accessible at :url path.', ['%name' => $wrappers[file_default_scheme()], ':url' => $imce_url]) . '</div>';
+    $rp_table['#suffix'] = '<div class="description">' . $this->t('Assign configuration profiles to user roles for available file systems. Users with multiple roles get the bottom most profile.') . ' ' . $this->t('The default file system %name is accessible at :url path.', ['%name' => $wrappers[$this->configSystemFile->get('default_scheme')], ':url' => $imce_url]) . '</div>';
     return $rp_table;
   }
 

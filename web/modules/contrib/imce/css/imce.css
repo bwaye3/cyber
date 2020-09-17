@@ -619,3 +619,63 @@
 .imce-uqi-percent {
   text-align: right;
 }
+
+/* Thumbnail grid style*/
+.thumbnail-grid .imce-content-header .imce-item {
+  text-align: center;
+  display: flex;
+}
+
+.thumbnail-grid .imce-content-header .imce-item > *{
+  float: none;
+  text-align: left;
+  display: inline-block;
+  width: auto;
+  order: 2;
+}
+
+.thumbnail-grid .imce-content-header .imce-item .imce-item-name {
+  order: 1;
+  top: 0;
+  margin-left: auto;
+}
+
+.thumbnail-grid .imce-content-header .imce-item .imce-item-size {
+  margin-right: auto;
+}
+
+.thumbnail-grid .imce-content-header .imce-item .imce-item-name::before{
+  content: "Sort by:   ";
+  color: black;
+  margin-right: 3px;
+}
+
+.thumbnail-grid .imce-folder-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  justify-items: center;
+}
+
+.thumbnail-grid .imce-folder-content .imce-item {
+  width: 100%;
+}
+
+.thumbnail-grid .imce-folder-content .imce-item > * {
+  float: none;
+  text-align: left;
+  width: auto;
+  padding: 1px 2px;
+}
+
+.thumbnail-grid .imce-folder-content .imce-item .imce-item-height{
+  display: inline-block;
+}
+
+.thumbnail-grid .imce-folder-content .imce-item .imce-item-width::after{
+  content: " X ";
+}
+
+.thumbnail-grid .imce-folder-content .imce-item .imce-item-width{
+  display: inline-block;
+  float: left;
+}

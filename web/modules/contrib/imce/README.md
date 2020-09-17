@@ -71,7 +71,8 @@ editing existing images.
 
 ## Tests
 
-* Before of run tests you needs create a shortcut for core/phpunit.xml.dist in your root project.
+* Before of run tests you needs create a shortcut for
+core/phpunit.xml.dist in your root project.
 
 ### Executing UnitTest
 
@@ -85,8 +86,7 @@ vendor/bin/phpunit modules/imce
 lando php core/scripts/run-tests.sh --php /usr/local/bin/php --url http://example.lndo.site --dburl mysql://drupal8:drupal8@database/drupal8 --sqlite simpletest.sqlite --module imce --verbose --color
 ```
 
-MAINTAINERS
------------
+## MAINTAINERS
 
  * ufku - https://www.drupal.org/user/9910 - https://git.drupalcode.org/ufku
  * thalles - https://www.drupal.org/user/3589086 - https://git.drupalcode.org/thallesvf

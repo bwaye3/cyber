@@ -2,9 +2,11 @@
 
 namespace Drupal\Tests\imce\Kernel\Plugin\ImcePlugin;
 
-use Drupal\imce\ImceFolder;
+use Drupal\imce\ImcePluginInterface;
 use Drupal\imce\Plugin\ImcePlugin\Core;
 use Drupal\Tests\imce\Kernel\Plugin\KernelTestBasePlugin;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Kernel tests for Imce plugins for Imce Plugin Core.
@@ -47,52 +49,25 @@ class CoreTest extends KernelTestBasePlugin {
     parent::setUp();
 
     $this->imceFM = $this->getImceFM();
-
-    $this->core = new Core([], 'core', $this->getPluginDefinations());
-    $this->setParametersRequest();
-    $this->setActiveFolder();
+    $this->core = new Core([], 'core', []);
 
     $this->core->opBrowse($this->imceFM);
   }
 
   /**
-   * Set the active folder.
+   * {@inheritDoc}
    */
-  public function setActiveFolder() {
-    $this->imceFM->activeFolder = new ImceFolder('.', $this->getConf());
-    $this->imceFM->activeFolder->setPath('.');
-    $this->imceFM->activeFolder->setFm($this->imceFM);
-  }
-
-  /**
-   * Set the request parameters to browser operation.
-   */
-  public function setParametersRequest() {
-    $this->imceFM->request->request->add([
-      'jsop' => 'browser',
+  public function getRequest() {
+    $request = Request::create("/imce", 'POST', [
+      'jsop' => 'browse',
       'token' => 'LLuA1R0aUOzoduSJkJxN5aoHVdJnQk8LbTBgdivOU4Y',
       'active_path' => '.',
     ]);
-  }
+    $session = new Session();
+    $session->set('imce_active_path', '.');
+    $request->setSession($session);
 
-  /**
-   * Get plugins definations.
-   *
-   * @return array
-   *   Return plugins definations.
-   */
-  public function getPluginDefinations() {
-    return [
-      'weight' => -99,
-      'operations' => [
-        'browse' => "opBrowse",
-        'uuid' => "opUuid",
-      ],
-      'id' => "core",
-      'label' => "Core",
-      'class' => "Drupal\imce\Plugin\ImcePlugin\Core",
-      'provider' => "imce",
-    ];
+    return $request;
   }
 
   /**
@@ -108,11 +83,18 @@ class CoreTest extends KernelTestBasePlugin {
   }
 
   /**
+   * Test core type.
+   */
+  public function testCore() {
+    $this->assertInstanceOf(ImcePluginInterface::class, $this->core);
+  }
+
+  /**
    * Test ImceFM::tree.
    */
   public function testTree() {
-    $this->assertTrue(is_array($this->imceFM->tree));
-    $this->assert((count($this->imceFM->tree) > 0));
+    $this->assertIsArray($this->imceFM->tree);
+    $this->assertTrue((count($this->imceFM->tree) > 0));
   }
 
   /**
@@ -120,16 +102,16 @@ class CoreTest extends KernelTestBasePlugin {
    */
   public function testSubfolders() {
     $subFolders = $this->imceFM->activeFolder->subfolders;
-    $this->assertTrue(is_array($subFolders));
-    $this->assert((count($subFolders) > 0));
+    $this->assertIsArray($subFolders);
+    $this->assertTrue((count($subFolders) > 0));
   }
 
   /**
-   * Test Core::permissionInfo()
+   * Test Core::permissionInfo().
    */
   public function testPermissionInfo() {
     $permissionInfo = $this->core->permissionInfo();
-    $this->assertTrue(is_array($permissionInfo));
+    $this->assertIsArray($permissionInfo);
     $this->assertTrue(in_array('Browse files', $permissionInfo));
     $this->assertTrue(in_array('Browse subfolders', $permissionInfo));
   }
@@ -140,6 +122,22 @@ class CoreTest extends KernelTestBasePlugin {
   public function testScan() {
     $this->assertTrue(is_bool($this->imceFM->activeFolder->scanned));
     $this->assertTrue($this->imceFM->activeFolder->scanned);
+  }
+
+  /**
+   * Teste messages on context ImcePlugin\Core.
+   */
+  public function testMessages() {
+    $messages = $this->imceFM->getMessages();
+    $this->assertIsArray($messages);
+    $this->assertEquals([], $messages);
+  }
+
+  /**
+   * Test operation of delete.
+   */
+  public function testOperation() {
+    $this->assertEquals($this->imceFM->getOp(), 'browse');
   }
 
 }

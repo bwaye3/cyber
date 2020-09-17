@@ -3,9 +3,11 @@
 namespace Drupal\Tests\imce\Kernel\Plugin\ImcePlugin;
 
 use Drupal\imce\Imce;
-use Drupal\imce\ImceFolder;
+use Drupal\imce\ImcePluginInterface;
 use Drupal\imce\Plugin\ImcePlugin\Newfolder;
 use Drupal\Tests\imce\Kernel\Plugin\KernelTestBasePlugin;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Kernel tests for Imce plugins for Imce Plugin NewFolder.
@@ -48,12 +50,26 @@ class NewFolderTest extends KernelTestBasePlugin {
     parent::setUp();
 
     $this->imceFM = $this->getImceFM();
-
-    $this->newFolder = new Newfolder([], 'newfolder', $this->getPluginDefinations());
-    $this->setParametersRequest();
-    $this->setActiveFolder();
+    $this->newFolder = new Newfolder([], 'newfolder', []);
 
     $this->newFolder->opNewfolder($this->imceFM);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getRequest() {
+    $request = Request::create("/imce", 'POST', [
+      'jsop' => 'newfolder',
+      'token' => 'LLuA1R0aUOzoduSJkJxN5aoHVdJnQk8LbTBgdivOU4Y',
+      'active_path' => '.',
+      'newfolder' => 'folder-test',
+    ]);
+    $session = new Session();
+    $session->set('imce_active_path', '.');
+    $request->setSession($session);
+
+    return $request;
   }
 
   /**
@@ -66,27 +82,6 @@ class NewFolderTest extends KernelTestBasePlugin {
     return [
       'permissions' => ['all' => TRUE],
     ];
-  }
-
-  /**
-   * Set the active folder.
-   */
-  public function setActiveFolder() {
-    $this->imceFM->activeFolder = new ImceFolder('.', $this->getConf());
-    $this->imceFM->activeFolder->setPath('.');
-    $this->imceFM->activeFolder->setFm($this->imceFM);
-  }
-
-  /**
-   * Set the request parameters.
-   */
-  public function setParametersRequest() {
-    $this->imceFM->request->request->add([
-      'jsop' => 'newfolder',
-      'token' => 'LLuA1R0aUOzoduSJkJxN5aoHVdJnQk8LbTBgdivOU4Y',
-      'active_path' => '.',
-      'newfolder' => 'folder-test',
-    ]);
   }
 
   /**
@@ -110,7 +105,7 @@ class NewFolderTest extends KernelTestBasePlugin {
    */
   public function testPermissiomInfo() {
     $permissionInfo = $this->newFolder->permissionInfo();
-    $this->assertTrue(is_array($permissionInfo));
+    $this->assertIsArray($permissionInfo);
     $this->assertTrue(in_array('Create subfolders', $permissionInfo));
   }
 
@@ -122,8 +117,31 @@ class NewFolderTest extends KernelTestBasePlugin {
       $this->imceFM->activeFolder->getUri(), $this->imceFM->getPost('newfolder')
     );
 
-    $this->assertTrue(is_string($uriFolder));
+    $this->assertIsString($uriFolder);
     $this->assertTrue(file_exists($uriFolder));
+  }
+
+  /**
+   * Teste messages on context ImcePlugin\NewFolder.
+   */
+  public function testMessages() {
+    $messages = $this->imceFM->getMessages();
+    $this->assertIsArray($messages);
+    $this->assertEquals([], $messages);
+  }
+
+  /**
+   * Test NewFolder type.
+   */
+  public function testCore() {
+    $this->assertInstanceOf(ImcePluginInterface::class, $this->newFolder);
+  }
+
+  /**
+   * Test operation of newFolder.
+   */
+  public function testOperation() {
+    $this->assertEquals($this->imceFM->getOp(), 'newfolder');
   }
 
 }

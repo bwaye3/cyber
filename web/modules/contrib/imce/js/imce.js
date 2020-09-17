@@ -133,7 +133,7 @@
     el.onkeydown = imce.eFmKeydown;
     el.tabIndex = 0;
     // Toolbar
-    el.appendChild(imce.toolbarEl = createEl('<div id="imce-toolbar"></div>'));
+    el.appendChild(imce.toolbarEl = createEl('<div id="imce-toolbar" aria-label="Operations" role="toolbar"></div>'));
     // Body
     el.appendChild(imce.bodyEl = createEl('<div id="imce-body"></div>'));
     // Tree
@@ -150,6 +150,9 @@
     imce.bodyEl.appendChild(el);
     // Content
     el = imce.contentEl = createEl('<div id="imce-content"></div>');
+    if (imce.conf.thumbnail_grid_style) {
+      el.className = 'thumbnail-grid';
+    }
     el.onmousedown = imce.eContentMousedown;
     el.ontouchstart = imce.eContentTouchstart;
     el.onkeydown = imce.eContentKeydown;
@@ -1344,7 +1347,9 @@
    * Default ajax error handler.
    */
   imce.ajaxError = function (xhr, status, e) {
-    imce.setMessage('<pre class="imce-ajax-error">' + Drupal.checkPlain(imce.ajaxErrorMessage(xhr, this.url)) + '</pre>');
+    if (status !== 'abort') {
+      imce.setMessage('<pre class="imce-ajax-error">' + Drupal.checkPlain(imce.ajaxErrorMessage(xhr, this.url)) + '</pre>');
+    }
   };
 
   /**

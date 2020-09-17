@@ -66,6 +66,10 @@ imce.profile_conf.thumbnail_style:
   type: string
   label: 'Thumbnail style'
 
+imce.profile_conf.thumbnail_grid_style:
+  type: boolean
+  label: 'Thumbnail grid style'
+
 imce.profile_conf.folders:
   type: sequence
   label: 'Folders'

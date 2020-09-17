@@ -2,6 +2,7 @@
 
 namespace Drupal\imce;
 
+use Drupal\Component\Utility\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -41,7 +42,7 @@ class Imce {
   public static function userProfile(AccountProxyInterface $user = NULL, $scheme = NULL) {
     $profiles = &drupal_static(__METHOD__, []);
     $user = $user ?: \Drupal::currentUser();
-    $scheme = isset($scheme) ? $scheme : file_default_scheme();
+    $scheme = isset($scheme) ? $scheme : \Drupal::config('system.file')->get('default_scheme');
     $profile = &$profiles[$user->id()][$scheme];
 
     if (isset($profile)) {
@@ -76,7 +77,7 @@ class Imce {
    */
   public static function userConf(AccountProxyInterface $user = NULL, $scheme = NULL) {
     $user = $user ?: \Drupal::currentUser();
-    $scheme = isset($scheme) ? $scheme : file_default_scheme();
+    $scheme = isset($scheme) ? $scheme : \Drupal::config('system.file')->get('default_scheme');
     if ($profile = static::userProfile($user, $scheme)) {
       $conf = $profile->getConf();
       $conf['pid'] = $profile->id();
@@ -93,7 +94,7 @@ class Imce {
     $conf['maxsize'] *= 1048576;
     $conf['quota'] *= 1048576;
     // Check php max upload size.
-    $phpmaxsize = file_upload_max_size();
+    $phpmaxsize = Environment::getUploadMaxSize();
     if ($phpmaxsize && (!$conf['maxsize'] || $phpmaxsize < $conf['maxsize'])) {
       $conf['maxsize'] = $phpmaxsize;
     }

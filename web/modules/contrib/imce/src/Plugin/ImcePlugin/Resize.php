@@ -81,7 +81,7 @@ class Resize extends ImcePluginBase {
         continue;
       }
       // Save.
-      $destination = $copy ? file_create_filename($fs->basename($uri), $fs->dirname($uri)) : $uri;
+      $destination = $copy ? $fs->createFilename($fs->basename($uri), $fs->dirname($uri)) : $uri;
       if (!$image->save($destination)) {
         continue;
       }
@@ -99,7 +99,7 @@ class Resize extends ImcePluginBase {
         $file = \Drupal::entityTypeManager()->getStorage('file')->create($values);
         // Check quota.
         if ($errors = file_validate_size($file, 0, $fm->getConf('quota'))) {
-          file_unmanaged_delete($destination);
+          $fs->delete($destination);
           $fm->setMessage($errors[0]);
         }
         else {
