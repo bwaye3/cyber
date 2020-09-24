@@ -69,11 +69,6 @@ AddEncoding gzip svgz
   RewriteCond %{HTTPS} on
   RewriteRule ^ - [E=protossl:s]
 
-  RewriteCond %{HTTPS} off [OR]
-  RewriteCond %{HTTP_HOST} ^www\. [NC]
-  RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-  RewriteRule ^https://%1%{REQUEST_URI} [L,NE,R=302]
-
   # Make sure Authorization HTTP header is available to PHP
   # even when running as CGI or FastCGI.
   RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -119,19 +114,6 @@ AddEncoding gzip svgz
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:
   # RewriteBase /
-
-  ############################
-  # Redirect for syncing files
-  # dir in local devs
-  ############################
-  RewriteCond %{HTTP_HOST} ^(.*)local(.*)|^(.*)dev(.*) [NC]
-  RewriteCond %{REQUEST_URI} \.(png|jpg|jpeg|gif|mp4|webm)$
-  # File doesn't exist.
-  RewriteCond %{REQUEST_FILENAME} !-f
-  # Redirect request to your staging or production server.
-  RewriteRule ^(.*.(png|jpg|jpeg|gif|css|js|mp4|webm))$ https://www.cyberwatchsystems.edu/$1 [L,R=301]
-
-
 
   # Redirect common PHP files to their new locations.
   RewriteCond %{REQUEST_URI} ^(.*)?/(install.php) [OR]
