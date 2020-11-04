@@ -54,44 +54,89 @@ class PackageManager implements PackageManagerInterface {
       ];
 
       foreach ($config['require'] as $package_name => $package_data) {
-        $namespace = '';
-        $src_dir = '';
+        $package_name_static = $package_name;
         $package_path = $extension_path . '/lib/' . str_replace('/', '-', $package_name) . '/' . $package_data['version'];
         $package = $this->jsonRead($this->root . '/' . $package_path . '/composer.json');
         $description = !empty($package['description']) ? $package['description'] : '';
         $homepage = !empty($package['homepage']) ? $package['homepage'] : '';
-        $autoload_key = isset($package['autoload']['psr-4']) ? 'psr-4' : 'psr-0';
-        if (!empty($package['autoload'][$autoload_key])) {
-          $autoload = $package['autoload'][$autoload_key];
-          $package_namespaces = array_keys($autoload);
-          $namespace = reset($package_namespaces);
-          $src_dir = $autoload[$namespace];
-          $src_dir = rtrim($src_dir, './');
-          // Autoloading fails if the namespace ends with a backslash.
-          $namespace = trim($namespace, '\\');
-        }
-        if ($autoload_key == 'psr-0' && !empty($namespace)) {
-          // Core only assumes that LudwigServiceProvider is adding PSR-4
-          // paths, each PSR-0 path needs to be converted in order to work.
-          if (!empty($src_dir)) {
-            $src_dir .= '/';
+        if (!empty($package['autoload'])) {
+          // Iterate through all autoload types.
+          $autoload_types = array_keys($package['autoload']);
+          count($autoload_types) > 1 ? $multi = TRUE : $multi = FALSE;
+          foreach ($autoload_types as $autoload_type) {
+            if (!empty($package['autoload'][$autoload_type])) {
+              if ($autoload_type == 'files' || $autoload_type == 'classmap') {
+                $autoload = $package['autoload'];
+                $package_namespaces = [$autoload_type];
+              }
+              else {
+                $autoload = $package['autoload'][$autoload_type];
+                $package_namespaces = array_keys($autoload);
+              }
+              if (count($package_namespaces) > 1) {
+                $multi = TRUE;
+              }
+              // Iterate through all resources inside this autoload type.
+              foreach ($package_namespaces as $namespace) {
+                $src_dir = $autoload[$namespace];
+                // Support for both single path (string) and multiple
+                // paths (array) inside one resource.
+                $srcdir = [];
+                is_array($src_dir) ? $srcdir = $src_dir : $srcdir[0] = $src_dir;
+                if (count($srcdir) > 1) {
+                  $multi = TRUE;
+                }
+                foreach ($srcdir as $src_dir) {
+                  $src_dir = rtrim($src_dir, './');
+                    if ($multi) {
+                      $package_name = $package_name_static . ' | ' . $src_dir;
+                    }
+                  // Autoloading fails if the namespace ends with a backslash.
+                  $namespace = trim($namespace, '\\');
+                  // Core only assumes that LudwigServiceProvider is adding
+                  // PSR-4 paths, each PSR-0 path needs to be converted
+                  // in order to work.
+                  if ($autoload_type == 'psr-0' && !empty($namespace)) {
+                    if (!empty($src_dir)) {
+                      $src_dir .= '/';
+                    }
+                    $src_dir .= str_replace('\\', '/', $namespace);
+                  }
+                  $packages[$package_name] = [
+                    'name' => $package_name,
+                    'version' => $package_data['version'],
+                    'description' => $description,
+                    'homepage' => $homepage,
+                    'provider' => $extension_name,
+                    'provider_path' => $extension_path,
+                    'download_url' => $package_data['url'],
+                    'path' => $package_path,
+                    'namespace' => $namespace,
+                    'src_dir' => $src_dir,
+                    'installed' => !empty($namespace),
+                    'autoload_type' => $autoload_type,
+                  ];
+                }
+              }
+            }
           }
-          $src_dir .= str_replace('\\', '/', $namespace);
         }
-
-        $packages[$package_name] = [
-          'name' => $package_name,
-          'version' => $package_data['version'],
-          'description' => $description,
-          'homepage' => $homepage,
-          'provider' => $extension_name,
-          'download_url' => $package_data['url'],
-          'path' => $package_path,
-          'provider_path' => $extension_path,
-          'namespace' => $namespace,
-          'src_dir' => $src_dir,
-          'installed' => !empty($namespace),
-        ];
+        else {
+          $packages[$package_name] = [
+            'name' => $package_name,
+            'version' => $package_data['version'],
+            'description' => $description,
+            'homepage' => $homepage,
+            'provider' => $extension_name,
+            'provider_path' => $extension_path,
+            'download_url' => $package_data['url'],
+            'path' => $package_path,
+            'namespace' => '',
+            'src_dir' => '',
+            'installed' => FALSE,
+            'autoload_type' => 'unknown',
+          ];
+        }
       }
     }
 
@@ -119,6 +164,5 @@ class PackageManager implements PackageManagerInterface {
 
     return $data;
   }
-
 
 }

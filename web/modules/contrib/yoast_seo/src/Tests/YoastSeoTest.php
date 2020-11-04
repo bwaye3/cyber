@@ -2,19 +2,14 @@
 
 namespace Drupal\yoast_seo\Tests;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Ensures that the Yoast Seo works correctly.
  *
  * @group YoastSeo
  */
-class YoastSeoTest extends WebTestBase {
-
-  /**
-   * Profile to use.
-   */
-  protected $profile = 'testing';
+class YoastSeoTest extends BrowserTestBase {
 
   /**
    * Admin user.
@@ -52,12 +47,19 @@ class YoastSeoTest extends WebTestBase {
   ];
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * Sets the test up.
    */
   protected function setUp() {
     parent::setUp();
     $this->adminUser = $this->drupalCreateUser($this->permissions);
-    $this->entityManager = \Drupal::entityManager();
+    $this->entityManager = \Drupal::service('entity_type.manager');
   }
 
   /**
@@ -66,9 +68,9 @@ class YoastSeoTest extends WebTestBase {
   protected function enableYoastSeo($entity_type, $bundle) {
     // Configure yoast seo for the given bundle.
     $this->drupalGet('admin/config/yoast_seo');
-    $edit = array($entity_type . '[' . $bundle . ']' => $bundle);
+    $edit = [$entity_type . '[' . $bundle . ']' => $bundle];
     json_decode($this->drupalPostForm(NULL, $edit, t('Save')));
-    $this->assertFieldChecked('edit-node-page');
+    $this->assertSession()->checkboxChecked('edit-node-page');
   }
 
   /**
@@ -77,9 +79,9 @@ class YoastSeoTest extends WebTestBase {
   protected function disableYoastSeo($entity_type, $bundle) {
     // Configure yoast seo for the given bundle.
     $this->drupalGet('admin/config/yoast_seo');
-    $edit = array($entity_type . '[' . $bundle . ']' => FALSE);
+    $edit = [$entity_type . '[' . $bundle . ']' => FALSE];
     json_decode($this->drupalPostForm(NULL, $edit, t('Save')));
-    $this->assertNoFieldChecked('edit-node-page');
+    $this->assertSession()->checkboxNotChecked('edit-node-page');
   }
 
   /**
@@ -96,29 +98,29 @@ class YoastSeoTest extends WebTestBase {
     // Given I am logged in as admin.
     $this->drupalLogin($this->adminUser);
     // Create a page node type.
-    $this->entityManager->getStorage('node_type')->create(array(
+    $this->entityManager->getStorage('node_type')->create([
       'type' => 'page',
       'name' => 'page',
-    ))->save();
+    ])->save();
 
     // When I am adding an Entity Test content.
     $this->drupalGet('node/add/page');
     // Then I should not see the Yoast SEO section active.
-    $this->assertNoText('Yoast SEO for drupal');
+    $this->assertSession()->pageTextNotContains('Yoast SEO for drupal');
 
     // When I enable Yoast SEO for the page bundle.
     $this->enableYoastSeo('node', 'page');
     // And I am adding an Entity Test content.
     $this->drupalGet('node/add/page');
     // Then I should see the Yoast SEO section active.
-    $this->assertText('Real-time SEO for drupal');
+    $this->assertSession()->pageTextContains('Real-time SEO for drupal');
 
     // When I disable Yoast SEO for the page bundle.
     $this->disableYoastSeo('node', 'page');
     // And I am adding an Entity Test content.
     $this->drupalGet('node/add/page');
     // Then I should not see the Yoast SEO section active.
-    $this->assertNoText('Real-time SEO for drupal');
+    $this->assertSession()->pageTextNotContains('Real-time SEO for drupal');
   }
 
 }

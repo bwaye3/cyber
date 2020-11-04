@@ -138,7 +138,7 @@ class YoastSeoConfigForm extends FormBase {
       }
     }
 
-    drupal_set_message($this->t('Real-time SEO configuration by bundles has been saved successfully.'));
+    \Drupal::messenger()->addMessage($this->t('Real-time SEO configuration by bundles has been saved successfully.'));
   }
 
   /**

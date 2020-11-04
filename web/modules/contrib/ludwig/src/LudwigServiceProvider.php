@@ -17,15 +17,20 @@ class LudwigServiceProvider extends ServiceProviderBase {
    * {@inheritdoc}
    */
   public function register(ContainerBuilder $container) {
-    $root = $container->get('app.root');
+    $root = \Drupal::hasService('app.root') ? \Drupal::root() : DRUPAL_ROOT;
     $package_manager = new PackageManager($root);
     $namespaces = $container->getParameter('container.namespaces');
     foreach ($package_manager->getPackages() as $package_name => $package) {
       if ($package['installed']) {
-        $namespace = $package['namespace'];
-        $namespaces[$namespace] = $package['path'];
-        if (!empty($package['src_dir'])) {
-          $namespaces[$namespace] .= '/' . $package['src_dir'];
+        if ($package['autoload_type'] == 'classmap' || $package['autoload_type'] == 'files') {
+          // @todo: Add support for 'classmap' and 'files' autoload types.
+        }
+        else {
+          $namespace = $package['namespace'];
+          $namespaces[$namespace] = $package['path'];
+          if (!empty($package['src_dir'])) {
+            $namespaces[$namespace] .= '/' . $package['src_dir'];
+          }
         }
       }
     }

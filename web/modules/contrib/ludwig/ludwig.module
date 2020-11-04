@@ -1,15 +1,38 @@
 <?php
 
+use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
 /**
- * Implements hook_update_projects_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
-function ludwig_update_projects_alter(&$projects) {
+function ludwig_form_update_manager_update_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // Update Manager can't update Ludwig-managed modules
+  // because that would remove their packages.
   $package_manager = \Drupal::service('ludwig.package_manager');
   $packages = $package_manager->getPackages();
   $providers = array_column($packages, 'provider', 'provider');
-  // Update Manager can't update Ludwig-managed modules
-  // because that would remove their packages.
-  foreach ($providers as $provider) {
-    unset($projects[$provider]);
+
+  foreach ($providers as $name) {
+    if (isset($form['projects']["#options"][$name]) ) {
+
+      $form['projects']["#options"][$name]['title']['data']['#markup'] .= ' ' . t("(Ludwig managed module. Needs manual update.)");
+      $form['projects'][$name]['#disabled'] = true;
+    }
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function ludwig_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for ludwig module.
+    case 'help.page.ludwig':
+      // Return a line-break version of the README.md.
+      return _filter_autop(file_get_contents(dirname(__FILE__) . '/README.md'));
+    default:
   }
 }

@@ -46,10 +46,17 @@ class YoastSeoFieldManager {
   protected $logger;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entity_manager;
+
+  /**
    * Constructor for YoastSeoFieldManager.
    */
   public function __construct() {
-    $this->entity_manager = \Drupal::entityManager();
+    $this->entity_manager = \Drupal::service('entity_type.manager');
   }
 
   /**
@@ -142,11 +149,15 @@ class YoastSeoFieldManager {
                            ->create($field_values)
                            ->save();
 
-      entity_get_form_display($entity_type, $bundle, 'default')
-        ->setComponent($field['field_name'], array())
+      $this->entity_manager
+        ->getStorage('entity_form_display')
+        ->load($entity_type . '.' . $bundle . '.default')
+        ->setComponent($field['field_name'], [])
         ->save();
-      entity_get_display($entity_type, $bundle, 'default')
-        ->setComponent($field['field_name'], array())
+      $this->entity_manager
+        ->getStorage('entity_view_display')
+        ->load($entity_type . '.' . $bundle . '.default')
+        ->setComponent($field['field_name'], [])
         ->save();
     }
   }
@@ -305,6 +316,7 @@ class YoastSeoFieldManager {
     $this->formSet($form, 'field_yoast_seo.widget.0.yoast_seo.snippet_analysis', [
       '#weight' => $body_weight + 1,
       '#markup' => $output,
+      '#parents' => [],
     ]);
 
     return $form;

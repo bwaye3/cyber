@@ -97,7 +97,7 @@ class PackageDownloader implements PackageDownloaderInterface {
     // @todo Will this work for non-GitHub archives?
     $source_location = $this->fileSystem->realpath($this->getExtractionDirectory() . '/' . $files[0]);
     $package_destination = $this->root . '/' . $package['path'];
-    $file_transfer = new Local($this->root);
+    $file_transfer = new Local($this->root, $this->fileSystem);
     $file_transfer->copyDirectory($source_location, $package_destination);
     $new_perms = substr(sprintf('%o', fileperms($package_destination)), -4, -1) . "5";
     $file_transfer->chmod($package_destination, intval($new_perms, 8), TRUE);
@@ -125,7 +125,7 @@ class PackageDownloader implements PackageDownloaderInterface {
       $destination = $local;
       try {
         $data = $this->httpClient->request('get', $url)->getBody()->getContents();
-        $local = file_unmanaged_save_data($data, $destination, FILE_EXISTS_REPLACE);
+        $local = $this->fileSystem->saveData($data, $destination, FileSystemInterface::EXISTS_REPLACE);
       }
       catch (RequestException $exception) {
         throw new \Exception(sprintf('Failed to fetch file due to error "%s"', $exception->getMessage()));
@@ -161,18 +161,19 @@ class PackageDownloader implements PackageDownloaderInterface {
       throw new \Exception(sprintf('Cannot extract %file, not a valid archive.', ['%file' => $file]));
     }
 
-    // Unfortunately, we can only use the directory name to determine the package
-    // name. Some archivers list the first file as the directory (i.e., MODULE/)
+    // Unfortunately, we can only use the directory name
+    // to determine the package name. Some archivers
+    // list the first file as the directory (i.e., MODULE/)
     // and others list an actual file (i.e., MODULE/README.TXT).
     $files = $archiver->listContents();
     $package = strtok($files[0], '/\\');
 
-    // Remove the directory if it exists, otherwise it might contain a mixture of
-    // old files mixed with the new files (e.g. in cases where files were removed
-    // from a later release).
+    // Remove the directory if it exists, otherwise it might contain
+    // a mixture of old files mixed with the new files (e.g. in cases
+    // where files were removed from a later release).
     $extract_location = $this->getExtractionDirectory() . '/' . $package;
     if (file_exists($extract_location)) {
-      file_unmanaged_delete_recursive($extract_location);
+      $this->fileSystem->deleteRecursive($extract_location);
     }
 
     return $archiver->extract($this->getExtractionDirectory());

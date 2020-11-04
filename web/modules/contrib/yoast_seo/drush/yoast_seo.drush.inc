@@ -57,11 +57,12 @@ function drush_yoast_seo_yoastseo_prepare_uninstall() {
   // 3) Purge field data.
   do {
     field_purge_batch(1000);
-    $properties = array(
-      'deleted' => TRUE,
-      'include_deleted' => TRUE,
-    );
-    $fields = entity_load_multiple_by_properties('field_config', $properties);
+    $fields = \Drupal::entityTypeManager()
+      ->getStorage('field_config')
+      ->loadByProperties([
+        'deleted' => TRUE,
+        'include_deleted' => TRUE,
+      ]);
   } while ($fields);
 
 }

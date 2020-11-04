@@ -17,6 +17,10 @@ function ludwig_drush_command() {
       'description' => "Downloads missing packages.",
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
     ],
+    'ludwig-list' => [
+      'description' => 'Lists packages managed by Ludwig.',
+      'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
+    ],
   ];
 }
 
@@ -61,9 +65,57 @@ function drush_ludwig_download() {
 }
 
 /**
+ * Implements drush_HOOK().
+ */
+function drush_ludwig_list() {
+  $has_missing_packages = FALSE;
+  /** @var \Drupal\ludwig\PackageManagerInterface $package_manager */
+  $package_manager = \Drupal::service('ludwig.package_manager');
+  $rows = [];
+  foreach ($package_manager->getPackages() as $package) {
+    $row = [
+      $package['name'],
+      $package['version'],
+      $package['provider'],
+    ];
+    if ($package['installed']) {
+      $row[] = 'Installed';
+    }
+    else {
+      $row[] = 'Missing';
+      $has_missing_packages = TRUE;
+    }
+    $rows[] = $row;
+  }
+
+  $tbl = new ReflectionClass('Console_Table');
+  $tbl = $tbl->newInstanceArgs([CONSOLE_TABLE_ALIGN_LEFT, '']);
+  $tbl->setHeaders([
+    'Package',
+    'Version',
+    'Required by',
+    'Status',
+  ]);
+  $tbl->addData($rows);
+  $output = $tbl->getTable();
+  if (!drush_is_windows()) {
+    $output = str_replace("\r\n", PHP_EOL, $output);
+  }
+  drush_print($output);
+
+  if ($has_missing_packages) {
+    $download = drush_confirm('You have missing packages, would you like to download them?');
+    if ($download) {
+      drush_invoke('ludwig-download');
+    }
+  }
+}
+
+/**
  * Implements hook_drush_pm_post_download().
  */
 function ludwig_drush_pm_post_download($request, $release) {
   drush_set_option('strict', FALSE);
   drush_invoke_process('@self', 'ludwig-download');
 }
+

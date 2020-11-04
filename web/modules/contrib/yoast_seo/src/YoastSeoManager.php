@@ -113,10 +113,8 @@ class YoastSeoManager {
    */
   public function getAvailableBundles($entity_type = 'node') {
     $options        = array();
-    $entity_manager = \Drupal::service('entity.manager');
-
     // Retrieve the bundles the entity type contains.
-    $bundles = $entity_manager->getBundleInfo($entity_type);
+    $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type);
     foreach ($bundles as $bundle_id => $bundle_metadata) {
       $options[$bundle_id] = $bundle_metadata['label'];
     }

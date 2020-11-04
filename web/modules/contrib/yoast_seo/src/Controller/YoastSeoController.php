@@ -74,12 +74,9 @@ class YoastSeoController extends ControllerBase {
       // module configuration page if he has access to do so.
       if (\Drupal::currentUser()->hasPermission('administer xmlsitemap')) {
         $xmlsitemap_description = $this->t(
-          'You can configure the XML Sitemap settings at the @url.',
+          'You can configure the XML Sitemap settings at the <a href="@url">configuration page</a>',
           [
-            '@url' => \Drupal::l(
-              $this->t('configuration page'),
-              Url::fromRoute('xmlsitemap.admin_search')
-            ),
+            '@url' => Url::fromRoute('xmlsitemap.admin_search')->toString(),
           ]
         );
       }
@@ -93,12 +90,9 @@ class YoastSeoController extends ControllerBase {
       // module configuration page if he has access to do so.
       if (\Drupal::currentUser()->hasPermission('administer simple_sitemap')) {
         $xmlsitemap_description = $this->t(
-          'You can configure the Simple XML Sitemap settings at the @url.',
+          'You can configure the Simple XML Sitemap settings at the <a href="@url">configuration page</a>.',
           [
-            '@url' => \Drupal::l(
-              $this->t('configuration page'),
-              Url::fromRoute('simple_sitemap.settings')
-            ),
+            '@url' => Url::fromRoute('simple_sitemap.settings')->toString(),
           ]
         );
       }
@@ -133,12 +127,9 @@ class YoastSeoController extends ControllerBase {
     // We do not check if the module is enabled since it is our dependency.
     if (\Drupal::currentUser()->hasPermission('administer meta tags')) {
       $metatag_description = $this->t(
-        'You can configure and override the Metatag title & description default settings at the @url.',
+        'You can configure and override the Metatag title & description default settings at the <a href="@url">Metatag configuration page</a>.',
         [
-          '@url' => \Drupal::l(
-            $this->t('Metatag configuration page'),
-            Url::fromRoute('entity.metatag_defaults.collection')
-          ),
+          '@url' => Url::fromRoute('entity.metatag_defaults.collection')->toString(),
         ]
       );
     }
