@@ -2,6 +2,9 @@
 
 namespace Drupal\ludwig;
 
+/**
+ * An interface for PackageDownloader.
+ */
 interface PackageDownloaderInterface {
 
   /**

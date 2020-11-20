@@ -1,10 +1,10 @@
-name: 'Ludwig'
-description: 'Provides a manual alternative to Composer.'
-package: Other
+name: Ludwig Test
+description: Module for testing Ludwig
 type: module
 core: 8.x
 core_version_requirement: ^8 || ^9
-configure: ludwig.packages
+dependencies:
+  - ludwig
 
 # Information added by Drupal.org packaging script on 2020-11-19
 version: '8.x-1.4'

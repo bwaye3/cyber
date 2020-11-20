@@ -73,6 +73,16 @@ class PackageDownloader implements PackageDownloaderInterface {
     $this->fileSystem = $file_system;
     $this->httpClient = $http_client;
     $this->root = $root;
+
+    $hash = substr(hash('sha256', Settings::getHashSalt()), 0, 8);
+    $this->extractionDir = 'temporary://luwdig-extraction-' . $hash;
+    if (!file_exists($this->extractionDir)) {
+      mkdir($this->extractionDir);
+    }
+    $this->cacheDir = 'temporary://ludwig-cache-' . $hash;
+    if (!file_exists($this->cacheDir)) {
+      mkdir($this->cacheDir);
+    }
   }
 
   /**
@@ -83,7 +93,7 @@ class PackageDownloader implements PackageDownloaderInterface {
     if (!is_writable($provider_path)) {
       throw new \Exception(sprintf('The extension directory %s is not writable.', $provider_path));
     }
-    $archive_path = $this->downloadArchive($package['download_url']);
+    $archive_path = $this->downloadArchive($package);
     if (!$archive_path) {
       throw new \Exception(sprintf('Unable to retrieve %s from %s.', $package['name'], $package['download_url']));
     }
@@ -95,7 +105,7 @@ class PackageDownloader implements PackageDownloaderInterface {
 
     // The real path the first directory in the extracted archive.
     // @todo Will this work for non-GitHub archives?
-    $source_location = $this->fileSystem->realpath($this->getExtractionDirectory() . '/' . $files[0]);
+    $source_location = $this->fileSystem->realpath($this->extractionDir . '/' . $files[0]);
     $package_destination = $this->root . '/' . $package['path'];
     $file_transfer = new Local($this->root, $this->fileSystem);
     $file_transfer->copyDirectory($source_location, $package_destination);
@@ -116,22 +126,25 @@ class PackageDownloader implements PackageDownloaderInterface {
    *
    * @throws \Exception
    */
-  protected function downloadArchive($url) {
-    $parsed_url = parse_url($url);
-    $cache_directory = $this->getCacheDirectory();
-    $local = $cache_directory . '/' . $this->fileSystem->basename($parsed_url['path']);
+  protected function downloadArchive($package) {
+    $parsed_url = parse_url($package['download_url']);
+    $cache_dir = $this->cacheDir . '/' . str_replace('/', '-', $package['name']);
+    if (!file_exists($cache_dir)) {
+      mkdir($cache_dir);
+    }
+    $local = $cache_dir . '/' . $this->fileSystem->basename($parsed_url['path']);
 
     if (!file_exists($local)) {
       $destination = $local;
       try {
-        $data = $this->httpClient->request('get', $url)->getBody()->getContents();
+        $data = $this->httpClient->request('get', $package['download_url'])->getBody()->getContents();
         $local = $this->fileSystem->saveData($data, $destination, FileSystemInterface::EXISTS_REPLACE);
       }
       catch (RequestException $exception) {
-        throw new \Exception(sprintf('Failed to fetch file due to error "%s"', $exception->getMessage()));
+        throw new \Exception(sprintf('Failed to fetch file due to error "%s". Fix the related "url" record in "%s" module ludwig.json file.', $exception->getMessage(), $package['provider']));
       }
       if (!$local) {
-        throw new \Exception(sprintf('%s could not be saved to %s', $url, $destination));
+        throw new \Exception(sprintf('%s could not be saved to %s', $package['download_url'], $destination));
       }
 
       return $local;
@@ -171,46 +184,12 @@ class PackageDownloader implements PackageDownloaderInterface {
     // Remove the directory if it exists, otherwise it might contain
     // a mixture of old files mixed with the new files (e.g. in cases
     // where files were removed from a later release).
-    $extract_location = $this->getExtractionDirectory() . '/' . $package;
+    $extract_location = $this->extractionDir . '/' . $package;
     if (file_exists($extract_location)) {
       $this->fileSystem->deleteRecursive($extract_location);
     }
 
-    return $archiver->extract($this->getExtractionDirectory());
-  }
-
-  /**
-   * Gets the directory where the archive files should be extracted.
-   *
-   * @return string
-   *   The full path to the extraction directory.
-   */
-  protected function getExtractionDirectory() {
-    if (!$this->extractionDir) {
-      $directory = 'temporary://luwdig-extraction-' . substr(hash('sha256', Settings::getHashSalt()), 0, 8);
-      if (!file_exists($directory)) {
-        mkdir($directory);
-      }
-      $this->extractionDir = $directory;
-    }
-    return $this->extractionDir;
-  }
-
-  /**
-   * Gets the directory where the archive files should be cached.
-   *
-   * @return string
-   *   The full path to the cache directory.
-   */
-  protected function getCacheDirectory() {
-    if (!$this->cacheDir) {
-      $directory = 'temporary://ludwig-cache-' . substr(hash('sha256', Settings::getHashSalt()), 0, 8);
-      if (!file_exists($directory)) {
-        mkdir($directory);
-      }
-      $this->cacheDir = $directory;
-    }
-    return $this->cacheDir;
+    return $archiver->extract($this->extractionDir);
   }
 
 }

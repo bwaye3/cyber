@@ -4,12 +4,15 @@ namespace Drupal\ludwig\Controller;
 
 use Drupal\Core\Link;
 use Drupal\ludwig\PackageManagerInterface;
+use Drupal\ludwig\PackageDownloaderInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Url;
+use Drupal\Core\FileTransfer\FileTransferException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Displays the Packages report.
@@ -26,11 +29,25 @@ class PackageController implements ContainerInjectionInterface {
   protected $packageManager;
 
   /**
+   * The package downloader.
+   *
+   * @var \Drupal\ludwig\PackageDownloaderInterface
+   */
+  protected $packageDownloader;
+
+  /**
    * The module extension list.
    *
    * @var \Drupal\Core\Extension\ModuleExtensionList
    */
   protected $moduleExtensionList;
+
+  /**
+   * The RequestStack object.
+   *
+   * @var Symfony\Component\HttpFoundation\RequestStack
+   */
+  private $requestStack;
 
   /**
    * Constructs a new PackageController object.
@@ -42,10 +59,12 @@ class PackageController implements ContainerInjectionInterface {
    * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
    *   The module extension list.
    */
-  public function __construct(PackageManagerInterface $package_manager, TranslationInterface $string_translation, ModuleExtensionList $module_extension_list) {
+  public function __construct(PackageManagerInterface $package_manager, PackageDownloaderInterface $package_downloader, TranslationInterface $string_translation, ModuleExtensionList $module_extension_list, RequestStack $request_stack) {
     $this->packageManager = $package_manager;
+    $this->packageDownloader = $package_downloader;
     $this->setStringTranslation($string_translation);
     $this->moduleExtensionList = $module_extension_list;
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -54,8 +73,10 @@ class PackageController implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('ludwig.package_manager'),
+      $container->get('ludwig.package_downloader'),
       $container->get('string_translation'),
-      $container->get('extension.list.module')
+      $container->get('extension.list.module'),
+      $container->get('request_stack')
     );
   }
 
@@ -66,13 +87,19 @@ class PackageController implements ContainerInjectionInterface {
    *   Returns a render array as expected by drupal_render().
    */
   public function page() {
+    // If requested, download the missing packages first.
+    if ($this->requestStack->getCurrentRequest()->query->get('missing') == 'download') {
+      $this->download();
+    }
     $info = $this->moduleExtensionList->getAllInstalledInfo();
     $build = [];
     $build['packages'] = [
       '#theme' => 'table',
       '#header' => [
         'package' => $this->t('Package'),
-        'version' => $this->t('Type, Version'),
+        'paths' => $this->t('Paths'),
+        'resource' => $this->t('Resource'),
+        'version' => $this->t('Version'),
         'required_by' => $this->t('Required by'),
         'status' => $this->t('Status'),
       ],
@@ -80,10 +107,24 @@ class PackageController implements ContainerInjectionInterface {
         'class' => ['system-status-report'],
       ],
     ];
+    $missing = 0;
     foreach ($this->packageManager->getPackages() as $package_name => $package) {
-      if ($package['autoload_type'] == 'classmap' || $package['autoload_type'] == 'files') {
-        $package['description'] = $this->t('<strong>Warning! @autoload_type autoload type libraries are not supported by Ludwig yet.</strong>', [
-          '@autoload_type' => strtoupper($package['autoload_type']),
+      if ($package['installed'] === FALSE) {
+        $missing++;
+      }
+      if (($package['resource'] == 'classmap' || $package['resource'] == 'files') && empty($package['disable_warnings'])) {
+        $package['description'] = $this->t('<strong>Warning! The @resource autoload type libraries are not supported by Ludwig yet.</strong>', [
+          '@resource' => strtoupper($package['resource']),
+        ]);
+      }
+      elseif (($package['resource'] == 'exclude-from-classmap' || $package['resource'] == 'target-dir') && empty($package['disable_warnings'])) {
+        $package['description'] = $this->t('<strong>Warning! The @resource autoload property is not supported by Ludwig yet.</strong>', [
+          '@resource' => strtoupper($package['resource']),
+        ]);
+      }
+      elseif (($package['resource'] == 'legacy' || $package['resource'] == 'unknown') && empty($package['disable_warnings'])) {
+        $package['description'] = $this->t('<strong>Warning! The @resource library type. Not supported by Ludwig.</strong>', [
+          '@resource' => strtoupper($package['resource']),
         ]);
       }
       elseif (!$package['installed']) {
@@ -97,7 +138,7 @@ class PackageController implements ContainerInjectionInterface {
       if (!empty($package['homepage'])) {
         $package_column[] = [
           '#type' => 'link',
-          '#title' => $package_name,
+          '#title' => $package['name'],
           '#url' => Url::fromUri($package['homepage']),
           '#options' => [
             'attributes' => ['target' => '_blank'],
@@ -106,7 +147,7 @@ class PackageController implements ContainerInjectionInterface {
       }
       else {
         $package_column[] = [
-          '#plain_text' => $package_name,
+          '#plain_text' => $package['name'],
         ];
       }
       if (!empty($package['description'])) {
@@ -127,14 +168,65 @@ class PackageController implements ContainerInjectionInterface {
           'package' => [
             'data' => $package_column,
           ],
-          'version' => strtoupper($package['autoload_type']) . ', ' . $package['version'],
+          'paths' => implode(', ', $package['paths']),
+          'resource' => $package['resource'],
+          'version' => $package['version'],
           'required_by' => $required_by,
           'status' => $package['installed'] ? $this->t('Installed') : $this->t('Missing'),
         ],
       ];
     }
 
+    if (!empty($missing)) {
+      // There are some missing packages, so render
+      // the "Download all missing packages" button
+      // as clickable link to the download page.
+      $build['#markup'] = '<div class="button">' . $this->t('<a href="@packages-url">Download and unpack all missing packages (@missing)', [
+        '@packages-url' => Url::fromRoute('ludwig.packages')->toString() . '?missing=download',
+        '@missing' => $missing,
+      ]) . '</a></div><div>&nbsp;</div>';
+    }
+    else {
+      // There are no missing packages. For the UX consistency
+      // purpose render the button again, but as disabled one.
+      $build['#markup'] = '<div class="button is-disabled">' . $this->t('Download and unpack missing packages (0)') . '</div><div>&nbsp;</div>';
+    }
+
     return $build;
+  }
+
+  /**
+   * Downloads missing packages.
+   */
+  public function download() {
+    $packages = array_filter($this->packageManager->getPackages(), function ($package) {
+      return empty($package['installed']);
+    });
+    if (!empty($packages)) {
+      $logger = \Drupal::logger('ludwig');
+      $messenger = \Drupal::messenger();
+      foreach ($packages as $name => $package) {
+        try {
+          $this->packageDownloader->download($package);
+          $logger->info($this->t('The @name package has been downloaded and unpacked successfully.', [
+            '@name' => $name,
+          ]));
+          $messenger->addMessage(t('The @name package has been downloaded and unpacked successfully.', [
+            '@name' => $name,
+          ]));
+        }
+        catch (FileTransferException $e) {
+          $logger->error($e->getMessage());
+          $messenger->addMessage($e->getMessage(), 'error');
+          continue;
+        }
+        catch (\Exception $e) {
+          $logger->error($e->getMessage());
+          $messenger->addMessage($e->getMessage(), 'error');
+          continue;
+        }
+      }
+    }
   }
 
 }

@@ -1,6 +1,0 @@
-services:
-  ludwig.commands:
-    class: \Drupal\ludwig\Commands\LudwigCommands
-    arguments: ['@ludwig.package_manager', '@ludwig.package_downloader']
-    tags:
-      - { name: drush.command }
