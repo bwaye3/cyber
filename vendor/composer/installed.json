@@ -3837,27 +3837,27 @@
     },
     {
         "name": "drupal/token",
-        "version": "1.7.0",
-        "version_normalized": "1.7.0.0",
+        "version": "1.9.0",
+        "version_normalized": "1.9.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/token.git",
-            "reference": "8.x-1.7"
+            "reference": "8.x-1.9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/token-8.x-1.7.zip",
-            "reference": "8.x-1.7",
-            "shasum": "c7e3a3757282e4c94e3c1fff08d01e22155cb853"
+            "url": "https://ftp.drupal.org/files/projects/token-8.x-1.9.zip",
+            "reference": "8.x-1.9",
+            "shasum": "a5d234382a1a0e4ba61d4c7a2fa10671ca656be4"
         },
         "require": {
-            "drupal/core": "^8.7.7 || ^9"
+            "drupal/core": "^8.8 || ^9"
         },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.7",
-                "datestamp": "1587893588",
+                "version": "8.x-1.9",
+                "datestamp": "1608284866",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3872,7 +3872,7 @@
         "installation-source": "dist",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
-            "GPL-2.0+"
+            "GPL-2.0-or-later"
         ],
         "authors": [
             {
@@ -5326,17 +5326,17 @@
     },
     {
         "name": "nikic/php-parser",
-        "version": "v4.10.3",
-        "version_normalized": "4.10.3.0",
+        "version": "v4.10.4",
+        "version_normalized": "4.10.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/nikic/PHP-Parser.git",
-            "reference": "dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984"
+            "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984",
-            "reference": "dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984",
+            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/c6d052fc58cb876152f89f532b95a8d7907e7f0e",
+            "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e",
             "shasum": ""
         },
         "require": {
@@ -5347,7 +5347,7 @@
             "ircmaxell/php-yacc": "^0.0.7",
             "phpunit/phpunit": "^6.5 || ^7.0 || ^8.0 || ^9.0"
         },
-        "time": "2020-12-03T17:45:45+00:00",
+        "time": "2020-12-20T10:01:03+00:00",
         "bin": [
             "bin/php-parse"
         ],
@@ -6425,24 +6425,24 @@
     },
     {
         "name": "symfony/filesystem",
-        "version": "v4.4.17",
-        "version_normalized": "4.4.17.0",
+        "version": "v4.4.18",
+        "version_normalized": "4.4.18.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/filesystem.git",
-            "reference": "17b83e36a911aefa2cfe04bbf6328ec4c040c1b2"
+            "reference": "d99fbef7e0f69bf162ae6131b31132fa3cc4bcbe"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/filesystem/zipball/17b83e36a911aefa2cfe04bbf6328ec4c040c1b2",
-            "reference": "17b83e36a911aefa2cfe04bbf6328ec4c040c1b2",
+            "url": "https://api.github.com/repos/symfony/filesystem/zipball/d99fbef7e0f69bf162ae6131b31132fa3cc4bcbe",
+            "reference": "d99fbef7e0f69bf162ae6131b31132fa3cc4bcbe",
             "shasum": ""
         },
         "require": {
             "php": ">=7.1.3",
             "symfony/polyfill-ctype": "~1.8"
         },
-        "time": "2020-11-11T22:20:15+00:00",
+        "time": "2020-11-30T13:04:35+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -6486,23 +6486,23 @@
     },
     {
         "name": "symfony/finder",
-        "version": "v5.2.0",
-        "version_normalized": "5.2.0.0",
+        "version": "v5.2.1",
+        "version_normalized": "5.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/finder.git",
-            "reference": "fd8305521692f27eae3263895d1ef1571c71a78d"
+            "reference": "0b9231a5922fd7287ba5b411893c0ecd2733e5ba"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/finder/zipball/fd8305521692f27eae3263895d1ef1571c71a78d",
-            "reference": "fd8305521692f27eae3263895d1ef1571c71a78d",
+            "url": "https://api.github.com/repos/symfony/finder/zipball/0b9231a5922fd7287ba5b411893c0ecd2733e5ba",
+            "reference": "0b9231a5922fd7287ba5b411893c0ecd2733e5ba",
             "shasum": ""
         },
         "require": {
             "php": ">=7.2.5"
         },
-        "time": "2020-11-18T09:42:36+00:00",
+        "time": "2020-12-08T17:02:38+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -7897,17 +7897,17 @@
     },
     {
         "name": "symfony/var-dumper",
-        "version": "v4.4.17",
-        "version_normalized": "4.4.17.0",
+        "version": "v4.4.18",
+        "version_normalized": "4.4.18.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/var-dumper.git",
-            "reference": "65c6f1e848cda840ef7278686c8e30a7cc353c93"
+            "reference": "4f31364bbc8177f2a6dbc125ac3851634ebe2a03"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/65c6f1e848cda840ef7278686c8e30a7cc353c93",
-            "reference": "65c6f1e848cda840ef7278686c8e30a7cc353c93",
+            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/4f31364bbc8177f2a6dbc125ac3851634ebe2a03",
+            "reference": "4f31364bbc8177f2a6dbc125ac3851634ebe2a03",
             "shasum": ""
         },
         "require": {
@@ -7931,7 +7931,7 @@
             "ext-intl": "To show region name in time zone dump",
             "symfony/console": "To use the ServerDumpCommand and/or the bin/var-dump-server script"
         },
-        "time": "2020-11-24T09:55:37+00:00",
+        "time": "2020-12-08T16:59:59+00:00",
         "bin": [
             "Resources/bin/var-dump-server"
         ],
