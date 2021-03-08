@@ -118,8 +118,8 @@ class PackageDownloader implements PackageDownloaderInterface {
    *
    * Returns the local path if the file has already been downloaded.
    *
-   * @param string $url
-   *   The archive URL.
+   * @param string $package
+   *   The package for download.
    *
    * @return string
    *   The path to the local file.

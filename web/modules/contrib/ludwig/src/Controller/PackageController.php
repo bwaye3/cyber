@@ -13,6 +13,7 @@ use Drupal\Core\Url;
 use Drupal\Core\FileTransfer\FileTransferException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Displays the Packages report.
@@ -54,10 +55,14 @@ class PackageController implements ContainerInjectionInterface {
    *
    * @param \Drupal\ludwig\PackageManagerInterface $package_manager
    *   The package manager.
+   * @param \Drupal\ludwig\PackageDownloaderInterface $package_downloader
+   *   The package downloader.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
    *   The module extension list.
+   * @param Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The RequestStack object.
    */
   public function __construct(PackageManagerInterface $package_manager, PackageDownloaderInterface $package_downloader, TranslationInterface $string_translation, ModuleExtensionList $module_extension_list, RequestStack $request_stack) {
     $this->packageManager = $package_manager;
@@ -90,6 +95,7 @@ class PackageController implements ContainerInjectionInterface {
     // If requested, download the missing packages first.
     if ($this->requestStack->getCurrentRequest()->query->get('missing') == 'download') {
       $this->download();
+      return new RedirectResponse(Url::fromRoute('ludwig.packages')->toString());
     }
     $info = $this->moduleExtensionList->getAllInstalledInfo();
     $build = [];
@@ -112,19 +118,31 @@ class PackageController implements ContainerInjectionInterface {
       if ($package['installed'] === FALSE) {
         $missing++;
       }
+
+      $guide_link = 'https://www.drupal.org/docs/contributed-modules/ludwig/ludwig-errors-warnings-and-notices';
+
       if (($package['resource'] == 'classmap' || $package['resource'] == 'files') && empty($package['disable_warnings'])) {
-        $package['description'] = $this->t('<strong>Warning! The @resource autoload type libraries are not supported by Ludwig yet.</strong>', [
+        $package['description'] .= $this->t('<br><strong>Warning! The @resource type libraries are not supported by Ludwig automatically. @read_more.</strong>', [
           '@resource' => strtoupper($package['resource']),
+          '@read_more' => Link::fromTextAndUrl($this->t('Read more'), Url::fromUri($guide_link))->toString(),
         ]);
       }
-      elseif (($package['resource'] == 'exclude-from-classmap' || $package['resource'] == 'target-dir') && empty($package['disable_warnings'])) {
-        $package['description'] = $this->t('<strong>Warning! The @resource autoload property is not supported by Ludwig yet.</strong>', [
+      elseif ($package['resource'] == 'exclude-from-classmap' && empty($package['disable_warnings'])) {
+        $package['description'] .= $this->t('<br><strong>Notice! The @resource property is not supported by Ludwig.</strong> Despite this notice, the library is loaded properly and the module should work nicely. @read_more.', [
           '@resource' => strtoupper($package['resource']),
+          '@read_more' => Link::fromTextAndUrl($this->t('Read more'), Url::fromUri($guide_link))->toString(),
+        ]);
+      }
+      elseif ($package['resource'] == 'target-dir' && empty($package['disable_warnings'])) {
+        $package['description'] .= $this->t('<br><strong>Warning! The @resource property is not supported by Ludwig.</strong> This module may lack some functionality. @read_more.', [
+          '@resource' => strtoupper($package['resource']),
+          '@read_more' => Link::fromTextAndUrl($this->t('Read more'), Url::fromUri($guide_link))->toString(),
         ]);
       }
       elseif (($package['resource'] == 'legacy' || $package['resource'] == 'unknown') && empty($package['disable_warnings'])) {
-        $package['description'] = $this->t('<strong>Warning! The @resource library type. Not supported by Ludwig.</strong>', [
+        $package['description'] .= $this->t('<br><strong>Warning! The @resource library type. Not supported by Ludwig. @read_more.</strong>', [
           '@resource' => strtoupper($package['resource']),
+          '@read_more' => Link::fromTextAndUrl($this->t('Read more'), Url::fromUri($guide_link))->toString(),
         ]);
       }
       elseif (!$package['installed']) {
@@ -178,18 +196,17 @@ class PackageController implements ContainerInjectionInterface {
     }
 
     if (!empty($missing)) {
-      // There are some missing packages, so render
-      // the "Download all missing packages" button
-      // as clickable link to the download page.
-      $build['#markup'] = '<div class="button">' . $this->t('<a href="@packages-url">Download and unpack all missing packages (@missing)', [
+      // There are some missing packages, so render the
+      // "Download all missing packages" clickable button.
+      $build['#markup'] = $this->t('<div class="button"><a href="@packages-url">Download and unpack all missing packages (@missing)</a></div><div>&nbsp;</div>', [
         '@packages-url' => Url::fromRoute('ludwig.packages')->toString() . '?missing=download',
         '@missing' => $missing,
-      ]) . '</a></div><div>&nbsp;</div>';
+      ]);
     }
     else {
       // There are no missing packages. For the UX consistency
       // purpose render the button again, but as disabled one.
-      $build['#markup'] = '<div class="button is-disabled">' . $this->t('Download and unpack missing packages (0)') . '</div><div>&nbsp;</div>';
+      $build['#markup'] = $this->t('<div class="button is-disabled">Download and unpack missing packages (0)</div><div>&nbsp;</div>');
     }
 
     return $build;

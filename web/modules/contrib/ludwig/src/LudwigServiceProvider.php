@@ -59,11 +59,11 @@ class LudwigServiceProvider extends ServiceProviderBase {
             $namespaces[$namespace] = $return_paths;
           }
         }
-        // @todo: Add support for 'classmap' autoload type.
-        // @todo: Add support for 'files' autoload type.
-        // @todo: Add support for 'exclude-from-classmap' autoload property.
-        // @todo: Add support for 'target-dir' autoload property.
-        // @todo: Add support for 'legacy' libraries (depricated type).
+        // @todo Add support for 'classmap' autoload type.
+        // @todo Add support for 'files' autoload type.
+        // @todo Add support for 'exclude-from-classmap' autoload property.
+        // @todo Add support for 'target-dir' autoload property.
+        // @todo Add support for 'legacy' libraries (depricated type).
       }
     }
     $container->setParameter('container.namespaces', $namespaces);

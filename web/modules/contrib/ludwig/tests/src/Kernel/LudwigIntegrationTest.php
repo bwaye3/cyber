@@ -13,6 +13,11 @@ use Drupal\KernelTests\KernelTestBase;
  */
 class LudwigIntegrationTest extends KernelTestBase implements ServiceModifierInterface {
 
+  /**
+   * The array of dependencies.
+   *
+   * @var array
+   */
   public static $modules = ['system', 'ludwig', 'ludwig_test'];
 
   /**
@@ -40,6 +45,9 @@ class LudwigIntegrationTest extends KernelTestBase implements ServiceModifierInt
     $this->assertTrue(class_exists('CommerceGuys\Intl\Calculator'));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function alter(ContainerBuilder $container) {
     $container->removeDefinition('test.http_client.middleware');
   }
