@@ -534,3 +534,9 @@ body, .node--view-mode-full p, p {
   position: absolute;
   left: -999em;
 }
+.dir p {
+  font-size: .8rem !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  line-height: 110% !important;
+}
