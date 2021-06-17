@@ -34,6 +34,13 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
   protected $originalValue;
 
   /**
+   * The transition to apply.
+   *
+   * @var \Drupal\state_machine\Plugin\Workflow\WorkflowTransition
+   */
+  protected $transitionToApply;
+
+  /**
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
@@ -288,6 +295,9 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
    * {@inheritdoc}
    */
   public function applyTransition(WorkflowTransition $transition) {
+    // Store the transition to apply, to ensure we're applying the requested
+    // transition instead of guessing based on the original state.
+    $this->transitionToApply = $transition;
     $this->setValue(['value' => $transition->getToState()->getId()]);
   }
 
@@ -334,7 +344,7 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
   protected function dispatchTransitionEvent($phase) {
     /** @var \Drupal\state_machine\Plugin\Workflow\WorkflowInterface $workflow */
     $workflow = $this->getWorkflow();
-    $transition = $workflow->findTransition($this->originalValue, $this->value);
+    $transition = $this->transitionToApply ?? $workflow->findTransition($this->originalValue, $this->value);
     if ($transition) {
       $field_name = $this->getFieldDefinition()->getName();
       $group_id = $workflow->getGroup();

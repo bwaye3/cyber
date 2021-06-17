@@ -8,6 +8,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\state_machine\Form\StateTransitionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -93,18 +94,59 @@ class StateTransitionFormFormatter extends FormatterBase implements ContainerFac
     if (!$items->getEntity()->access('update')) {
       return [];
     }
-
     /** @var \Drupal\state_machine\Form\StateTransitionFormInterface $form_object */
     $form_object = $this->classResolver->getInstanceFromDefinition(StateTransitionForm::class);
     $form_object->setEntity($items->getEntity());
     $form_object->setFieldName($items->getFieldDefinition()->getName());
-    $form_state = new FormState();
+    $form_state = (new FormState())->setFormState([
+      // Store in the form state whether a confirmation is required before
+      // applying the state transition.
+      'require_confirmation' => (bool) $this->getSetting('require_confirmation'),
+    ]);
     // $elements needs a value for each delta. State fields can't be multivalue,
     // so it's safe to hardcode 0.
     $elements = [];
     $elements[0] = $this->formBuilder->buildForm($form_object, $form_state);
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    return [
+      'require_confirmation' => FALSE,
+    ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $form = parent::settingsForm($form, $form_state);
+
+    $form['require_confirmation'] = [
+      '#title' => $this->t('Require confirmation before applying the state transition'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('require_confirmation'),
+    ];
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    $summary = parent::settingsSummary();
+    if ($this->getSetting('require_confirmation')) {
+      $summary[] = $this->t('Require confirmation before applying the state transition');
+    }
+    else {
+      $summary[] = $this->t('Do not require confirmation before applying the state transition');
+    }
+
+    return $summary;
   }
 
   /**

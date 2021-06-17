@@ -3,6 +3,7 @@
 namespace Drupal\tvi\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 use Drupal\views\Views;
 use Drupal\Core\Config\ConfigFactory;
@@ -26,7 +27,7 @@ class TaxonomyViewsIntegratorManager implements TaxonomyViewsIntegratorManagerIn
   /**
    * Core config factory service.
    *
-   * @var \Drupal\Core\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   private $config;
 
@@ -58,16 +59,6 @@ class TaxonomyViewsIntegratorManager implements TaxonomyViewsIntegratorManagerIn
     $this->config = $config;
     $this->entityTypeManager = $entity_type_manager;
     $this->requestStack = $requestStack;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    $config = $container->get('config.factory');
-    $entity_type_manager = $container->get('entity_type.manager');
-    $requestStack = $container->get('request_stack');
-    return new static($config, $entity_type_manager, $requestStack);
   }
 
   /**
@@ -136,66 +127,83 @@ class TaxonomyViewsIntegratorManager implements TaxonomyViewsIntegratorManagerIn
    * {@inheritdoc}
    */
   public function getTaxonomyTermView(TermInterface $taxonomy_term) {
+    $view_info = $this->getTaxonomyTermViewAndDisplayId($taxonomy_term);
+
     $config = $this->getTermConfigSettings($taxonomy_term);
-    $check_vocab = TRUE;
-    $check_global = TRUE;
-
-    // If we have no matches, we are going to call the default core term view.
-    $view_name = 'taxonomy_term';
-    $view_id = 'page_1';
     $view_arguments = [$taxonomy_term->id()];
-
-    if ($config->get('enable_override')) {
-      $view_name = $config->get('view');
-      $view_id = $config->get('view_display');
-    }
-    else {
-      // Check parent terms for settings.
-      // if parent is enabled and has 'children inherit settings' is checked.
-      foreach ($this->getTermParents($taxonomy_term) as $parent) {
-        // Skip the current term, it is returned by loadAllParents.
-        if ($taxonomy_term->id() === $parent->id()) {
-          continue;
-        }
-
-        $config = $this->getTermConfigSettings($parent);
-
-        if ($config->get('enable_override') && $config->get('inherit_settings')) {
-          $view_name = $config->get('view');
-          $view_id = $config->get('view_display');
-          $check_vocab = FALSE;
-          break;
-        }
-      }
-
-      // Check vocab for settings.
-      if ($check_vocab) {
-        $config = $this->getVocabularyConfigSettings($taxonomy_term);
-
-        if ($config->get('enable_override') && $config->get('inherit_settings')) {
-          $view_name = $config->get('view');
-          $view_id = $config->get('view_display');
-          $check_global = FALSE;
-        }
-      }
-
-      // Check for global settings.
-      if ($check_global) {
-        $config = $this->getDefaultConfigSettings();
-
-        if ($config->get('enable_override')) {
-          $view_name = $config->get('view');
-          $view_id = $config->get('view_display');
-        }
-      }
-    }
 
     // If the option to pass all args to views is enabled, pass them on.
     if ($config->get('pass_arguments')) {
       $view_arguments += $this->getRequestUriArguments();
     }
 
-    return Views::getView($view_name)->executeDisplay($view_id, $view_arguments);
+    $build = NULL;
+    if ($view_info['display_id']) {
+      $view = Views::getView($view_info['view_id']);
+      // Ensure view exists and is enabled.
+      if ($view && $view->storage->status()) {
+        $view->override_url = Url::fromUri($this->requestStack->getCurrentRequest()->getUri());
+        $build = $view->executeDisplay($view_info['display_id'], $view_arguments);
+      }
+    }
+
+    if (!$build) {
+      $build = $this->entityTypeManager
+        ->getViewBuilder('taxonomy_term')
+        ->view($taxonomy_term, 'full');
+    }
+
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTaxonomyTermViewAndDisplayId(TermInterface $taxonomy_term) {
+    // If we have no matches, we are going to call the default core term view.
+    $view_name = 'taxonomy_term';
+    $view_id = 'page_1';
+
+    $global_config = $this->getDefaultConfigSettings();
+    if ($global_config->get('disable_default_view')) {
+      $view_name = NULL;
+      $view_id = NULL;
+    }
+    elseif ($global_config->get('enable_override')) {
+      $view_name = $global_config->get('view');
+      $view_id = $global_config->get('view_display');
+    }
+
+    // Check for global overrides.
+    $term_config = $this->getTermConfigSettings($taxonomy_term);
+    if ($term_config->get('enable_override')) {
+      $view_name = $term_config->get('view');
+      $view_id = $term_config->get('view_display');
+    }
+    else {
+      // Check parent terms and vocab for settings.
+      $vocab_config = $this->getVocabularyConfigSettings($taxonomy_term);
+      if ($vocab_config->get('enable_override') && $vocab_config->get('inherit_settings')) {
+        $view_name = $vocab_config->get('view');
+        $view_id = $vocab_config->get('view_display');
+      }
+
+      $parents = $this->getTermParents($taxonomy_term);
+      unset($parents[$taxonomy_term->id()]);
+      foreach ($parents as $parent) {
+        $parent_config = $this->getTermConfigSettings($parent);
+        if ($parent_config->get('enable_override') && $parent_config->get('inherit_settings')) {
+          $view_name = $parent_config->get('view');
+          $view_id = $parent_config->get('view_display');
+          break;
+        }
+      }
+    }
+
+    return [
+      'view_id' => $view_name,
+      'display_id' => $view_id,
+    ];
   }
 
 }

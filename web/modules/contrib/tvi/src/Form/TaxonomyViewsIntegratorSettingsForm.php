@@ -107,11 +107,23 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
       '#description' => $this->t('By enabling taxonomy views integration here, it will apply to all vocabularies and their terms by default.'),
     ];
 
+    $form['tvi']['disable_default_view'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Don't display a view by default."),
+      '#description' => $this->t('Checking this field will enable the use of the selected view when displaying this taxonomy page.'),
+      '#default_value' => $config->get('disable_default_view'),
+    ];
+
     $form['tvi']['enable_override'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use global view override.'),
       '#description' => $this->t('Checking this field will enable the use of the selected view when displaying this taxonomy page.'),
       '#default_value' => $config->get('enable_override'),
+      '#states' => [
+        'visible' => [
+          ':input[name="disable_default_view"]' => ['checked' => FALSE],
+        ],
+      ],
     ];
 
     $form['tvi']['view'] = [
@@ -123,6 +135,7 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="enable_override"]' => ['checked' => TRUE],
+          ':input[name="disable_default_view"]' => ['checked' => FALSE],
         ],
       ],
       '#ajax' => [
@@ -144,6 +157,7 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="enable_override"]' => ['checked' => TRUE],
+          ':input[name="disable_default_view"]' => ['checked' => FALSE],
         ],
       ],
       '#prefix' => '<div id="tvi-view-display">',
@@ -175,6 +189,7 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('tvi.global_settings')
+      ->set('disable_default_view', $form_state->getValue('disable_default_view'))
       ->set('enable_override', $form_state->getValue('enable_override'))
       ->set('view', $form_state->getValue('view'))
       ->set('view_display', $form_state->getValue('view_display'))

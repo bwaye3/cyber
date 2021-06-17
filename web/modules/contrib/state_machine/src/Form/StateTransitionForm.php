@@ -101,10 +101,25 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
-    /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
-    $state_item = $this->entity->get($this->fieldName)->first();
-    $state_item->applyTransition($triggering_element['#transition']);
-    $this->entity->save();
+
+    if ($this->entity->hasLinkTemplate('state-transition-form') &&
+      $this->entity->getEntityType()->getFormClass('state-transition-confirm') &&
+      $form_state->get('require_confirmation')
+    ) {
+      // Instead of updating the entity, we redirect to the confirmation form.
+      $route_parameters = [
+        $this->entity->getEntityTypeId() => $this->entity->id(),
+        'field_name' => $this->fieldName,
+        'transition_id' => $triggering_element['#transition']->getId(),
+      ];
+      $form_state->setRedirect("entity.{$this->entity->getEntityTypeId()}.state_transition_form", $route_parameters);
+    }
+    else {
+      /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
+      $state_item = $this->entity->get($this->fieldName)->first();
+      $state_item->applyTransition($triggering_element['#transition']);
+      $this->entity->save();
+    }
   }
 
 }
