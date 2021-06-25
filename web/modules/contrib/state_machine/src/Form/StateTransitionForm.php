@@ -106,8 +106,9 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
       $this->entity->getEntityType()->getFormClass('state-transition-confirm') &&
       $form_state->get('require_confirmation')
     ) {
+      $url = $this->entity->toUrl('state-transition-form');
       // Instead of updating the entity, we redirect to the confirmation form.
-      $route_parameters = [
+      $route_parameters = $url->getRouteParameters() + [
         $this->entity->getEntityTypeId() => $this->entity->id(),
         'field_name' => $this->fieldName,
         'transition_id' => $triggering_element['#transition']->getId(),
