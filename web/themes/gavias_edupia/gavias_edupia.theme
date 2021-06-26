@@ -30,9 +30,9 @@ function gavias_edupia_preprocess_page(&$variables) {
   $variables['footer_four_size'] = theme_get_setting('footer_four_size');
 
   $variables['preloader'] = theme_get_setting('preloader');
- 
+
   $variables['theme_path'] = $base_url . '/' . $theme_path;
-  
+
   //Header setting -----------
   $header = 'header';
   if(theme_get_setting('default_header')){
@@ -42,7 +42,7 @@ function gavias_edupia_preprocess_page(&$variables) {
   if(isset($variables['gva_header']) && $variables['gva_header'] && $variables['gva_header']!='_none' ){
     $header = $variables['gva_header'];
   }
-  
+
   if(file_exists($theme_path . '/templates/page/' . trim($header) . '.html.twig')){
     $variables['header_skin'] = $variables['directory'] . '/templates/page/' . trim($header) . '.html.twig';
   }else{
@@ -119,7 +119,7 @@ function gavias_edupia_preprocess_html(&$variables) {
 
   ob_start();
   $json = \Drupal::config('gaviasthemer.settings')->get('gavias_customize');
-  
+
   if(!$json){
     if(file_exists($theme_path . '/css/customize.json')){
       $json = file_get_contents($theme_path . '/css/customize.json');
@@ -134,16 +134,16 @@ function gavias_edupia_preprocess_html(&$variables) {
 
   $variables['customize_styles'] = $customize_styles;
 
-  //Form customize 
+  //Form customize
   $user = \Drupal::currentUser();
 
   if(theme_get_setting('enable_customize') == 1 &&  \Drupal::moduleHandler()->moduleExists('gaviasthemer') && ($user->hasPermission('administer gavias_customize') || $user->hasPermission('administer gavias_customize preview')) ){
     $url_customize_save = Url::fromRoute('gaviasthemer.admin.customize_save', array(), array('absolute' => TRUE))->toString();
-    $variables['#attached']['drupalSettings']['gavias_customize']['save'] = $url_customize_save;  
+    $variables['#attached']['drupalSettings']['gavias_customize']['save'] = $url_customize_save;
     $url_customize_preview = Url::fromRoute('gaviasthemer.admin.customize_preview', array(), array('absolute' => TRUE))->toString();
-    $variables['#attached']['drupalSettings']['gavias_customize']['preview'] = $url_customize_preview;  
+    $variables['#attached']['drupalSettings']['gavias_customize']['preview'] = $url_customize_preview;
     $variables['#attached']['library'][] = 'gaviasthemer/customize';
- 
+
     $variables['#attached']['drupalSettings']['gavias_customize']['json'] = $json;
 
     $variables['addon_template'] = '';
@@ -168,7 +168,7 @@ function gavias_edupia_preprocess_html(&$variables) {
     }
     $variables['current_url'] = $current_url;
   }
-  
+
   //---- End customize gavias themer ---
 
   $skin = 'default';
@@ -207,9 +207,9 @@ function gavias_edupia_preprocess_html(&$variables) {
   }else{
     $variables['attributes']['class'][] = 'not-preloader';
   }
-  
+
   if(\Drupal::service('module_handler')->moduleExists('gavias_hook_themer')){
-    $abs_url_config = Url::fromRoute('gavias_hook_themer.ajax_views', array(), array('absolute' => FALSE))->toString(); 
+    $abs_url_config = Url::fromRoute('gavias_hook_themer.ajax_views', array(), array('absolute' => FALSE))->toString();
   }else{
     $abs_url_config = '';
   }
@@ -242,7 +242,7 @@ function gavias_edupia_preprocess_block(&$variables) {
     $tmp_logo = theme_get_setting('logo');
     $variables['setting_logo'] = $tmp_logo['use_default'];
   }
-} 
+}
 
 function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $styles = array();
@@ -251,7 +251,7 @@ function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $bg_position = 'center center';
   $bg_repeat = 'no-repeat';
   $text_style = 'text-dark';
-  
+
   if (!empty($variables['elements']['#id'])) {
     $block = Block::load($variables['elements']['#id']);
     if($variables['plugin_id'] == 'system_breadcrumb_block'){
@@ -296,7 +296,7 @@ function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $title = '';
   if ($route = $request->attributes->get(\Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT)) {
     $title = \Drupal::service('title_resolver')->getTitle($request, $route);
-  } 
+  }
   $variables['breadcrumb_title'] = $title;
 }
 
@@ -369,7 +369,7 @@ function gavias_edupia_theme_suggestions_page_alter(array &$suggestions, array $
 }
 
 function gavias_edupia_theme_suggestions_field_alter(&$suggestions, $variables) {
-  $suggestions[] = 'field__' . 
-  $variables['element']['#field_name'] . '__' . 
+  $suggestions[] = 'field__' .
+  $variables['element']['#field_name'] . '__' .
   $variables['element']['#view_mode'];
 }
