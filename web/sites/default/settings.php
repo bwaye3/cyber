@@ -767,11 +767,10 @@ $settings['entity_update_batch_size'] = 50;
 
 
 
-
-$databases['default']['default'] = array(
+$databases['default']['default'] = array (
   'database' => 'cyberwatch_cyberwatch',
   'username' => 'cyberwatch_root',
-  'password' => '!eG13zz63$$$',
+  'password' => '!eG13zz63$%$',
   'prefix' => '',
   'host' => 'localhost',
   'port' => '3306',
@@ -780,20 +779,11 @@ $databases['default']['default'] = array(
 );
 
 
-/**
- * Load local development override configuration, if available.
- *
- * Use settings.local.php to override variables on secondary (staging,
- * development, etc) installations of this site. Typically used to disable
- * caching, JavaScript/CSS compression, re-routing of outgoing emails, and
- * other things that should not happen on development and testing sites.
- *
- * Keep this code block at the end of this file to take full effect.
- */
-#
-
 $settings['trusted_host_patterns'] = [
   '^cyberwatchsystems\.com$',
   '^www\.cyberwatchsystems\.com$',
 ];
 
+if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+  include $app_root . '/' . $site_path . '/settings.local.php';
+}

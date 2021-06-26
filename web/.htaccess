@@ -155,8 +155,6 @@ AddEncoding gzip svgz
     RewriteCond %{REQUEST_FILENAME}\.gz -s
     RewriteRule ^(.*)\.css $1\.css\.gz [QSA]
 
-    Redirect /texasdir.html /texas-dir/cyber-watch-systems-dir
-
     # Serve gzip compressed JS files if they exist and the client accepts gzip.
     RewriteCond %{HTTP:Accept-encoding} gzip
     RewriteCond %{REQUEST_FILENAME}\.gz -s
