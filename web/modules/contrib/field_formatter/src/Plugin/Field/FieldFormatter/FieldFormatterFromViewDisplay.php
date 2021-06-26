@@ -3,9 +3,13 @@
 namespace Drupal\field_formatter\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -23,11 +27,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FieldFormatterFromViewDisplay extends FieldFormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity type manager.
+   * The display repository.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityDisplayRepository
    */
-  protected $entityTypeManager;
+  protected $entityDisplayRepository;
 
   /**
    * Constructs a FieldFormatterFromViewDisplay object.
@@ -46,12 +50,21 @@ class FieldFormatterFromViewDisplay extends FieldFormatterBase implements Contai
    *   The view mode.
    * @param array $third_party_settings
    *   Third party settings.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager object for retrieving the correct language code.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, LanguageManagerInterface $language_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityFieldManagerInterface $entity_field_manager, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $language_manager, $entity_type_bundle_info, $entity_field_manager);
     $this->entityTypeManager = $entity_type_manager;
+    $this->entityDisplayRepository = $entity_display_repository;
   }
 
   /**
@@ -66,7 +79,11 @@ class FieldFormatterFromViewDisplay extends FieldFormatterBase implements Contai
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('entity_type.manager')
+      $container->get('language_manager'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('entity_field.manager'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_display.repository')
     );
   }
 
@@ -74,7 +91,7 @@ class FieldFormatterFromViewDisplay extends FieldFormatterBase implements Contai
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    $settings = [
+    $settings = parent::defaultSettings() + [
       'view_mode' => 'default',
       'field_name' => '',
     ];
@@ -87,13 +104,26 @@ class FieldFormatterFromViewDisplay extends FieldFormatterBase implements Contai
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
     $options = [];
-    foreach ($this->entityTypeManager->getStorage('entity_view_mode')->loadMultiple() as $id => $view_mode) {
-      // Filter out view modes that have status set to FALSE since they will
-      // reuse the 'default' display settings by default.
-      if ($view_mode->getTargetType() == $this->fieldDefinition->getSetting('target_type') && $view_mode->status()) {
-        $options[$id] = $view_mode->label();
+
+    $er_target_entity_type = $this->fieldDefinition->getSetting('target_type');
+    $er_handler_settings = $this->fieldDefinition->getSetting('handler_settings');
+    $display_repository = $this->entityDisplayRepository;
+    if (!empty($er_handler_settings['target_bundles'])) {
+      $er_target_bundles = $er_handler_settings['target_bundles'];
+      foreach ($er_target_bundles as $er_target_bundle => $er_target_bundle_val) {
+        $optionsByBundle = $display_repository->getViewModeOptionsByBundle($er_target_entity_type, $er_target_bundle);
+        // Add option by key to prevent duplicates:
+        foreach ($optionsByBundle as $key => $option) {
+          $options[$key] = $option;
+        }
       }
     }
+    else {
+      $options = $display_repository->getViewModeOptions($er_target_entity_type);
+    }
+
+    // Sort options in alphabetcial order:
+    asort($options);
     $form['view_mode'] = [
       '#title' => $this->t('View mode'),
       '#type' => 'select',
@@ -139,13 +169,6 @@ class FieldFormatterFromViewDisplay extends FieldFormatterBase implements Contai
    */
   public function settingsSummary() {
     $summary = parent::settingsSummary();
-
-    if ($field_name = $this->getSetting('field_name')) {
-      $summary[] = $this->t('Field %field_name displayed.', ['%field_name' => $field_name]);
-    }
-    else {
-      $summary[] = $this->t('Field not configured.');
-    }
 
     if ($view_mode = $this->getSetting('view_mode')) {
       $summary[] = $this->t('View display %view_mode used.', ['%view_mode' => $view_mode]);

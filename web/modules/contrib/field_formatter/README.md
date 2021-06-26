@@ -1,8 +1,9 @@
 # Field Formatter
 
-[Field Formatter](https://www.drupal.org/project/field_formatter) module provides
-a collection of generic formatters for entity reference fields that output only
-a specific field of the referenced entity. There are currently three formatters:
+[Field Formatter](https://www.drupal.org/project/field_formatter) module
+provides a collection of generic formatters for entity reference fields that
+output only a specific field of the referenced entity.
+There are currently three formatters:
 
 - Field formatter with inline settings (Entity reference fields)
 - Field formatter from view display (Entity reference fields)
@@ -18,7 +19,9 @@ a specific field of the referenced entity. There are currently three formatters:
 
 ## Usage
 
-### In order to use the "Field formatter with inline settings" and "Field formatter from view display":
+### In order to use the "Field formatter with inline settings"
+and "Field formatter from view display":
+
 1. Create entity reference field:
   * On `admin/structure` choose **Content types**.
   * Choose content type entity reference field should be added to, for example:

@@ -13,6 +13,7 @@ use Drupal\Core\Field\FormatterPluginManager;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Wraps an existing field.
@@ -116,7 +117,9 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
   protected function getAvailableFormatterOptions(FieldStorageDefinitionInterface $field_storage_definition) {
     $formatters = $this->formatterPluginManager->getOptions($field_storage_definition->getType());
     $formatter_instances = array_map(
-      function($formatter_id) {
+      function ($formatter_id) {
+        // TODO: Ensure it is right to empty all values here, see:
+        // https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Field%21FormatterPluginManager.php/class/FormatterPluginManager/8.2.x
         $configuration = [
           'field_definition' => $this->fieldDefinition,
           'settings' => [],
@@ -128,23 +131,26 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
       },
       array_combine(array_keys($formatters), array_keys($formatters))
     );
-    $filtered_formatter_instances = array_filter(
-      $formatter_instances,
+
+    $filtered_formatter_instances = array_filter($formatter_instances,
       function (FormatterInterface $formatter) {
         return $formatter->isApplicable($this->fieldDefinition);
       }
     );
+
     $options = array_map(
       function (FormatterInterface $formatter) {
         return $formatter->getPluginDefinition()['label'];
-      },
-      $filtered_formatter_instances
-    );
+      }, $filtered_formatter_instances);
+
+    // Remove field_link itself.
+    unset($options['field_link']);
+
     return $options;
   }
 
   /**
-   * Ajax submit callback for formatter type change.
+   * Ajax callback for fields with AJAX callback to update form substructure.
    *
    * @param array $form
    *   The form.
@@ -155,40 +161,34 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
    *   The replaced form substructure.
    */
   public static function onFormatterTypeChange(array $form, FormStateInterface $form_state) {
-    return $form['fields'][$form_state->getStorage()['plugin_settings_edit']]['plugin']['settings_edit_form']['settings']['settings'];
-  }
-
-  /**
-   * Rebuilds the form on select submit.
-   *
-   * @param array $form
-   *   The form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   */
-  public static function rebuildSubmit(array $form, FormStateInterface $form_state) {
-    $form_state->setRebuild(TRUE);
+    $triggeringElement = $form_state->getTriggeringElement();
+    // Dynamically return the dependent ajax for elements based on the
+    // triggering element. This shouldn't be done statically because
+    // settings forms may be different, e.g. for layout builder, core, ...
+    if (!empty($triggeringElement['#array_parents'])) {
+      $subformKeys = $triggeringElement['#array_parents'];
+      // Remove the triggering element itself and add the 'settings' below key.
+      array_pop($subformKeys);
+      $subformKeys[] = 'settings';
+      // Return the subform:
+      return NestedArray::getValue($form, $subformKeys);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    // Name of the field this formatter is currently displaying.
-    $field_name = $this->fieldDefinition->getName();
-    $triggering_element = $form_state->getTriggeringElement();
-
+    $form = parent::settingsForm($form, $form_state);
     $field_storage = $this->fieldDefinition->getFieldStorageDefinition();
     $formatter_options = $this->getAvailableFormatterOptions($field_storage);
-    if ($field_name) {
-      // Form state is not updated as long just select elements are triggered.
-      $formatter_type = $this->getSetting('type');
-      if ($triggering_element['#name'] == "fields[$field_name][settings_edit_form][settings][field_name]") {
+
+    if (!empty($formatter_options)) {
+      $formatter_type = $this->getSettingFromFormState($form_state, 'type');
+      $settings = $this->getSettingFromFormState($form_state, 'settings');
+      if (!isset($formatter_options[$formatter_type])) {
         $formatter_type = key($formatter_options);
-      }
-      elseif ($triggering_element['#name'] == "fields[$field_name][settings_edit_form][settings][type]") {
-        // If triggered element is formatter set correct formatter type.
-        $formatter_type = $triggering_element['#value'];
+        $settings = [];
       }
 
       $form['type'] = [
@@ -199,19 +199,17 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
         // Note: We cannot use ::foo syntax, because the form is the entity form
         // display.
         '#ajax' => [
-          'callback' => [static::class, 'onFormatterTypeChange'],
+          'callback' => [get_class(), 'onFormatterTypeChange'],
           'wrapper' => 'field-formatter-settings-ajax',
           'method' => 'replace',
         ],
-        '#submit' => [[static::class, 'rebuildSubmit']],
-        '#executes_submit_callback' => TRUE,
       ];
 
       $options = [
         'field_definition' => $this->getFieldDefinition($field_storage),
         'configuration' => [
           'type' => $formatter_type,
-          'settings' => $this->getSetting('settings'),
+          'settings' => $settings,
           'label' => '',
           'weight' => 0,
         ],
@@ -221,7 +219,7 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
       // Get the formatter settings form.
       $settings_form = ['#value' => []];
       if ($formatter = $this->formatterPluginManager->getInstance($options)) {
-        $settings_form = $formatter->settingsForm($form, $form_state);
+        $settings_form = $formatter->settingsForm([], $form_state);
       }
       $form['settings'] = $settings_form;
       $form['settings']['#prefix'] = '<div id="field-formatter-settings-ajax">';
@@ -282,6 +280,35 @@ abstract class FieldWrapperBase extends FormatterBase implements ContainerFactor
 
     $build = $this->getViewDisplay($entity->bundle())->build($entity);
     return isset($build[$this->fieldDefinition->getName()]) ? $build[$this->fieldDefinition->getName()] : [];
+  }
+
+  /**
+   * Helper function to retrieve the $setting from the $form_state.
+   *
+   * @param Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   * @param string $setting
+   *   The setting key to retrieve.
+   */
+  protected function getSettingFromFormState(FormStateInterface $form_state, $setting) {
+    $field_name = $this->fieldDefinition->getName();
+    if ($form_state->hasValue([
+      'fields',
+      $field_name,
+      'settings_edit_form',
+      'settings',
+      $setting,
+    ])) {
+      return $form_state->getValue([
+        'fields',
+        $field_name,
+        'settings_edit_form',
+        'settings',
+        $setting,
+      ]);
+    }
+
+    return $this->getSetting($setting);
   }
 
 }

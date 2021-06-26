@@ -3,15 +3,19 @@
 namespace Drupal\field_formatter\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Field\FormatterPluginManager;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Plugin implementation of the 'link' formatter.
@@ -41,23 +45,6 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
   protected $formatterPluginManager;
 
   /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $plugin_id,
-      $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings'],
-      $container->get('entity_field.manager'),
-      $container->get('plugin.manager.field.formatter')
-    );
-  }
-
-  /**
    * Constructs a FieldFormatterWithInlineSettings object.
    *
    * @param string $plugin_id
@@ -74,22 +61,50 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
    *   The view mode.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param \Drupal\Core\Entity\EntityFieldManager $entity_field_manager
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager object for retrieving the correct language code.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    *   The entity field manager.
    * @param \Drupal\Core\Field\FormatterPluginManager $formatter_plugin_manager
    *   The formatter plugin manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, EntityFieldManager $entity_field_manager, FormatterPluginManager $formatter_plugin_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, LanguageManagerInterface $language_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityFieldManagerInterface $entity_field_manager, FormatterPluginManager $formatter_plugin_manager, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $language_manager, $entity_type_bundle_info, $entity_field_manager);
     $this->entityFieldManager = $entity_field_manager;
     $this->formatterPluginManager = $formatter_plugin_manager;
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('language_manager'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('entity_field.manager'),
+      $container->get('plugin.manager.field.formatter'),
+      $container->get('entity_type.manager')
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return [
+    return parent::defaultSettings() + [
       'field_name' => '',
       'type' => '',
       'settings' => [],
@@ -122,7 +137,9 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
   protected function getAvailableFormatterOptions(FieldStorageDefinitionInterface $field_storage_definition) {
     $field_definition = $this->getFieldDefinition($field_storage_definition);
     $formatters = $this->formatterPluginManager->getOptions($field_storage_definition->getType());
-    $formatter_instances = array_map(function($formatter_id) use ($field_definition) {
+    $formatter_instances = array_map(function ($formatter_id) use ($field_definition) {
+      // TODO: Ensure it is right to empty all values here, see:
+      // https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Field%21FormatterPluginManager.php/class/FormatterPluginManager/8.2.x
       $configuration = [
         'field_definition' => $field_definition,
         'settings' => [],
@@ -142,7 +159,7 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
   }
 
   /**
-   * Ajax submit callback for field name change.
+   * Ajax callback for fields with AJAX callback to update form substructure.
    *
    * @param array $form
    *   The form.
@@ -153,11 +170,21 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
    *   The replaced form substructure.
    */
   public static function onFieldNameChange(array $form, FormStateInterface $form_state) {
-    return $form['fields'][$form_state->getStorage()['plugin_settings_edit']]['plugin']['settings_edit_form']['settings'];
+    $triggeringElement = $form_state->getTriggeringElement();
+    // Dynamically return the dependent ajax for elements based on the
+    // triggering element. This shouldn't be done statically because
+    // settings forms may be different, e.g. for layout builder, core, ...
+    if (!empty($triggeringElement['#array_parents'])) {
+      $subformKeys = $triggeringElement['#array_parents'];
+      // Remove the triggering element itself:
+      array_pop($subformKeys);
+      // Return the subform:
+      return NestedArray::getValue($form, $subformKeys);
+    }
   }
 
   /**
-   * Ajax submit callback for formatter type change.
+   * Ajax callback for fields with AJAX callback to update form substructure.
    *
    * @param array $form
    *   The form.
@@ -168,19 +195,18 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
    *   The replaced form substructure.
    */
   public static function onFormatterTypeChange(array $form, FormStateInterface $form_state) {
-    return $form['fields'][$form_state->getStorage()['plugin_settings_edit']]['plugin']['settings_edit_form']['settings']['settings'];
-  }
-
-  /**
-   * Rebuilds the form on select submit.
-   *
-   * @param array $form
-   *   The form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   */
-  public static function rebuildSubmit(array $form, FormStateInterface $form_state) {
-    $form_state->setRebuild(TRUE);
+    $triggeringElement = $form_state->getTriggeringElement();
+    // Dynamically return the dependent ajax for elements based on the
+    // triggering element. This shouldn't be done statically because
+    // settings forms may be different, e.g. for layout builder, core, ...
+    if (!empty($triggeringElement['#array_parents'])) {
+      $subformKeys = $triggeringElement['#array_parents'];
+      // Remove the triggering element itself and add the 'settings' below key.
+      array_pop($subformKeys);
+      $subformKeys[] = 'settings';
+      // Return the subform:
+      return NestedArray::getValue($form, $subformKeys);
+    }
   }
 
   /**
@@ -208,12 +234,10 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
       // Note: We cannot use ::foo syntax, because the form is the entity form
       // display.
       '#ajax' => [
-        'callback' => [get_called_class(), 'onFieldNameChange'],
+        'callback' => [get_class(), 'onFieldNameChange'],
         'wrapper' => 'field-formatter-ajax',
         'method' => 'replace',
       ],
-      '#submit' => [[get_called_class(), 'rebuildSubmit']],
-      '#executes_submit_callback' => TRUE,
     ];
 
     $form['label'] = [
@@ -228,7 +252,7 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
       '#default_value' => $this->getSettingFromFormState($form_state, 'label'),
     ];
 
-    if ($formatted_field_name && isset($formatter_options)) {
+    if ($formatted_field_name && !empty($formatter_options)) {
       $formatter_type = $this->getSettingFromFormState($form_state, 'type');
       $settings = $this->getSettingFromFormState($form_state, 'settings');
       if (!isset($formatter_options[$formatter_type])) {
@@ -244,12 +268,10 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
         // Note: We cannot use ::foo syntax, because the form is the entity form
         // display.
         '#ajax' => [
-          'callback' => [get_called_class(), 'onFormatterTypeChange'],
+          'callback' => [get_class(), 'onFormatterTypeChange'],
           'wrapper' => 'field-formatter-settings-ajax',
           'method' => 'replace',
         ],
-        '#submit' => [[get_called_class(), 'rebuildSubmit']],
-        '#executes_submit_callback' => TRUE,
       ];
 
       $options = [
@@ -303,13 +325,6 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
   public function settingsSummary() {
     $summary = parent::settingsSummary();
 
-    if ($field_name = $this->getSetting('field_name')) {
-      $summary[] = $this->t('Field %field_name displayed.', ['%field_name' => $field_name]);
-    }
-    else {
-      $summary[] = $this->t('Field not configured.');
-    }
-
     if ($type = $this->getSetting('type')) {
       $summary[] = $this->t('Formatter %type used.', ['%type' => $type]);
     }
@@ -318,14 +333,6 @@ class FieldFormatterWithInlineSettings extends FieldFormatterBase implements Con
     }
 
     return $summary;
-  }
-
-  protected function getSettingFromFormState(FormStateInterface $form_state, $setting) {
-    $field_name = $this->fieldDefinition->getName();
-    if ($form_state->hasValue(['fields', $field_name, 'settings_edit_form', 'settings', $setting])) {
-      return $form_state->getValue(['fields', $field_name, 'settings_edit_form', 'settings', $setting]);
-    }
-    return $this->getSetting($setting);
   }
 
 }

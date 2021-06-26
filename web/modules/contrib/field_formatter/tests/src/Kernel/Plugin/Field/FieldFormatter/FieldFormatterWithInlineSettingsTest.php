@@ -123,8 +123,10 @@ class FieldFormatterWithInlineSettingsTest extends KernelTestBase {
     $build = $parent_entity_view_display->build($entity);
 
     \Drupal::service('renderer')->renderRoot($build);
-
-    $this->assertEquals($expected_output, $build['test_er_field']['#markup']);
+    // Prepare XML structure to compare:
+    $expected_output = str_replace(["\r", "\n"], '', trim($expected_output));
+    $actual_output = str_replace(["\r", "\n"], '', trim($build['test_er_field']['#markup']));
+    $this->assertXmlStringEqualsXmlString($expected_output, $actual_output, 'Expected HTML is "' . htmlentities($expected_output) . '" but was: "' . htmlentities($actual_output) . '"');
   }
 
   /**
@@ -144,6 +146,7 @@ class FieldFormatterWithInlineSettingsTest extends KernelTestBase {
           </div>
 
 EXPECTED;
+
     $output_without_label = <<<EXPECTED
 
   <div>
@@ -155,11 +158,25 @@ EXPECTED;
 
 EXPECTED;
 
+    $output_without_label_vh = <<<EXPECTED
+
+  <div>
+    <div>test_er_field</div>
+              <div>
+  <div>
+    <div class="visually-hidden">Name</div>
+              <div>child name</div>
+          </div>
+  </div>
+          </div>
+
+EXPECTED;
+
     return [
       ['above', $output_with_label],
       ['inline', $output_with_label],
       ['hidden', $output_without_label],
-      ['visually_hidden', $output_with_label],
+      ['visually_hidden', $output_without_label_vh],
     ];
   }
 

@@ -2,14 +2,16 @@
 
 namespace Drupal\field_formatter\Tests;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Ensures that field_formatter UI works correctly.
  *
  * @group field_formatter
  */
-class FieldFormatterWithInlineSettingsUITest extends WebTestBase {
+class FieldFormatterWithInlineSettingsUITest extends BrowserTestBase {
+  use StringTranslationTrait;
 
   /**
    * The test user.
@@ -55,7 +57,7 @@ class FieldFormatterWithInlineSettingsUITest extends WebTestBase {
       'name[0][value]' => $term_name,
       'field_test_field[0][value]' => $field,
     ];
-    $this->drupalPostForm(NULL, $edit_term, t('Save'));
+    $this->drupalPostForm(NULL, $edit_term, $this->t('Save'));
     $this->assertText("Created new term $term_name.", 'Created term.');
 
     // Add content.
@@ -65,7 +67,7 @@ class FieldFormatterWithInlineSettingsUITest extends WebTestBase {
       'title[0][value]' => $content_name,
       'field_field_test_ref_inline[0][target_id]' => $term_name,
     ];
-    $this->drupalPostForm(NULL, $edit_content, t('Save'));
+    $this->drupalPostForm(NULL, $edit_content, $this->t('Save'));
     $this->assertRaw('<div class="field__label">test_field</div>', 'Field is correctly displayed on node page.');
     $this->assertRaw('<div class="field__item">' . $field . '</div>', "Field's content was found.");
 
@@ -73,10 +75,10 @@ class FieldFormatterWithInlineSettingsUITest extends WebTestBase {
     // are available (all bundles).
     $this->drupalGet('admin/structure/types/manage/test_content_type/display');
     // Open the formatter settings.
-    $this->drupalPostAjaxForm(NULL, [], 'field_field_test_ref_inline_settings_edit');
+    $this->drupalPostForm(NULL, [], 'field_field_test_ref_inline_settings_edit');
     $this->assertFieldByName('fields[field_field_test_ref_inline][settings_edit_form][settings][field_name]', NULL, 'Destination fields dropdown element found.');
     $field_select_element = $this->xpath('//*[@name="fields[field_field_test_ref_inline][settings_edit_form][settings][field_name]"]');
-    $field_select_id = $field_select_element[0]['id'];
+    $field_select_id = $field_select_element[0]->getAttribute('id');
     $this->assertOption($field_select_id, 'field_test_field', 'First target field is an available option.');
     $this->assertOption($field_select_id, 'field_test_field2', 'Second target field is an available option.');
     $this->assertFieldByName('fields[field_field_test_ref_inline][settings_edit_form][settings][label]', 'above', 'The "Label" dropdown element exists and is set to "Above".');
