@@ -450,3 +450,10 @@ a#add_layer{
 .layer-single-settingsss.layer-settings__xs .option-xs{
   display: block;
 }
+
+.gavias-image-demo{
+  height: 46px;
+  top: 4px;
+  position: absolute;
+  right: 35px;
+}

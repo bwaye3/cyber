@@ -7,6 +7,7 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\block\Entity\Block;
+use Drupal\Core\Url;
 
 $theme_path = drupal_get_path('theme', 'gavias_edupia');
 include_once $theme_path . '/includes/template.functions.php';
@@ -29,9 +30,9 @@ function gavias_edupia_preprocess_page(&$variables) {
   $variables['footer_four_size'] = theme_get_setting('footer_four_size');
 
   $variables['preloader'] = theme_get_setting('preloader');
-
+ 
   $variables['theme_path'] = $base_url . '/' . $theme_path;
-
+  
   //Header setting -----------
   $header = 'header';
   if(theme_get_setting('default_header')){
@@ -41,7 +42,7 @@ function gavias_edupia_preprocess_page(&$variables) {
   if(isset($variables['gva_header']) && $variables['gva_header'] && $variables['gva_header']!='_none' ){
     $header = $variables['gva_header'];
   }
-
+  
   if(file_exists($theme_path . '/templates/page/' . trim($header) . '.html.twig')){
     $variables['header_skin'] = $variables['directory'] . '/templates/page/' . trim($header) . '.html.twig';
   }else{
@@ -52,7 +53,7 @@ function gavias_edupia_preprocess_page(&$variables) {
   $user = \Drupal::currentUser();
   $user_picture = '';
   if($uid = $user->id()){
-    $custom_account = "Hi, <span>{$user->getUsername()}</span>";
+    $custom_account = "Hi, <span>{$user->getAccountname()}</span>";
     $user = \Drupal\user\Entity\User::load($uid);
     if (!empty($user->user_picture) && $user->user_picture->isEmpty() === FALSE) {
       $user_picture = $user->user_picture->entity->getFileUri();
@@ -86,10 +87,6 @@ function gavias_edupia_preprocess_html(&$variables) {
   global $theme, $base_url;
   global $parent_root;
 
-  if ($node = \Drupal::request()->attributes->get('node')) {
-      $variables['attributes']['class'][] = 'page-node-' . $node->id();
-    }
-
   $theme_path = drupal_get_path('theme', 'gavias_edupia');
 
   if(theme_get_setting('enable_panel') == '1' ){
@@ -122,7 +119,7 @@ function gavias_edupia_preprocess_html(&$variables) {
 
   ob_start();
   $json = \Drupal::config('gaviasthemer.settings')->get('gavias_customize');
-
+  
   if(!$json){
     if(file_exists($theme_path . '/css/customize.json')){
       $json = file_get_contents($theme_path . '/css/customize.json');
@@ -137,16 +134,16 @@ function gavias_edupia_preprocess_html(&$variables) {
 
   $variables['customize_styles'] = $customize_styles;
 
-  //Form customize
+  //Form customize 
   $user = \Drupal::currentUser();
 
   if(theme_get_setting('enable_customize') == 1 &&  \Drupal::moduleHandler()->moduleExists('gaviasthemer') && ($user->hasPermission('administer gavias_customize') || $user->hasPermission('administer gavias_customize preview')) ){
-    $url_customize_save = \Drupal::url('gaviasthemer.admin.customize_save', array(), array('absolute' => TRUE));
-    $variables['#attached']['drupalSettings']['gavias_customize']['save'] = $url_customize_save;
-    $url_customize_preview = \Drupal::url('gaviasthemer.admin.customize_preview', array(), array('absolute' => TRUE));
-    $variables['#attached']['drupalSettings']['gavias_customize']['preview'] = $url_customize_preview;
+    $url_customize_save = Url::fromRoute('gaviasthemer.admin.customize_save', array(), array('absolute' => TRUE))->toString();
+    $variables['#attached']['drupalSettings']['gavias_customize']['save'] = $url_customize_save;  
+    $url_customize_preview = Url::fromRoute('gaviasthemer.admin.customize_preview', array(), array('absolute' => TRUE))->toString();
+    $variables['#attached']['drupalSettings']['gavias_customize']['preview'] = $url_customize_preview;  
     $variables['#attached']['library'][] = 'gaviasthemer/customize';
-
+ 
     $variables['#attached']['drupalSettings']['gavias_customize']['json'] = $json;
 
     $variables['addon_template'] = '';
@@ -171,7 +168,7 @@ function gavias_edupia_preprocess_html(&$variables) {
     }
     $variables['current_url'] = $current_url;
   }
-
+  
   //---- End customize gavias themer ---
 
   $skin = 'default';
@@ -210,9 +207,9 @@ function gavias_edupia_preprocess_html(&$variables) {
   }else{
     $variables['attributes']['class'][] = 'not-preloader';
   }
-
+  
   if(\Drupal::service('module_handler')->moduleExists('gavias_hook_themer')){
-    $abs_url_config = \Drupal::url('gavias_hook_themer.ajax_views', array(), array('absolute' => FALSE));
+    $abs_url_config = Url::fromRoute('gavias_hook_themer.ajax_views', array(), array('absolute' => FALSE))->toString(); 
   }else{
     $abs_url_config = '';
   }
@@ -245,7 +242,7 @@ function gavias_edupia_preprocess_block(&$variables) {
     $tmp_logo = theme_get_setting('logo');
     $variables['setting_logo'] = $tmp_logo['use_default'];
   }
-}
+} 
 
 function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $styles = array();
@@ -254,7 +251,7 @@ function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $bg_position = 'center center';
   $bg_repeat = 'no-repeat';
   $text_style = 'text-dark';
-
+  
   if (!empty($variables['elements']['#id'])) {
     $block = Block::load($variables['elements']['#id']);
     if($variables['plugin_id'] == 'system_breadcrumb_block'){
@@ -299,9 +296,10 @@ function gavias_edupia_preprocess_block__system_breadcrumb_block(&$variables){
   $title = '';
   if ($route = $request->attributes->get(\Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT)) {
     $title = \Drupal::service('title_resolver')->getTitle($request, $route);
-  }
+  } 
   $variables['breadcrumb_title'] = $title;
 }
+
 
 /**
  * Implements hook_preprocess_HOOK() for page templates.
@@ -324,6 +322,7 @@ function gavias_edupia_preprocess_page_title(&$variables) {
     $variables['title_suffix']['add_or_remove_shortcut']['#weight'] = -100;
   }
 }
+
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter() for form templates.
@@ -352,7 +351,7 @@ function gavias_edupia_theme_suggestions_page_alter(array &$suggestions, array $
     $type = '';
     if(is_object($product)){
       $id = $product->id();
-      $result = db_select('{commerce_product}', 'p')
+      $result = Drupal::database()->select('{commerce_product}', 'p')
         ->fields('p', array('product_id', 'type'))
         ->condition('product_id', $id, '=')
         ->execute()
@@ -370,21 +369,7 @@ function gavias_edupia_theme_suggestions_page_alter(array &$suggestions, array $
 }
 
 function gavias_edupia_theme_suggestions_field_alter(&$suggestions, $variables) {
-  $suggestions[] = 'field__' .
-  $variables['element']['#field_name'] . '__' .
+  $suggestions[] = 'field__' . 
+  $variables['element']['#field_name'] . '__' . 
   $variables['element']['#view_mode'];
 }
-
-/**
- * Implementation of block_form_alter().
- *
- *
- */
-function gavias_edupia_form_search_block_form_alter(&$form, &$form_state)
-{
-  $form['keys']['#attributes']['placeholder'][] = t('Search here...');
-  $form['actions']['submit']['#value'] = html_entity_decode('GO');
-  $form['actions']['submit']['#attributes']['alt'] = "Search submit";
-  $form['actions']['submit']['#attributes']['class'][] = 'btn btn-default';
-}
-

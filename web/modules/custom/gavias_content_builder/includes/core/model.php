@@ -1,6 +1,6 @@
 <?php
 function gavias_content_builder_load($pid) {
-  $result = db_select('{gavias_content_builder}', 'd')
+  $result = \Drupal::database()->select('{gavias_content_builder}', 'd')
           ->fields('d')
           ->condition('id', $pid, '=')
           ->execute()
@@ -18,7 +18,7 @@ function gavias_content_builder_load($pid) {
 }
 
 function gavias_content_builder_load_by_machine($mid) {
-  $result = db_select('{gavias_content_builder}', 'd')
+  $result = \Drupal::database()->select('{gavias_content_builder}', 'd')
           ->fields('d', array('id', 'title', 'params'))
           ->condition('body_class', $mid, '=')
           ->execute()
@@ -36,7 +36,7 @@ function gavias_content_builder_load_by_machine($mid) {
 }
 
 function gavias_content_builder_check_machine($id, $mid){
-  $result = db_select('{gavias_content_builder}', 'd')
+  $result = \Drupal::database()->select('{gavias_content_builder}', 'd')
     ->fields('d')
     ->condition('id', $id , '<>')
     ->condition('body_class', $mid, '=')
@@ -49,7 +49,7 @@ function gavias_content_builder_check_machine($id, $mid){
 }
 
 function gavias_content_builder_get_list(){
-  $result = db_select('{gavias_content_builder}', 'd')
+  $result = \Drupal::database()->select('{gavias_content_builder}', 'd')
     ->fields('d')
     ->execute();
   return $result;

@@ -4,6 +4,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation;
+use Drupal\Core\Url;
+
 class GroupForm implements FormInterface {
    /**
    * Implements \Drupal\Core\Form\FormInterface::getFormID().
@@ -20,7 +22,7 @@ class GroupForm implements FormInterface {
       if(\Drupal::request()->attributes->get('sid')) $sid = \Drupal::request()->attributes->get('sid');
       
       if (is_numeric($sid)) {
-        $slide = db_select('{gavias_sliderlayergroups}', 'd')->fields('d')->condition('id', $sid, '=')->execute()->fetchAssoc();
+        $slide = \Drupal::database()->select('{gavias_sliderlayergroups}', 'd')->fields('d')->condition('id', $sid, '=')->execute()->fetchAssoc();
         } else {
             $slide = array('id' => 0, 'title' => '');
         }
@@ -61,25 +63,25 @@ class GroupForm implements FormInterface {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if (is_numeric($form['id']['#value']) && $form['id']['#value'] > 0) {
-      $sid = db_update("gavias_sliderlayergroups")
+      $sid = $builder = \Drupal::database()->update("gavias_sliderlayergroups")
         ->fields(array(
             'title' => $form['title']['#value'],
         ))
         ->condition('id', $form['id']['#value'])
         ->execute();
         \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      drupal_set_message("Slide '{$form['title']['#value']}' has been updated");
+      \Drupal::messenger()->addMessage("Slide '{$form['title']['#value']}' has been updated");
     } else {
-        $sid = db_insert("gavias_sliderlayergroups")
+        $sid = $builder = \Drupal::database()->insert("gavias_sliderlayergroups")
           ->fields(array(
               'title' => $form['title']['#value'],
               'params' => ''
           ))
           ->execute();
-        drupal_set_message("Slide '{$form['title']['#value']}' has been created");
+        \Drupal::messenger()->addMessage("Slide '{$form['title']['#value']}' has been created");
         \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
     }
-    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_group.admin'));
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_group.admin')->toString());
     $response->send();
    }
 }

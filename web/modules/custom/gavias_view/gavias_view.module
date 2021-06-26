@@ -118,7 +118,9 @@ function template_preprocess_views_view_gvaportfolio(&$variables) {
   
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
 
-  $terms_tmp = \Drupal::entityManager()->getStorage('taxonomy_term')->loadTree($taxonomy);
+  $terms_tmp = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($taxonomy);
+
+  $terms = array();
 
   if($tids){
     $tids_arr = preg_split("/,/", $tids);

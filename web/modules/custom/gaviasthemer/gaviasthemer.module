@@ -7,7 +7,7 @@ use \Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\MenuLinkContent;
 use Drupal\block\Entity\Block;
-
+use \Drupal\Core\File\FileSystemInterface;
 define( 'GAVIASTHEMER_VERSION', '1.0' );
 define( 'GAVIASTHEMER_PATH', drupal_get_path('module', 'gaviasthemer') );
     
@@ -17,7 +17,7 @@ function gaviasthemer_get_blocks_options() {
     // Get default theme for user.
     $theme_default = \Drupal::config('system.theme')->get('default');
     // Get storage handler of block.
-    $block_storage = \Drupal::entityManager()->getStorage('block');
+    $block_storage = \Drupal::entityTypeManager()->getStorage('block');
     // Get the enabled block in the default theme.
     $entity_ids = $block_storage->getQuery()->condition('theme', $theme_default)->execute();
     $entities = $block_storage->loadMultiple($entity_ids);
@@ -34,7 +34,7 @@ function gaviasthemer_get_blocks_options() {
 
 function gaviasthemer_render_block($key) {
   $block = \Drupal\block\Entity\Block::load($key);
-  $block_content = \Drupal::entityManager()
+  $block_content = \Drupal::entityTypeManager()
     ->getViewBuilder('block')
     ->view($block);
 
@@ -302,7 +302,8 @@ function gaviasthemer_form_block_form_alter(&$form, \Drupal\Core\Form\FormStateI
     if($block->getPluginId() == 'system_breadcrumb_block'){
       $values = $form_state->getValues();
       if( isset($values['breadcrumb_background_image_tmp']) && !empty($values['breadcrumb_background_image_tmp']) ) {
-        $filename = file_unmanaged_copy($values['breadcrumb_background_image_tmp']->getFileUri());
+        //$filename = \Drupal::service('file_system')->copy($values['breadcrumb_background_image_tmp']->getFileUri(), 'public://breadcrumb-image', FileSystemInterface::EXISTS_REPLACE);
+        $filename = \Drupal::service('file_system')->copy($values['breadcrumb_background_image_tmp']->getFileUri(), 'public://breadcrumb-' . $values['breadcrumb_background_image_tmp']->getFileName(), FileSystemInterface::EXISTS_RENAME);
         if (!empty($filename)) {
           \Drupal::configFactory()->getEditable('gaviasthemer.settings')
           ->set('breadcrumb_background_image_path_' . $_id, gaviasthemer_validate_path($filename))
@@ -314,7 +315,7 @@ function gaviasthemer_form_block_form_alter(&$form, \Drupal\Core\Form\FormStateI
 
  function gaviasthemer_validate_path($path) {
   // Absolute local file paths are invalid.
-  if (drupal_realpath($path) == $path) {
+  if (\Drupal::service('file_system')->realpath($path) == $path) {
     return FALSE;
   }
   // A path relative to the Drupal root or a fully qualified URI is valid.

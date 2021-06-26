@@ -15,7 +15,7 @@ class GaviasContentBuilderController extends ControllerBase {
   public function gavias_content_builder_list(){
     $page['#attached']['library'][] = 'gavias_content_builder/gavias_content_builder.assets.admin';
     $header = array( 'ID', 'Title', 'Action');
-    $results = db_select('{gavias_content_builder}', 'd')
+    $results = \Drupal::database()->select('{gavias_content_builder}', 'd')
             ->fields('d', array('id', 'title', 'machine_name'))
             ->orderBy('title', 'ASC')
             ->execute();
@@ -26,11 +26,11 @@ class GaviasContentBuilderController extends ControllerBase {
       $tmp[] = $row->id;
       $tmp[] = $row->title;
       $tmp[] = t('<a href="@link">Change Name</a> | <a href="@link_2">Configuration</a> |  <a href="@link_3">Delete</a> | <a href="@link_4">Duplicate</a> | <a href="@link_5">Export</a>', array(
-            '@link' => \Drupal::url('gavias_content_builder.admin.add', array('bid' => $row->id)),
-            '@link_2' => \Drupal::url('gavias_content_builder.admin.edit', array('bid' => $row->id)),
-            '@link_3' => \Drupal::url('gavias_content_builder.admin.delete', array('bid' => $row->id)),
-            '@link_4' => \Drupal::url('gavias_content_builder.admin.clone', array('bid' => $row->id)),
-            '@link_5' => \Drupal::url('gavias_content_builder.admin.export', array('bid' => $row->id)),
+            '@link' => Url::fromRoute('gavias_content_builder.admin.add', array('bid' => $row->id))->toString(),
+            '@link_2' => Url::fromRoute('gavias_content_builder.admin.edit', array('bid' => $row->id))->toString(),
+            '@link_3' => Url::fromRoute('gavias_content_builder.admin.delete', array('bid' => $row->id))->toString(),
+            '@link_4' => Url::fromRoute('gavias_content_builder.admin.clone', array('bid' => $row->id))->toString(),
+            '@link_5' => Url::fromRoute('gavias_content_builder.admin.export', array('bid' => $row->id))->toString(),
         ));
       $rows[] = $tmp;
     }
@@ -39,7 +39,7 @@ class GaviasContentBuilderController extends ControllerBase {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => t('No Content Builder Available. <a href="@link">Add Content Builder</a>', array('@link' => \Drupal::url('gavias_content_builder.admin.add', array('bid'=>0)))),
+      '#empty' => t('No Content Builder Available. <a href="@link">Add Content Builder</a>', array('@link' => Url::fromRoute('gavias_content_builder.admin.add', array('bid'=>0))->toString())),
     );
     return $page;
   }
@@ -51,7 +51,7 @@ class GaviasContentBuilderController extends ControllerBase {
 
     $page['#attributes']['classes_array'][] = 'form-blockbuilder';
 
-    $abs_url_config = \Drupal::url('gavias_content_builder.admin.save', array(), array('absolute' => FALSE)); 
+    $abs_url_config = Url::fromRoute('gavias_content_builder.admin.save', array(), array('absolute' => FALSE))->toString(); 
     
     $page['#attached']['drupalSettings']['gavias_content_builder']['saveConfigURL'] = $abs_url_config;
 
@@ -94,7 +94,7 @@ class GaviasContentBuilderController extends ControllerBase {
     $data = $_REQUEST['data'];
     $pid = $_REQUEST['pid'];
 
-    db_update("gavias_content_builder")
+    $builder = \Drupal::database()->update("gavias_content_builder")
           ->fields(array(
               'params' => $data,
           ))

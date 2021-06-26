@@ -5,6 +5,7 @@ use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation;
 use Drupal\file\Entity\File;
+use Drupal\Core\Url;
 
 class ImportForm implements FormInterface {
    /**
@@ -22,7 +23,7 @@ class ImportForm implements FormInterface {
       if(\Drupal::request()->attributes->get('gid')) $gid = \Drupal::request()->attributes->get('gid');
 
       if (is_numeric($gid)) {
-        $group = db_select('{gavias_sliderlayergroups}', 'd')
+        $group = \Drupal::database()->select('{gavias_sliderlayergroups}', 'd')
            ->fields('d')
            ->condition('id', $gid, '=')
            ->execute()
@@ -31,7 +32,7 @@ class ImportForm implements FormInterface {
         $group = array('id' => 0, 'title' => '');
       }
       if($group['id']==0){
-        drupal_set_message('Not found gavias slider layer !');
+        \Drupal::messenger()->addMessage('Not found gavias slider layer !');
         return false;
       }
 
@@ -95,7 +96,7 @@ class ImportForm implements FormInterface {
       $json = base64_decode($data);
       $slideshow = json_decode($json);
 
-      db_update("gavias_sliderlayergroups")
+      $builder = \Drupal::database()->update("gavias_sliderlayergroups")
       ->fields(array(
         'params' => (isset($slideshow->group->params) && $slideshow->group->params) ? $slideshow->group->params : ''
       ))
@@ -104,10 +105,10 @@ class ImportForm implements FormInterface {
     
       $i = 0; 
       if($slideshow->sliders){
-        db_delete('gavias_sliderlayers')->condition('group_id', $gid)->execute();
+        \Drupal::database()->delete('gavias_sliderlayers')->condition('group_id', $gid)->execute();
         foreach ($slideshow->sliders as $key => $slider) {
           $i++;
-          db_insert("gavias_sliderlayers")
+          $builder = \Drupal::database()->insert("gavias_sliderlayers")
             ->fields(array(
               'sort_index' => (isset($slider->sort_index) && $slider->sort_index) ? $slider->sort_index : $i,
               'status' => (isset($slider->status) && $slider->status) ? $slider->status : 1,
@@ -122,8 +123,8 @@ class ImportForm implements FormInterface {
       }  
 
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      drupal_set_message("Slider Layer '{$form['title']['#value']}' has been import");
-      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_group.admin', array('gid'=>$gid)));
+      \Drupal::messenger()->addMessage("Slider Layer '{$form['title']['#value']}' has been import");
+      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_group.admin', array('gid'=>$gid))->toString());
       $response->send();
     }  
   }

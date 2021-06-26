@@ -4,6 +4,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation;
+use Drupal\Core\Url;
+
 class GroupClone implements FormInterface {
    /**
    * Implements \Drupal\Core\Form\FormInterface::getFormID().
@@ -20,7 +22,7 @@ class GroupClone implements FormInterface {
       if(\Drupal::request()->attributes->get('sid')) $sid = \Drupal::request()->attributes->get('sid');
       
       if (is_numeric($sid)) {
-        $slide = db_select('{gavias_sliderlayergroups}', 'd')
+        $slide = \Drupal::database()->select('{gavias_sliderlayergroups}', 'd')
                  ->fields('d')
                  ->condition('id', $sid, '=')
                  ->execute()->fetchAssoc();
@@ -69,7 +71,7 @@ class GroupClone implements FormInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if (is_numeric($form['id']['#value']) && $form['id']['#value'] > 0) {
       $old_id = $form['id']['#value'];
-      $new_gid = db_insert("gavias_sliderlayergroups")
+      $new_gid = $builder = \Drupal::database()->insert("gavias_sliderlayergroups")
       ->fields(array(
           'title' => $form['title']['#value'],
           'params' => $form['params']['#value']
@@ -79,7 +81,7 @@ class GroupClone implements FormInterface {
       $slides = gavias_sliders_by_group($old_id);
 
       foreach ($slides as $key => $slide) {
-        db_insert("gavias_sliderlayers")
+        $builder = \Drupal::database()->insert("gavias_sliderlayers")
         ->fields(array(
           'title'         => (isset($slide->title) && $slide->title) ? $slide->title : '',
           'group_id'      => $new_gid,
@@ -92,10 +94,10 @@ class GroupClone implements FormInterface {
         ->execute();
       }
 
-      drupal_set_message("Slide '{$form['title']['#value']}' has been cloned");
+      \Drupal::messenger()->addMessage("Slide '{$form['title']['#value']}' has been cloned");
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
     }
-    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_group.admin'));
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_group.admin')->toString());
     $response->send();
    }
 }

@@ -1,4 +1,3 @@
-(function ($) {
 $.notify.addStyle("metro", {
     html:
         "<div>" +
@@ -15,9 +14,8 @@ $.notify.addStyle("metro", {
             "border": "1px solid #FF0026"
         },
         success: {
-            "background-color": "#5CB85C",
-            "border": "1px solid #4DB149",
-            "color": '#fff'
+            "background-color": "#32CD32",
+            "border": "1px solid #4DB149"
         },
         info: {
             "color": "#fafafa !important",
@@ -39,4 +37,3 @@ $.notify.addStyle("metro", {
         }
     }
 });
-})(jQuery);

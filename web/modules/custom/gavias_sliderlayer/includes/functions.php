@@ -14,3 +14,9 @@ function gavias_sliderlayer_writecache( $folder, $file, $value, $e='css' ){
       fwrite($handle, ($value));
       fclose($handle);
   }
+
+if(!function_exists('file_default_scheme')){
+  function file_default_scheme(){
+    return \Drupal::config('system.file')->get('default_scheme');
+  }
+}

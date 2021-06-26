@@ -14,10 +14,10 @@ function gavias_sliderlayer_delete_confirm_form($form_state) {
 
 function gavias_sliderlayer_delete_confirm_form_submit($form, &$form_state){
   $gid = $form['id']['#value'];
-  db_delete('gavias_sliderlayer')
+  \Drupal::database()->delete('gavias_sliderlayer')
           ->condition('id', $gid)
           ->execute();
-  drupal_set_message('The block bulider has been deleted');
+  \Drupal::messenger()->addMessage('The block bulider has been deleted');
   drupal_goto('admin/gavias_sliderlayer');
 }
 
@@ -33,7 +33,7 @@ function gavias_sliderlayer_export($gid){
 function gavias_sliderlayer_import($bid) {
   $bid = arg(2);
   if (is_numeric($bid)) {
-    $bblock = db_select('{gavias_sliderlayer}', 'd')
+    $bblock = \Drupal::database()->select('{gavias_sliderlayer}', 'd')
        ->fields('d')
        ->condition('id', $bid, '=')
        ->execute()
@@ -43,7 +43,7 @@ function gavias_sliderlayer_import($bid) {
   }
 
   if($bblock['id']==0){
-    drupal_set_message('Not found gavias slider !');
+    \Drupal::messenger()->addMessage('Not found gavias slider !');
     return false;
   }
 
@@ -67,13 +67,13 @@ function gavias_sliderlayer_import($bid) {
 function gavias_sliderlayer_import_submit($form, $form_state) {
   if ($form['id']['#value']) {
     $id = $form['id']['#value'];
-    db_update("gavias_sliderlayer")
+    $builder = \Drupal::database()->update("gavias_sliderlayer")
       ->fields(array(
           'params' => $form['params']['#value'],
       ))
       ->condition('id', $id)
       ->execute();
     drupal_goto('admin/gavias_sliderlayer/'.$id.'/edit');
-    drupal_set_message("Block Builder '{$form['title']['#value']}' has been updated");
+    \Drupal::messenger()->addMessage("Block Builder '{$form['title']['#value']}' has been updated");
   } 
 }

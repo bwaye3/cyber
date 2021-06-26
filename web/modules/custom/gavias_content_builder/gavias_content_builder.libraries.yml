@@ -2,7 +2,6 @@ gavias_content_builder.assets.admin:
   version: 1.x
   css:
     theme:
-      dist/css/admin.css: {}
       vendor/font-awesome/css/font-awesome.min.css: {}
       vendor/notify/styles/metro/notify-metro.css: {}
       dist/css/admin.css: {}
@@ -36,3 +35,4 @@ gavias_content_builder.assets.frontend:
   js:
     vendor/skrollr.min.js: {cope: footer}
     vendor/main.js: {cope: footer}
+

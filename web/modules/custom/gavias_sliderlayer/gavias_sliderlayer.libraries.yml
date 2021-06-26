@@ -3,29 +3,30 @@ gavias_sliderlayer.assets.admin:
   css:
     theme:
       vendor/font-awesome/css/font-awesome.min.css: {}
-      vendor/notify/styles/metro/notify-metro.css: {}
       assets/css/admin.css: {}
-      vendor/revolution/css/layers.css: {}
+      # vendor/revolution/css/layers.css: {}
       vendor/revolution/css/settings.css: {}
       vendor/jrange/nouislider.min.css: {}
       vendor/colorpicker/css/colorpicker.css: {}
+      vendor/sortable/sortable.css: {}
   js:
+    vendor/sortable/sortable-min.js: {}
     vendor/jquery-migrate.min.js: {}
     vendor/colorpicker/js/colorpicker.js: {}
-    assets/js/slider.js: { }
-    vendor/notify/notify.min.js: {}
-    vendor/notify/styles/metro/notify-metro.js: {}
+    vendor/notify/notify.js: {}
     vendor/jrange/nouislider.min.js: {}
     assets/js/upload/jquery.ui.widget.js: { }
     assets/js/upload/jquery.iframe-transport.js: { }
     assets/js/upload/jquery.fileupload.js: { }
     assets/js/upload/script.js: { }
+    assets/js/slider.js: { }
+
   dependencies:
+    - imce/drupal.imce.input
     - core/jquery
     - core/drupal
     - core/drupalSettings
     - core/jquery.once
-    - core/jquery.ui.sortable
     - core/jquery.ui.draggable
     - core/jquery.ui.dropable
     - core/jquery.ui.dialog
@@ -35,10 +36,8 @@ gavias_sliderlayer.assets.config_global:
   css:
     theme:
       assets/css/admin.css: {}
-      vendor/notify/styles/metro/notify-metro.css: {}
   js:
-    vendor/notify/notify.min.js: {}
-    vendor/notify/styles/metro/notify-metro.js: {}
+    vendor/notify/notify.js: {}
     assets/js/group.js: { }
   dependencies:
     - core/jquery

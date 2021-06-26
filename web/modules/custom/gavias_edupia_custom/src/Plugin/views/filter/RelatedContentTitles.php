@@ -37,7 +37,7 @@ class RelatedContentTitles extends ManyToOne {
     //  ;
     // $result = $query->execute();
 
-    $storage = \Drupal::entityManager()->getStorage('commerce_product');
+    $storage = \Drupal::entityTypeManager()->getStorage('commerce_product');
     $relatedContentQuery = \Drupal::entityQuery('commerce_product')
       ->condition('type', array('default'))
       ->condition('status', 1);

@@ -123,7 +123,7 @@ function gavias_sliderlayer_slides($vars){
   $vars['attributes_array']['class'] = 'gavias_sliderlayer rev_slider_wrapper fullwidthbanner-container';
   $style = array();
   $style[] = 'height:'. ((isset($settings->gridheight) && $settings->gridheight) ? $settings->gridheight : '700') . 'px';
-  $vars['attributes_array']['style'] = implode($style, ';');
+  $vars['attributes_array']['style'] = implode(';', $style);
   
   $vars['content'] = '';
   $i = 1;

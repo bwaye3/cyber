@@ -16,7 +16,7 @@ namespace Drupal\gavias_content_builder\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-
+use Drupal\Core\Url;
 class GaviasContentBuilderFormatter extends FormatterBase {
 
   /**
@@ -36,7 +36,7 @@ class GaviasContentBuilderFormatter extends FormatterBase {
           $url = \Drupal::request()->getRequestUri();
           $edit_url = '';
           if($user->hasPermission('administer gavias_content_builder')){
-            $edit_url = \Drupal::url('gavias_content_builder.admin.edit', array('bid' => $bid, 'destination' =>  $url));
+            $edit_url = Url::fromRoute('gavias_content_builder.admin.edit', array('bid' => $bid, 'destination' =>  $url))->toString();
           }
 
           $content .= '<div class="gavias-builder--content">';

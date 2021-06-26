@@ -88,31 +88,29 @@ class DelForm extends ConfirmFormBase  {
     $action = $this->action;
     if($action=='group'){
       
-      db_delete('gavias_sliderlayergroups')
+      \Drupal::database()->delete('gavias_sliderlayergroups')
         ->condition('id', $gid)
         ->execute();
 
-      db_delete('gavias_sliderlayers')
+      \Drupal::database()->delete('gavias_sliderlayers')
         ->condition('group_id', $gid)
         ->execute(); 
 
-      drupal_set_message('The group slider has been deleted');
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      drupal_set_message("SliderLayer Group '#{$gid}' has been delete");
-      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_group.admin'));
+      \Drupal::messenger()->addMessage("SliderLayer Group '#{$gid}' has been deleted");
+      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_group.admin')->toString());
       $response->send();
     }
 
     if($action=='slider'){
       
-      db_delete('gavias_sliderlayers')
+      \Drupal::database()->delete('gavias_sliderlayers')
         ->condition('id', $sid)
         ->execute(); 
 
-      drupal_set_message('The slider has been deleted');
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      drupal_set_message("SliderLayer item '#{$sid}' has been delete");
-      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_sliders.admin.list', array('gid' => $gid)));
+      \Drupal::messenger()->addMessage("SliderLayer item '#{$sid}' has been deleted");
+      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_sliders.admin.list', array('gid' => $gid))->toString());
       $response->send();  
 
     }

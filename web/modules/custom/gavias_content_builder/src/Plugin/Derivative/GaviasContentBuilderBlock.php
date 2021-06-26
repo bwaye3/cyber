@@ -20,8 +20,8 @@ class GaviasContentBuilderBlock extends DeriverBase {
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    if(db_table_exists('gavias_content_builder')){
-      $results = db_select('{gavias_content_builder}', 'd')
+    if(\Drupal::database()->schema()->tableExists('gavias_content_builder')){
+      $results = \Drupal::database()->select('{gavias_content_builder}', 'd')
             ->fields('d', array('id', 'title'))
             ->execute();
 

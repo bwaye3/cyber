@@ -38,7 +38,7 @@ class GaviasContentBuilderWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     
     $field_settings = $this->getFieldSettings();
-    $results = db_select('{gavias_content_builder}', 'd')
+    $results = \Drupal::database()->select('{gavias_content_builder}', 'd')
       ->fields('d', array('id', 'title'))
       ->orderBy('title', 'ASC')
       ->execute();
@@ -93,7 +93,7 @@ class GaviasContentBuilderWidget extends WidgetBase {
     $field_name = $items->getName();
     $input = $form_state->getUserInput();
 
-    $results = db_select('{gavias_content_builder}', 'd')
+    $results = \Drupal::database()->select('{gavias_content_builder}', 'd')
       ->fields('d', array('id', 'title'))
       ->condition('use_field', 1)
       ->orderBy('title', 'ASC')
@@ -108,35 +108,48 @@ class GaviasContentBuilderWidget extends WidgetBase {
     
     $random = gavias_content_builder_makeid(10);
 
+    // if($flag_use_role){
+    //   $element['addform'] = array(
+    //     '#type' => 'linkfield',
+    //     '#title' => t('<strong>Add New Builder</strong>'),
+    //     '#url' => Url::fromRoute('gavias_content_builder.admin.add_popup', array('random'=>$random))->toString(),
+    //     '#attributes' => array(
+    //       'class' => array('use-ajax'),
+    //       'data-dialog-type' => 'modal',
+    //       'data-dialog-options' =>  json_encode(array(
+    //           'resizable' => TRUE,
+    //           'width' => '80%',
+    //           'height' => 'auto',
+    //           'max-width' => '1100px',
+    //           'modal' => TRUE,
+    //         )),
+    //       'title' => t('Add new builder'),
+    //     ),
+    //   );
+    // }
+
     if($flag_use_role){
-      $links = array(
-        '#type' => 'link',
-        '#title' => t('<strong>Add New Builder</strong>'),
-        '#url' => Url::fromRoute('gavias_content_builder.admin.add_popup', array('random'=>$random)),
-        '#attributes' => array(
-          'class' => array('use-ajax'),
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' =>  json_encode(array(
-              'resizable' => TRUE,
-              'width' => '80%',
-              'height' => 'auto',
-              'max-width' => '1100px',
-              'modal' => TRUE,
-            )),
-          'title' => t('Add new builder'),
-        ),
+
+      $link_html = '<a href="'.Url::fromRoute('gavias_content_builder.admin.add_popup', array('random'=>$random))->toString().'" class="use-ajax" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:&quot;600px&quot;,&quot;modal&quot;:true}" data-drupal-selector="edit-field-content-builder-0-addform" id="edit-field-content-builder-0-addform">';
+        $link_html .= '<strong>Add New Builder</strong>';
+      $link_html .= '</a>';
+
+      $element['addform'] = array(
+        '#type' => 'markup',
+        '#markup' => \Drupal\Core\Render\Markup::create($link_html),
+        '#weight' => -11  
       );
-      $element['addform'] = $links;
-    }
+      
+    };
 
     $element['bid'] = array(
-      '#title' => $items->getFieldDefinition()->getLabel() . (' <a class="gva-popup-iframe" href="'.\Drupal::url('gavias_content_builder.admin', array('gva_iframe'=> 'on')).'">Manage All Blockbuilders</a>'),
+      '#title' => $items->getFieldDefinition()->getLabel() . (' <a class="gva-popup-iframe" href="'.Url::fromRoute('gavias_content_builder.admin', array('gva_iframe'=> 'on'))->toString().'">Manage All Blockbuilders</a>'),
       '#type' => 'textfield',
       '#default_value' => $bid,
       '#attributes' => array('class' => array('field_gavias_content_builder', 'gva-id-' . $random), 'data-random' => $random, 'readonly'=>'readonly')
     );
     if($flag_use_role){
-      $element['bid']['#title'] = $items->getFieldDefinition()->getLabel() . (' <a class="gva-popup-iframe" href="'.\Drupal::url('gavias_content_builder.admin', array('gva_iframe'=> 'on')).'">Manage All Blockbuilders</a>');
+      $element['bid']['#title'] = $items->getFieldDefinition()->getLabel() . (' <a class="gva-popup-iframe" href="'.Url::fromRoute('gavias_content_builder.admin', array('gva_iframe'=> 'on'))->toString().'">Manage All Blockbuilders</a>');
     }else{
       $element['bid']['#title'] = $items->getFieldDefinition()->getLabel();
     }
@@ -152,7 +165,7 @@ class GaviasContentBuilderWidget extends WidgetBase {
   }
 
   function _get_list_blockbuilder($random){
-    $results = db_select('{gavias_content_builder}', 'd')
+    $results = \Drupal::database()->select('{gavias_content_builder}', 'd')
       ->fields('d', array('id', 'title', 'machine_name'))
       ->orderBy('title', 'ASC')
       ->execute();
@@ -161,11 +174,11 @@ class GaviasContentBuilderWidget extends WidgetBase {
       foreach ($results as $key => $result) {
         $html .= '<span class="gbb-item id-'.$result->id.'">';
         $html .= '<a class="select" data-id="'.$result->id.'" title="'. $result->machine_name .'">' . $list_builder[$result->id] = $result->title  . '</a>';
-        $html .= ' <span class="action">( <a class="edit gva-popup-iframe" href="'.\Drupal::url('gavias_content_builder.admin.edit', array('bid'=>$result->id)).'?gva_iframe=on" data-id="'.$result->id.'" title="'. $result->machine_name .'">Edit</a>';
-        $html .= ' | <a class="duplicate use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.\Drupal::url('gavias_content_builder.admin.duplicate_popup', array('bid'=>$result->id, 'random'=>$random)).'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Duplicate</a>';
-        $html .= ' | <a class="import use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.\Drupal::url('gavias_content_builder.admin.import_popup', array('bid'=>$result->id)).'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Import</a> ';
-        $html .= ' | <a class="export" href="'.\Drupal::url('gavias_content_builder.admin.export', array('bid'=>$result->id)).'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Export</a>';
-        $html .= ' | <a class="delete use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.\Drupal::url('gavias_content_builder.admin.delete_popup', array('bid'=>$result->id, 'random'=>$random)).'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Delete</a> )</span>';
+        $html .= ' <span class="action">( <a class="edit gva-popup-iframe" href="'.Url::fromRoute('gavias_content_builder.admin.edit', array('bid'=>$result->id))->toString().'?gva_iframe=on" data-id="'.$result->id.'" title="'. $result->machine_name .'">Edit</a>';
+        $html .= ' | <a class="duplicate use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.Url::fromRoute('gavias_content_builder.admin.duplicate_popup', array('bid'=>$result->id, 'random'=>$random))->toString().'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Duplicate</a>';
+        $html .= ' | <a class="import use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.Url::fromRoute('gavias_content_builder.admin.import_popup', array('bid'=>$result->id))->toString().'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Import</a> ';
+        $html .= ' | <a class="export" href="'.Url::fromRoute('gavias_content_builder.admin.export', array('bid'=>$result->id))->toString().'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Export</a>';
+        $html .= ' | <a class="delete use-ajax" data-dialog-type="modal" data-dialog-options="{"resizable":true,"width":"80%","height":"auto","max-width":"1100px","modal":true}" href="'.Url::fromRoute('gavias_content_builder.admin.delete_popup', array('bid'=>$result->id, 'random'=>$random))->toString().'" data-id="'.$result->id.'" title="'. $result->machine_name .'">Delete</a> )</span>';
         $html .= '</span>';
       }
     $html .= '</div>';

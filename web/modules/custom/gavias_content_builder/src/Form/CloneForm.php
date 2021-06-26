@@ -4,6 +4,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation;
+use Drupal\Core\Url;
+
 class CloneForm implements FormInterface {
    /**
    * Implements \Drupal\Core\Form\FormInterface::getFormID().
@@ -19,7 +21,7 @@ class CloneForm implements FormInterface {
       $bid = 0;
       if(\Drupal::request()->attributes->get('bid')) $bid = \Drupal::request()->attributes->get('bid');
       if (is_numeric($bid) && $bid > 0) {
-        $builder = db_select('{gavias_content_builder}', 'd')
+        $builder = \Drupal::database()->select('{gavias_content_builder}', 'd')
             ->fields('d', array('id', 'title', 'machine_name', 'use_field'))
             ->condition('id', $bid)
             ->execute()
@@ -72,7 +74,7 @@ class CloneForm implements FormInterface {
     if ($form['id']['#value']) {
       $bid = $form['id']['#value'];
       if (is_numeric($bid) && $bid > 0) {
-        $builder = db_select('{gavias_content_builder}', 'd')
+        $builder = \Drupal::database()->select('{gavias_content_builder}', 'd')
             ->fields('d', array('id', 'title', 'params', 'use_field'))
             ->condition('id', $bid)
             ->execute()
@@ -81,7 +83,7 @@ class CloneForm implements FormInterface {
         $builder = array('id' => 0, 'title' => '', 'machine_name' => '', 'params' => '', 'use_field' => 1);
       }    
 
-      $pid = db_insert("gavias_content_builder")
+      $pid = $builder = \Drupal::database()->insert("gavias_content_builder")
         ->fields(array(
             'title'         => $form['title']['#value'],
             'machine_name'  => $form['machine_name']['#value'],
@@ -90,8 +92,8 @@ class CloneForm implements FormInterface {
         ))
         ->execute();
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      drupal_set_message("Builder '{$form['title']['#value']}' has been clone");
-      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_content_builder.admin'));
+      \Drupal::messenger()->addMessage("Builder '{$form['title']['#value']}' has been clone");
+      $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_content_builder.admin')->toString());
       $response->send();
     }  
   }

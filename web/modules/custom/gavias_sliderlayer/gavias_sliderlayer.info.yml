@@ -5,7 +5,7 @@ description: Gavias SliderLayer module.
 # core: 8.x
 package: gavias
 
-version: '8.x-1.0'
-core: '8.x'
+version: '8.x-2.0'
+core_version_requirement: ^8.8 || ^9
 project: 'gavias_sliderlayer'
 datestamp: 1439548441

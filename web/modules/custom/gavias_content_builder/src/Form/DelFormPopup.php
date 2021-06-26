@@ -97,11 +97,11 @@ class DelFormPopup extends FormBase{
   public function submitForm(array &$form, FormStateInterface $form_state) {
      $bid = $this->bid;
     if(!$bid && \Drupal::request()->attributes->get('bid')) $bid = \Drupal::request()->attributes->get('bid');
-    db_delete('gavias_content_builder')
+    \Drupal::database()->delete('gavias_content_builder')
             ->condition('id', $bid)
             ->execute();
     \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-    drupal_set_message("blockbuilder '#{$bid}' has been delete");
+    \Drupal::messenger()->addMessage("blockbuilder '#{$bid}' has been delete");
   }
 
   public function getFormArgs($form_state){

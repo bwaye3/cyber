@@ -1,14 +1,17 @@
 <?php
+use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Url;
+
 function gavias_edupia_check_registered_course($uid, $course_id){
   if($uid == 0) return false;
-  $results = db_select('{commerce_order_item}', 'oi');
+  $results = Drupal::database()->select('{commerce_order_item}', 'oi');
   $results->leftJoin('{commerce_order}', 'o', 'oi.order_id = o.order_id');
   $results->leftJoin('{commerce_product_variation_field_data}', 'v', 'oi.purchased_entity = v.variation_id');
   $results->fields('v', array('product_id', 'type'));
   $results->fields('o', array('state', 'uid'));
   $results->fields('oi', array('unit_price__number', 'total_price__number'));
   $results->condition(
-    db_or()
+    (new Condition('OR'))
       ->condition('o.state', 'payment_received', '=')
       ->condition('o.state', 'completed', '=')
   );
@@ -118,12 +121,12 @@ function gavias_edupia_preprocess_node__lesson(&$variables) {
             $lesson_content = $variables['content']['field_lesson_content'];
           }    
         }else{
-          $lesson_content = '<div class="alert alert-info fade in alert-dismissable">' . t('Please Registered to view this lesson. ') . '<a href="'. base_path() .'/user"><strong>' . t('Login Page') . '</strong></a></div>';
+          $lesson_content = '<div class="alert alert-info fade in alert-dismissable">' . t('Please Registered to view this lesson. ') . '<a href="'. Url::fromRoute('user.login')->toString() .'/user"><strong>' . t('Login Page') . '</strong></a></div>';
         }
 
       }elseif ($lesson_access == 'logged_in'){
         if (!$user->id()) {
-          $lesson_content = '<div class="alert alert-info fade in alert-dismissable">' . t('Please Login to view this lesson. ') . '<a href="'. base_path() .'/user"><strong>' . t('Login Page') . '</strong></a></div>';
+          $lesson_content = '<div class="alert alert-info fade in alert-dismissable">' . t('Please Login to view this lesson. ') . '<a href="'. Url::fromRoute('user.login')->toString() .'/user"><strong>' . t('Login Page') . '</strong></a></div>';
         }
         else {
           if(isset($variables['content']['field_lesson_content'])){

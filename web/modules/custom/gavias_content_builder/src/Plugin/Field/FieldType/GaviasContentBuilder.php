@@ -22,7 +22,7 @@ use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Form\FormStateInterface;
-
+use Drupal\Core\Url;
 
 class GaviasContentBuilder extends FieldItemBase {
   
@@ -43,7 +43,7 @@ class GaviasContentBuilder extends FieldItemBase {
     $element['role_field_gcb'] = [
       '#type'          => 'checkboxes',
       '#title'         => $this->t('Roles'),
-      '#default_value' => $settings['role_field_gcb'],
+      '#default_value' => isset($settings['role_field_gcb']) ? $settings['role_field_gcb'] : array(),
       '#options'       => $roles,
       '#description'   => 'When the user has the following roles'
     ];

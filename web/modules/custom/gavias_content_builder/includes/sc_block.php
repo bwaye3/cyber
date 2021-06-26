@@ -13,7 +13,7 @@ function sc_blockbulider($attr){
         $url = \Drupal::request()->getRequestUri();
         $edit_url = '';
         if($user->hasPermission('administer gavias_content_builder')){
-          $edit_url = \Drupal::url('gavias_builder.admin.edit', array('bid' => $results->id, 'destination' =>  $url));
+          $edit_url = Url::fromRoute('gavias_builder.admin.edit', array('bid' => $results->id, 'destination' =>  $url))->toString();
           $output .= "<a class=\"link-edit-blockbuider\" href=\"{$edit_url}\"> Config block builder </a>";
         }
         $output .= gavias_builder_frontend($results->params);

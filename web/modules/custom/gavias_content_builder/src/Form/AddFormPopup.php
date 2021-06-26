@@ -8,7 +8,7 @@ use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
-
+use Drupal\Core\Url;
 class AddFormPopup extends FormBase{
 
   /**
@@ -82,7 +82,7 @@ class AddFormPopup extends FormBase{
 
     }else{
       $values = $form_state->getValues();
-      $pid = db_insert("gavias_content_builder")
+      $pid = $builder = \Drupal::database()->insert("gavias_content_builder")
         ->fields(array(
           'title'         => $form['title']['#value'],
           'machine_name'  => $form['machine_name']['#value'],
@@ -158,7 +158,7 @@ class AddFormPopup extends FormBase{
     $html = '';
     $html .= '<span class="gbb-item active id-'.$pid.'">';
     $html .= '<a class="select" data-id="'.$pid.'" title="'. $machine_name .'">' . $title  . '</a>';
-    $html .= ' <span class="action">( <a class="edit gva-popup-iframe" href="'.\Drupal::url('gavias_content_builder.admin.edit', array('bid'=>$pid, 'gva_iframe'=>'on')).'" title="'. $machine_name .'">Edit</a>';
+    $html .= ' <span class="action">( <a class="edit gva-popup-iframe" href="'.Url::fromRoute('gavias_content_builder.admin.edit', array('bid'=>$pid, 'gva_iframe'=>'on'))->toString().'" title="'. $machine_name .'">Edit</a>';
     $html .= ' | <a>Please save and refesh if you want duplicate</a>) </span>';
     $html .= '</span>';
 

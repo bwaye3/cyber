@@ -40,7 +40,7 @@ function gavias_content_builder_get_blocks_options() {
       // Get default theme for user.
       $theme_default = \Drupal::config('system.theme')->get('default');
       // Get storage handler of block.
-      $block_storage = \Drupal::entityManager()->getStorage('block');
+      $block_storage = \Drupal::entityTypeManager()->getStorage('block');
       // Get the enabled block in the default theme.
       $entity_ids = $block_storage->getQuery()->condition('theme', $theme_default)->execute();
       $entities = $block_storage->loadMultiple($entity_ids);
@@ -56,11 +56,11 @@ function gavias_content_builder_get_blocks_options() {
 function gavias_content_builder_render_block($key) {
   $block = \Drupal\block\Entity\Block::load($key);
   if($block){
-    $block_content = \Drupal::entityManager()
+    $block_content = \Drupal::entityTypeManager()
       ->getViewBuilder('block')
       ->view($block);
       $block = null;
-    return drupal_render($block_content);
+    return \Drupal::service('renderer')->render($block_content);
   }else{
     return '<div>Missing view, block "'.$key.'"</div>';
   }

@@ -26,7 +26,7 @@ class ImportFormPopup extends FormBase{
     if(\Drupal::request()->attributes->get('bid')) $bid = \Drupal::request()->attributes->get('bid');
 
     if (is_numeric($bid)) {
-      $bblock = db_select('{gavias_content_builder}', 'd')
+      $bblock = \Drupal::database()->select('{gavias_content_builder}', 'd')
          ->fields('d')
          ->condition('id', $bid, '=')
          ->execute()
@@ -35,7 +35,7 @@ class ImportFormPopup extends FormBase{
       $bblock = array('id' => 0, 'title' => '');
     }
     if($bblock['id']==0){
-      drupal_set_message('Not found gavias block builder !');
+      \Drupal::messenger()->addMessage('Not found gavias block builder !');
       return false;
     }
 
@@ -96,7 +96,7 @@ class ImportFormPopup extends FormBase{
       }
 
       $id = $form['id']['#value'];
-      db_update("gavias_content_builder")
+      $builder = \Drupal::database()->update("gavias_content_builder")
       ->fields(array(
         'params' => $params,
       ))

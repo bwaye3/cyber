@@ -605,29 +605,11 @@ function gavias_sliderlayer_field_upload_slider(){
     $_id = gavias_sliderlayer_makeid(10);
     ob_start();
     ?> 
-    <div class="gva-upload-image" id="gva-upload-<?php print $_id; ?>">
-        <form class="upload" id="upload-<?php print $_id; ?>" method="post" action="<?php print ($base_url . '/admin/structure/gavias_sliderlayer/upload') ?>" enctype="multipart/form-data">
-            <div class="drop">
-                <input type="file" name="upl" multiple class="input-file-upload"/>
-            </div>
-        </form>
-        <input readonly="true" type="text" name="background_image_uri" value="" class="slide-option file-input" />
-        <span class="loading">Loading....</span>
-        <a class="button button-action button--primary button--small btn-get-images-upload">Choose image</a>
+    <div class="gva-upload-input field-upload-background-slider" data-id="<?php print $_id; ?>">
+        <input data-id="<?php print $_id; ?>" id="gva-upload-<?php print $_id; ?>" type="text" name="background_image_uri" class="imce-url-input slide-option" data-imce-type="link"/>
+        <img class="gavias-image-demo" id="gva-upload-<?php print $_id; ?>-demo" src="" />
+        <a class="gavias-field-upload-remove btn-delete" data-src="" style="">Remove</a>
         <div class="clearfix"></div>
-
-        <div class="clearfix"></div>
-        <div class="gavias-box-images">
-            <div class="gavias-box-images-inner">
-                <div class="header">
-                    Images Upload
-                    <a class="close">close</a>
-                </div>
-                <div class="list-images">
-
-                </div>
-            </div>
-        </div>
     </div>  
         
     <?php

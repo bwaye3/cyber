@@ -1,5 +1,5 @@
 var $settings = drupalSettings.gavias_sliderlayer.settings;
-
+console.log($settings);
 var $group_settings = drupalSettings.gavias_sliderlayer.group_settings;
 
 var $layers = drupalSettings.gavias_sliderlayer.layers_settings;
@@ -389,6 +389,8 @@ base64Encode = function(r) {
 
     $('#prview-option-screen').val('');
 
+    load_imce();
+
     function set_position_layer(__layer, ptop, pleft){
       $('#layer-' + __layer).css({
         'top': ptop + 'px'
@@ -555,19 +557,6 @@ base64Encode = function(r) {
 });
 
 //========================================
-  function notify(style, text) {
-    $.notify({
-        title: 'Notification',
-        text: text,
-        image: '<i class="fa fa-bell" style="font-size: 30px;color: #fff;"></i>',
-        hideAnimation: 'slideUp',
-    }, {
-        style: 'metro',
-        className: style,
-        autoHide: true,
-        clickToHide: true,
-    });
-  }
 
   function load_slider() {
     $settings = $.extend(true, deslider, $settings);
@@ -575,6 +564,8 @@ base64Encode = function(r) {
       $('#gavias_slider_single').css({
         'background-image': 'url(' + drupalSettings.gavias_sliderlayer.base_url  + $settings.background_image_uri + ')'
       })
+      $('.field-upload-background-slider .gavias-image-demo').attr('src', drupalSettings.gavias_sliderlayer.base_url  + $settings.background_image_uri);
+
     } else {
       $('#gavias_slider_single').css({
         backgroundImage: 'none'
@@ -979,15 +970,77 @@ base64Encode = function(r) {
       dataType: 'json',
       success: function (data) {
         $('#save').val('Save');
-        notify('success', 'Slider updated');
+        $.notify('Slider has been updated', 'success');
         $('#save').removeAttr('disabled');
         window.location = data['url_edit'];
        
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        notify('black', 'Slider not updated');
+        $.notify("Slider can't updated", "error");
         $('#save').removeAttr('disabled');
       }
     });
   }
+
+   function load_imce(){
+
+      $('.imce-url-button').click(function(e){
+        e.preventDefault();
+        var url = Drupal.url('imce');
+        var inputID = 'gva-upload-' + $(this).parents('.gva-upload-input').attr('data-id');
+        url += (url.indexOf('?') === -1 ? '?' : '&') + 'sendto=gvaImceInputSlider.urlSendto&inputId=' + inputID + '&type=link';
+        $('#gva-upload-' + inputID).focus();
+        //if(IMCE_WINDOW == null || IMCE_WINDOW.closed){
+          IMCE_WINDOW = window.open(url, '', 'width=' + Math.min(1000, parseInt(screen.availWidth * 0.8, 10)) + ',height=' + Math.min(800, parseInt(screen.availHeight * 0.8, 10)) + ',resizable=1');
+        //}
+        return false;
+      })
+    }
+
+    function close_imce(){
+      try {
+        if (IMCE_WINDOW.document.location.href == "about:blank") {
+          IMCE_WINDOW.close();
+          IMCE_WINDOW = undefined;
+        }
+      } catch (e) { }
+    }
+
+    //Select IMCE file, display image demo and set val for upload input.
+
+      $('.imce-url-input').not('.imce-url-processed').addClass('imce-url-processed').each(function(){
+        var el = $(this);
+        var inputId = el.attr('id');
+        el.before('<a href="#" class="imce-url-button"><span>Open File Browser</span></a> | <a href="#" class="gavias-field-upload-remove">Remove</a>');
+      });
+
+      var gvaImceInputSlider = window.gvaImceInputSlider = window.gvaImceInputSlider || {
+         urlSendto: function(File, win) {
+
+          var url = File.getUrl();
+          var el = $('#' + win.imce.getQuery('inputId'))[0];
+          win.close();
+          if (el) {
+            var base_path = drupalSettings.gavias_sliderlayer.base_path;
+            var url_new = '/' + url.replace(base_path, '');
+            console.log(url);
+
+            $(el).val(url_new);
+            $(el).parents('.gva-upload-input').find('.gavias-image-demo').attr('src', url);
+            $('#gavias_slider_single').css('background-image', 'url(\'' + url + '\')');
+          }
+        }
+      };
+
+      $(document).ready(function(){
+        $('.gavias-field-upload-remove').on('click', function(e){
+          e.preventDefault();
+          $(this).parents('.gva-upload-input').find('.gavias-image-demo').attr('src', '');
+          $(this).parents('.gva-upload-input').find('.imce-url-input').val('');
+          $('#gavias_slider_single').css({'background-image': 'url("")'});
+        });
+      })
+ 
+
 })(jQuery);
+

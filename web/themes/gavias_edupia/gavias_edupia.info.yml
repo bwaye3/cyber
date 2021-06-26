@@ -1,7 +1,8 @@
-name: Cyber Watch Systems
+name: Gavias Edupia
 type: theme
-description: ''
+description: 'A flexible, recolorable theme with many regions and a responsive, mobile-first layout.'
 package: gaviasthemes
+base theme: false
 libraries:
   - gavias_edupia/global-styling
   - core/jquery
@@ -14,7 +15,6 @@ regions:
   topbar: 'Topbar'
   branding: 'Branding'
   search: 'Search'
-  telephone: 'Telephone'
   cart: 'Cart'
   breadcrumbs: 'Breadcrumbs'
   help: 'Help'
@@ -39,6 +39,6 @@ regions:
   copyright: 'Copyright'
   other: 'Other'
 
-version: '8.x'
-core: '8.x'
+version: '9.x'
+core_version_requirement: ^8.8 || ^9
 project: 'drupal'

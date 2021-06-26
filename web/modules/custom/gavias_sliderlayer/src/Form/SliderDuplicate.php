@@ -4,6 +4,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation;
+use Drupal\Core\Url;
+
 class SliderDuplicate implements FormInterface {
    /**
    * Implements \Drupal\Core\Form\FormInterface::getFormID().
@@ -20,7 +22,7 @@ class SliderDuplicate implements FormInterface {
       if(\Drupal::request()->attributes->get('id')) $id = \Drupal::request()->attributes->get('id');
       
       if (is_numeric($id)) {
-        $slide = db_select('{gavias_sliderlayers}', 'd')
+        $slide = \Drupal::database()->select('{gavias_sliderlayers}', 'd')
                  ->fields('d')
                  ->condition('id', $id, '=')
                  ->execute()->fetchAssoc();
@@ -89,7 +91,7 @@ class SliderDuplicate implements FormInterface {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if (is_numeric($form['id']['#value']) && $form['id']['#value'] > 0) {
-      db_insert("gavias_sliderlayers")
+      $builder = \Drupal::database()->insert("gavias_sliderlayers")
       ->fields(array(
         'title'         => $form['title']['#value'],
         'group_id'      => $form['group_id']['#value'],
@@ -100,10 +102,10 @@ class SliderDuplicate implements FormInterface {
         'background_image_uri' => $form['background_image_uri']['#value']
       ))
       ->execute();
-      drupal_set_message("Slide '{$form['title']['#value']}' has been duplicate");
+      \Drupal::messenger()->addMessage("Slide '{$form['title']['#value']}' has been duplicate");
       \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
     }
-    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(\Drupal::url('gavias_sl_sliders.admin.list', array('gid' => $form['group_id']['#value'])));
+    $response = new \Symfony\Component\HttpFoundation\RedirectResponse(Url::fromRoute('gavias_sl_sliders.admin.list', array('gid' => $form['group_id']['#value']))->toString());
     $response->send();
    }
 }

@@ -76,8 +76,8 @@ function gavias_edupia_preprocess_node__event(&$variables){
   if($node->hasField('field_event_start')){
     $event_start = $node->field_event_start->value;
     if($event_start){ 
-      $event_date['day'] = format_date(strtotime($event_start), 'custom', 'd');
-      $event_date['month'] = format_date(strtotime($event_start), 'custom', 'F');
+      $event_date['day'] = \Drupal::service('date.formatter')->format(strtotime($event_start), 'custom', 'd');
+      $event_date['month'] = \Drupal::service('date.formatter')->format(strtotime($event_start), 'custom', 'F');
     }
   }
   $variables['event_date'] = $event_date;

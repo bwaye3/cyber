@@ -20,10 +20,10 @@ function gavias_edupia_include($theme, $path) {
 function gavias_edupia_render_block($key) {
   $block = \Drupal\block\Entity\Block::load($key);
   if($block){
-  $block_content = \Drupal::entityManager()
+  $block_content = \Drupal::entityTypeManager()
     ->getViewBuilder('block')
     ->view($block);
-    return drupal_render($block_content);
+    return \Drupal::service('renderer')->render($block_content);
   }  
   return '';
 }

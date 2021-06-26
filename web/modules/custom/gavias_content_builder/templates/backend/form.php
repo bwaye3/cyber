@@ -1,9 +1,13 @@
-<?php global $base_url; ?>
+<?php 
+use Drupal\Core\Url;
+
+global $base_url; 
+?>
 
 <div id="gavias-pagebuider-wrap-settings">
    
    <div class="gbb-block-title">
-    <strong><?php print 'Edit: ' ?><?php print $gbb_title ?> ( ID: <?php print $gbb_id ?> | <a href="<?php print \Drupal::url('gavias_content_builder.admin.import', array('bid' => $gbb_id)) ?>">Import</a> | <a href="<?php print \Drupal::url('gavias_content_builder.admin.export', array('bid' => $gbb_id)) ?>">Export</a> )</strong>
+    <strong><?php print 'Edit: ' ?><?php print $gbb_title ?> ( ID: <?php print $gbb_id ?> | <a href="<?php print Url::fromRoute('gavias_content_builder.admin.import', array('bid' => $gbb_id))->toString() ?>">Import</a> | <a href="<?php print Url::fromRoute('gavias_content_builder.admin.export', array('bid' => $gbb_id))->toString() ?>">Export</a> )</strong>
    </div>
 
   <form method="POST" id="gpb_form-content-change" class="form-horizontal" enctype="multipart/form-data">
