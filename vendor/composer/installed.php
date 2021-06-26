@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '91afa6df2ef9c13cdf65cd94e03a2d22c52636a7',
+        'reference' => 'f367d21accb11a7e20a4d8006ebab2a46625e8df',
         'name' => 'drupal/recommended-project',
         'dev' => true,
     ),
@@ -276,6 +276,15 @@
             'replaced' => array(
                 0 => '9.2.0',
             ),
+        ),
+        'drupal/body_node_id_class' => array(
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/body_node_id_class',
+            'aliases' => array(),
+            'reference' => '8.x-1.1',
+            'dev_requirement' => false,
         ),
         'drupal/book' => array(
             'dev_requirement' => false,
@@ -973,7 +982,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '91afa6df2ef9c13cdf65cd94e03a2d22c52636a7',
+            'reference' => 'f367d21accb11a7e20a4d8006ebab2a46625e8df',
             'dev_requirement' => false,
         ),
         'drupal/responsive_image' => array(
