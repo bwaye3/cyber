@@ -19,6 +19,7 @@ use Drupal\upgrade_status\DeprecationAnalyzer;
 use Drupal\upgrade_status\ProjectCollector;
 use Drupal\upgrade_status\ScanResultFormatter;
 use Drupal\upgrade_status\Util\CorrectDbServerVersion;
+use Drupal\user\Entity\Role;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -717,6 +718,35 @@ MARKUP
         ]
       ];
 
+      // Check user roles on the site for invalid permissions.
+      $class = 'no-known-error';
+      $requirement = [$this->t('None found.')];
+      $user_roles = Role::loadMultiple();
+      $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+      foreach ($user_roles as $role) {
+        $role_permissions = $role->getPermissions();
+        $valid_role_permissions = array_intersect($role_permissions, $all_permissions);
+        $invalid_role_permissions = array_diff($role_permissions, $valid_role_permissions);
+        if (!empty($invalid_role_permissions)) {
+          $class = 'known-error';
+          $status = FALSE;
+          $requirement = [$this->t('"@permissions" of user role: "@role".', ['@permissions' => implode('", "', $invalid_role_permissions), '@role' => $role->label()])];
+        }
+      }
+      $build['data']['#rows'][] = [
+        'class' => [$class],
+        'data' => [
+          'requirement' => [
+            'class' => 'requirement-label',
+            'data' => $this->t('Invalid permissions will trigger runtime exceptions in Drupal 10. Permissions should be defined in a permissions.yml file or a permission callback. See https://www.drupal.org/node/3193348'),
+          ],
+          'status' => [
+            'data' => join(' ', $requirement),
+            'class' => 'status-info',
+          ],
+        ]
+      ];
+
       // Save the overall status indicator in the build array. It will be
       // popped off later to be used in the summary table.
       $build['status'] = $status;
@@ -946,6 +976,33 @@ MARKUP
         'requirement' => [
           'class' => 'requirement-label',
           'data' => $this->t('When using Drush, minimum version is 10'),
+        ],
+        'status' => [
+          'data' => $label,
+          'class' => 'status-info',
+        ],
+      ]
+    ];
+
+    // Check deprecated $config_directories.
+    $class = 'no-known-error';
+    $requirement = $this->t('Use of $config_directories in settings.php is deprecated.');
+    $label = $this->t('Not used');
+    if (!empty($GLOBALS['config_directories'])) {
+      $status = FALSE;
+      $class = 'known-error';
+      $label = $this->t('Deprecated configuration used');
+      $requirement .= ' ' . $this->t('<a href=":settings">Use $settings[\'config_sync_directory\'] instead.</a>', [':settings' => 'https://www.drupal.org/node/3018145']);
+    }
+    $build['data']['#rows'][] = [
+      'class' => $class,
+      'data' => [
+        'requirement' => [
+          'class' => 'requirement-label',
+          'data' => [
+            '#type' => 'markup',
+            '#markup' => $requirement
+          ],
         ],
         'status' => [
           'data' => $label,

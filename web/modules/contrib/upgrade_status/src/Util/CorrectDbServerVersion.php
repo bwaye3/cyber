@@ -89,7 +89,7 @@ class CorrectDbServerVersion {
    */
   protected function getDatabaseServerVersion(): string {
     if (!$this->databaseServerVersion) {
-      $this->databaseServerVersion = $this->database->query('SELECT VERSION()')->fetchColumn();
+      $this->databaseServerVersion = $this->database->version();
     }
     return $this->databaseServerVersion;
   }

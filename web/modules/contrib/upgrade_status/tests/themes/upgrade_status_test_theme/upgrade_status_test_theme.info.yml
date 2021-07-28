@@ -13,7 +13,7 @@ libraries-extend:
   upgrade_status_test_twig/deprecated_library:
     - upgrade_status_test_theme/library
 
-# Information added by Drupal.org packaging script on 2021-06-24
-version: '8.x-3.7'
+# Information added by Drupal.org packaging script on 2021-07-20
+version: '8.x-3.8'
 project: 'upgrade_status'
-datestamp: 1624540307
+datestamp: 1626775916

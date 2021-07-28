@@ -513,6 +513,24 @@ class ProjectCollector {
   }
 
   /**
+   * Checks constraint compatibility with PHP 8.
+   *
+   * A customized version of Semver::satisfies(), since that only works for
+   * a == condition.
+   *
+   * @paran string $constraints
+   *   Composer compatible constraints from a PHP version requirement.
+   *
+   * @return bool
+   */
+  public static function isCompatibleWithPHP8(string $constraints) {
+    $version_parser = new VersionParser();
+    $provider = new Constraint('>=', $version_parser->normalize('8.0.0'));
+    $parsed_constraints = $version_parser->parseConstraints($constraints);
+    return $parsed_constraints->matches($provider);
+  }
+
+  /**
    * Return the oldest supported minor version for the current core major.
    *
    * @return string

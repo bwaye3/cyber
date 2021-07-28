@@ -6,7 +6,7 @@ core_version_requirement: ^8.7.7 || ^9
 dependencies:
     - drupal:options
 
-# Information added by Drupal.org packaging script on 2021-06-24
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2021-06-30
+version: '8.x-1.4'
 project: 'state_machine'
-datestamp: 1624520740
+datestamp: 1625048410

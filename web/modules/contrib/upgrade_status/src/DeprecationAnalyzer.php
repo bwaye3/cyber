@@ -406,6 +406,10 @@ final class DeprecationAnalyzer {
         $result['data']['totals']['file_errors']++;
         $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
       }
+
+      // No need to check info files for PHP 8 compatibility information because
+      // they can only define minimal PHP versions not maximum or excluded PHP
+      // versions.
     }
 
     // Manually add on composer.json file incompatibility to results.
@@ -423,6 +427,15 @@ final class DeprecationAnalyzer {
       elseif (!empty($composer_json->require->{'drupal/core'}) && !projectCollector::isCompatibleWithNextMajorDrupal($composer_json->require->{'drupal/core'})) {
         $result['data']['files'][$extension->getPath() . '/composer.json']['messages'][] = [
           'message' => "The drupal/core requirement is not compatible with the next major version of Drupal. Either remove it or update it to be compatible. See https://drupal.org/node/2514612#s-drupal-9-compatibility.",
+          'line' => 0,
+        ];
+        $result['data']['totals']['errors']++;
+        $result['data']['totals']['file_errors']++;
+        $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
+      }
+      elseif ((projectCollector::getDrupalCoreMajorVersion() > 8) && !empty($composer_json->require->{'php'} && !projectCollector::isCompatibleWithPHP8($composer_json->require->{'php'}))) {
+        $result['data']['files'][$extension->getPath() . '/composer.json']['messages'][] = [
+          'message' => "The PHP requirement is not compatible with PHP 8. Once the codebase is actually compatible, either remove this limitation or update it to be compatible.",
           'line' => 0,
         ];
         $result['data']['totals']['errors']++;
@@ -540,7 +553,7 @@ final class DeprecationAnalyzer {
    */
   protected function createModifiedNeonFile() {
     $module_path = DRUPAL_ROOT . '/' . drupal_get_path('module', 'upgrade_status');
-    $config = file_get_contents($module_path . '/deprecation_testing.neon');
+    $config = file_get_contents($module_path . '/deprecation_testing_template.neon');
     $config = str_replace(
       'parameters:',
       "parameters:\n\ttmpDir: '" . $this->temporaryDirectory . '/phpstan' . "'\n" .
