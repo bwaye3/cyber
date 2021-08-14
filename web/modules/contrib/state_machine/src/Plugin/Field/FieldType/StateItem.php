@@ -366,6 +366,9 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
       $this->dispatchTransitionEvent('post_transition');
     }
     $this->originalValue = $this->value;
+    // Nullify the transition to apply, to ensure the next entity save
+    // doesn't trigger the same transition by mistake.
+    $this->transitionToApply = NULL;
   }
 
   /**

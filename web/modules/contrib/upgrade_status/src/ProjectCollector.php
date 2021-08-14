@@ -336,6 +336,29 @@ class ProjectCollector {
   }
 
   /**
+   * Collect core modules that are installed and obsolete or deprecated.
+   *
+   * @return array
+   *   An associated array of extension names keyed by extension machine names.
+   */
+  public function collectCoreDeprecatedAndObsoleteExtensions() {
+    $deprecated_or_obsolete = [];
+    $modules = $this->moduleExtensionList->getList();
+    $themes = $this->themeExtensionList->getList();
+    $profiles = $this->profileExtensionList->getList();
+    $extensions = array_merge($modules, $themes, $profiles);
+    unset($modules, $themes, $profiles);
+
+    /** @var \Drupal\Core\Extension\Extension $extension */
+    foreach ($extensions as $key => $extension) {
+      if ($extension->origin === 'core' && !empty($extension->info['lifecycle']) && in_array($extension->info['lifecycle'], ['deprecated', 'obsolete'])) {
+        $deprecated_or_obsolete[$key] = $extension->info['name'];
+      }
+    }
+    return $deprecated_or_obsolete;
+  }
+
+  /**
    * Finds topmost extension for each extension and keeps only that.
    *
    * @param \Drupal\Core\Extension\Extension[] $extensions
@@ -542,7 +565,7 @@ class ProjectCollector {
       case 8:
         return '8.9';
       case 9:
-        return '9.0';
+        return '9.1';
     }
     return '';
   }

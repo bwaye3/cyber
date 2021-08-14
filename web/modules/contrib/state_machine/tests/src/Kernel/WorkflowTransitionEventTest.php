@@ -69,6 +69,39 @@ class WorkflowTransitionEventTest extends KernelTestBase {
     $this->assertEquals('Test entity (field_state) - Completed at generic pre-transition (workflow: default, transition: fulfill).', (string) $message[1]);
     $this->assertEquals('Test entity (field_state) - Completed at group post-transition (workflow: default, transition: fulfill).', (string) $message[2]);
     $this->assertEquals('Test entity (field_state) - Completed at generic post-transition (workflow: default, transition: fulfill).', (string) $message[3]);
+
+    \Drupal::messenger()->deleteAll();
+    $entity = EntityTestWithBundle::create([
+      'type' => 'first',
+      'name' => 'Test entity 2',
+      'field_state' => 'new',
+    ]);
+    $entity->save();
+    $entity->get('field_state')->first()->applyTransitionById('create');
+    $entity->save();
+
+    $messages = \Drupal::messenger()->all();
+    $message = reset($messages);
+    $this->assertCount(6, $message);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at pre-transition (workflow: default, transition: create).', (string) $message[0]);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at group pre-transition (workflow: default, transition: create).', (string) $message[1]);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at generic pre-transition (workflow: default, transition: create).', (string) $message[2]);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at post-transition (workflow: default, transition: create).', (string) $message[3]);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at group post-transition (workflow: default, transition: create).', (string) $message[4]);
+    $this->assertEquals('Test entity 2 (field_state) - Fulfillment at generic post-transition (workflow: default, transition: create).', (string) $message[5]);
+
+    \Drupal::messenger()->deleteAll();
+    // Ensure manually setting the state to "create", triggers the cancel
+    // transition and not the 'fulfill' transition previously applied.
+    $entity->set('field_state', 'canceled');
+    $entity->save();
+    $messages = \Drupal::messenger()->all();
+    $message = reset($messages);
+    $this->assertCount(4, $message);
+    $this->assertEquals('Test entity 2 (field_state) - Canceled at group pre-transition (workflow: default, transition: cancel).', (string) $message[0]);
+    $this->assertEquals('Test entity 2 (field_state) - Canceled at generic pre-transition (workflow: default, transition: cancel).', (string) $message[1]);
+    $this->assertEquals('Test entity 2 (field_state) - Canceled at group post-transition (workflow: default, transition: cancel).', (string) $message[2]);
+    $this->assertEquals('Test entity 2 (field_state) - Canceled at generic post-transition (workflow: default, transition: cancel).', (string) $message[3]);
   }
 
   /**
