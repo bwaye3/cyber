@@ -1361,6 +1361,11 @@ MARKUP
     $app_root = $this->kernel->getAppRoot();
     $site_path = $this->kernel->getSitePath();
     if (is_readable($app_root . '/' . $site_path . '/settings.php')) {
+      // Reset the "global" variables expected to exist for settings.
+      $settings = [];
+      $config = [];
+      $databases = [];
+      $class_loader = require $app_root . '/autoload.php';
       require $app_root . '/' . $site_path . '/settings.php';
     }
 

@@ -1469,27 +1469,30 @@
     },
     {
         "name": "drupal/admin_toolbar",
-        "version": "2.4.0",
-        "version_normalized": "2.4.0.0",
+        "version": "3.0.2",
+        "version_normalized": "3.0.2.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-            "reference": "8.x-2.4"
+            "reference": "3.0.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-2.4.zip",
-            "reference": "8.x-2.4",
-            "shasum": "6240047b8d91ac78f98d861ba8282af971fa0b38"
+            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-3.0.2.zip",
+            "reference": "3.0.2",
+            "shasum": "a3b7a8030695d0c1d49ec57786321e2dd142184a"
         },
         "require": {
             "drupal/core": "^8.8.0 || ^9.0"
         },
+        "require-dev": {
+            "drupal/admin_toolbar_tools": "*"
+        },
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-2.4",
-                "datestamp": "1601999178",
+                "version": "3.0.2",
+                "datestamp": "1629907124",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3722,18 +3725,18 @@
     },
     {
         "name": "drupal/upgrade_status",
-        "version": "3.9.0",
-        "version_normalized": "3.9.0.0",
+        "version": "3.10.0",
+        "version_normalized": "3.10.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/upgrade_status.git",
-            "reference": "8.x-3.9"
+            "reference": "8.x-3.10"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/upgrade_status-8.x-3.9.zip",
-            "reference": "8.x-3.9",
-            "shasum": "5a0c33e882d72ac8d1ac28d68013937fcdced6cd"
+            "url": "https://ftp.drupal.org/files/projects/upgrade_status-8.x-3.10.zip",
+            "reference": "8.x-3.10",
+            "shasum": "baf07d068f0378ae5d094df175588d28e4bf8e44"
         },
         "require": {
             "drupal/core": "^8 || ^9",
@@ -3746,8 +3749,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-3.9",
-                "datestamp": "1628707640",
+                "version": "8.x-3.10",
+                "datestamp": "1629923995",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3856,18 +3859,18 @@
     },
     {
         "name": "drupal/webform",
-        "version": "6.0.4",
-        "version_normalized": "6.0.4.0",
+        "version": "6.0.5",
+        "version_normalized": "6.0.5.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/webform.git",
-            "reference": "6.0.4"
+            "reference": "6.0.5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/webform-6.0.4.zip",
-            "reference": "6.0.4",
-            "shasum": "8b87ffb19f980e9d77957dfb2d784a1a68619d57"
+            "url": "https://ftp.drupal.org/files/projects/webform-6.0.5.zip",
+            "reference": "6.0.5",
+            "shasum": "a925d604e3b4a29f5a688a8e84fdb3a93490f641"
         },
         "require": {
             "drupal/core": "^8.8 || ^9"
@@ -3915,8 +3918,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "6.0.4",
-                "datestamp": "1624461046",
+                "version": "6.0.5",
+                "datestamp": "1629909787",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -5661,17 +5664,17 @@
     },
     {
         "name": "nette/utils",
-        "version": "v3.2.2",
-        "version_normalized": "3.2.2.0",
+        "version": "v3.2.3",
+        "version_normalized": "3.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/nette/utils.git",
-            "reference": "967cfc4f9a1acd5f1058d76715a424c53343c20c"
+            "reference": "5c36cc1ba9bb6abb8a9e425cf054e0c3fd5b9822"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nette/utils/zipball/967cfc4f9a1acd5f1058d76715a424c53343c20c",
-            "reference": "967cfc4f9a1acd5f1058d76715a424c53343c20c",
+            "url": "https://api.github.com/repos/nette/utils/zipball/5c36cc1ba9bb6abb8a9e425cf054e0c3fd5b9822",
+            "reference": "5c36cc1ba9bb6abb8a9e425cf054e0c3fd5b9822",
             "shasum": ""
         },
         "require": {
@@ -5694,7 +5697,7 @@
             "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()",
             "ext-xml": "to use Strings::length() etc. when mbstring is not available"
         },
-        "time": "2021-03-03T22:53:25+00:00",
+        "time": "2021-08-16T21:05:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -5740,11 +5743,7 @@
             "utf-8",
             "utility",
             "validation"
-        ],
-        "support": {
-            "issues": "https://github.com/nette/utils/issues",
-            "source": "https://github.com/nette/utils/tree/v3.2.2"
-        }
+        ]
     },
     {
         "name": "nikic/php-parser",
@@ -6036,17 +6035,17 @@
     },
     {
         "name": "phpstan/phpstan",
-        "version": "0.12.94",
-        "version_normalized": "0.12.94.0",
+        "version": "0.12.96",
+        "version_normalized": "0.12.96.0",
         "source": {
             "type": "git",
             "url": "https://github.com/phpstan/phpstan.git",
-            "reference": "3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6"
+            "reference": "a98bdc51318f20fcae8c953d266f81a70254917f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6",
-            "reference": "3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6",
+            "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a98bdc51318f20fcae8c953d266f81a70254917f",
+            "reference": "a98bdc51318f20fcae8c953d266f81a70254917f",
             "shasum": ""
         },
         "require": {
@@ -6055,7 +6054,7 @@
         "conflict": {
             "phpstan/phpstan-shim": "*"
         },
-        "time": "2021-07-30T09:05:27+00:00",
+        "time": "2021-08-21T11:55:13+00:00",
         "bin": [
             "phpstan",
             "phpstan.phar"
