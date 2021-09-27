@@ -44,7 +44,6 @@
         "drupal/state_machine": "^1.0@RC",
         "drupal/token": "^1.6",
         "drupal/tvi": "^1.0@beta",
-        "drupal/upgrade_status": "^3.0",
         "drupal/views_infinite_scroll": "^1.6",
         "drupal/webform": "^6.0.4",
         "drupal/xmlsitemap": "^1.0@RC",
