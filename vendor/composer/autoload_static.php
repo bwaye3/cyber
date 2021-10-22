@@ -116,10 +116,6 @@ class ComposerStaticInit582c0d3031320461a0e1a08837d7d8e8
             'Laminas\\Escaper\\' => 16,
             'Laminas\\Diactoros\\' => 18,
         ),
-        'I' => 
-        array (
-            'Interop\\Container\\' => 18,
-        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -372,10 +368,6 @@ class ComposerStaticInit582c0d3031320461a0e1a08837d7d8e8
         'Laminas\\Diactoros\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-diactoros/src',
-        ),
-        'Interop\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
