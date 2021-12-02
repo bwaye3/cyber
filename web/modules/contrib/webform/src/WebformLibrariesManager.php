@@ -88,7 +88,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     $libraries = $this->getLibraries();
 
     // Defined REQUIREMENT constants which may not be loaded.
-    // @see /private/var/www/sites/d8_webform/web/core/includes/install.inc
+    // @see ~/Sites/drupal_webfor/mweb/core/includes/install.inc
     if (!defined('REQUIREMENT_OK')) {
       define('REQUIREMENT_INFO', -1);
       define('REQUIREMENT_OK', 0);
@@ -118,8 +118,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         continue;
       }
 
-      $library_exists = $this->exists($library_name);
-      $library_path = ($library_exists) ? '/' . $this->find($library_name) : '/libraries/' . $library_name;
+      $library_exists = $this->exists($library['name']);
+      $library_path = ($library_exists) ? '/' . $this->find($library['name']) : '/libraries/' . $library['name'];
 
       $t_args = [
         '@title' => $library['title'],
@@ -152,7 +152,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         $stats['@missing']++;
         $title = $this->t('<span class="color-warning"><strong>@title @version</strong> (CDN).</span>', $t_args);
         $description = $this->t('Please download the <a href=":homepage_href">@title</a> library from <a href=":download_href">:download_href</a> and copy it to <b>@path</b> or use <a href=":install_href">Drush</a> to install this library.', $t_args);
-        $severity = REQUIREMENT_WARNING;
+        $severity = REQUIREMENT_ERROR;
       }
       else {
         // CDN.
@@ -191,12 +191,15 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     }
 
     // Description.
-    $description = [
-      'info' => $info,
-    ];
-    if (!$cli && $severity === REQUIREMENT_WARNING) {
-      $description['cdn'] = ['#markup' => $this->t('<a href=":href">Disable CDN warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()])];
+    $description = [];
+    if (!$cli && $severity === REQUIREMENT_ERROR) {
+      $description['cdn'] = [
+        '#markup' => '<hr/>' .
+          $this->t('Relying on a CDN for external libraries can cause unexpected issues with Ajax and BigPipe support. For more information see: <a href=":href">Issue #1988968</a>', [':href' => 'https://www.drupal.org/project/drupal/issues/1988968']) . '<br/>' .
+          $this->t('<a href=":href">Disable CDN warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()]),
+      ];
     }
+    $description['info'] = $info;
 
     return [
       'webform_libraries' => [
@@ -209,13 +212,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
   }
 
   /**
-   * Determine if a library's directory exist.
-   *
-   * @param string $name
-   *   The library's directory name.
-   *
-   * @return bool
-   *   TRUE if the library's directory exist.
+   * {@inheritdoc}
    */
   public function exists($name) {
     // @todo Inject dependency once Drupal 8.9.x is only supported.
@@ -228,16 +225,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
   }
 
   /**
-   * Finds files that are located in the supported 'libraries' directories.
-   *
-   * @param string $path
-   *   The path for the library file to find.
-   *
-   * @return string|false
-   *   The real path to the library file relative to the root directory. If the
-   *   library cannot be found then FALSE.
+   * {@inheritdoc}
    */
-
   public function find($name) {
     if (\Drupal::hasService('library.libraries_directory_file_finder')) {
       return \Drupal::service('library.libraries_directory_file_finder')->find($name);
@@ -472,7 +461,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("Tabby provides lightweight, accessible vanilla JS toggle tabs."),
       'notes' => $this->t('Tabby is used to display tabs in the administrative UI'),
       'homepage_url' => Url::fromUri('https://github.com/cferdinandi/tabby'),
-      'download_url' =>  Url::fromUri('https://github.com/cferdinandi/tabby/archive/v12.0.3.zip'),
+      'download_url' => Url::fromUri('https://github.com/cferdinandi/tabby/archive/v12.0.3.zip'),
       'version' => '12.0.3',
     ];
     // Drupal 8 and 9 supports different version of PopperJS which is a
@@ -483,7 +472,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper."),
       'notes' => $this->t('Tippy.js is used to provide a tooltips. Tippy.js 5.x is compatible with Drupal 8.x.'),
       'homepage_url' => Url::fromUri('https://github.com/atomiks/tippyjs'),
-      'download_url' =>  Url::fromUri('https://unpkg.com/tippy.js@5.2.1/dist/tippy-bundle.iife.min.js'),
+      'download_url' => Url::fromUri('https://unpkg.com/tippy.js@5.2.1/dist/tippy-bundle.iife.min.js'),
       'version' => '5.2.1',
       'core' => 8,
     ];
@@ -492,7 +481,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper."),
       'notes' => $this->t('Tippy.js is used to provide a tooltips. Tippy.js 6.x is compatible with Drupal 9.x.'),
       'homepage_url' => Url::fromUri('https://github.com/atomiks/tippyjs'),
-      'download_url' =>  Url::fromUri('https://unpkg.com/tippy.js@6.2.6/dist/tippy-bundle.umd.min.js'),
+      'download_url' => Url::fromUri('https://unpkg.com/tippy.js@6.2.6/dist/tippy-bundle.umd.min.js'),
       'version' => '6.2.6',
       'core' => 9,
     ];
@@ -546,19 +535,22 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     // Sort libraries by key.
     ksort($libraries);
 
-    // Map ckeditor plugin libraries and support CKEditor plugins without
-    // the ckeditor.* prefix.
+    // Update ckeditor plugin libraries to support CKEditor plugins installed
+    // without the ckeditor.* prefix.
     // @see https://www.drupal.org/project/fakeobjects
     // @see https://www.drupal.org/project/anchor_link
     foreach ($libraries as $library_name => $library) {
+      // Add name to all libraries, so that it can be modified if a ckeditor
+      // plugin is installed without the ckeditor.* prefix.
+      $libraries[$library_name]['name'] = $library_name;
       if (strpos($library_name, 'ckeditor.') === 0) {
-        $library_path = $this->find($library_name)
-          ?: $this->find(str_replace('ckeditor.', '', $library_name));
+        $ckeditor_library_name = str_replace('ckeditor.', '', $library_name);
+        $library_path = $this->find($ckeditor_library_name);
         if ($library_path) {
+          $libraries[$library_name]['name'] = $ckeditor_library_name;
           $libraries[$library_name]['plugin_path'] = str_replace('libraries/' . $library_name, $library_path, $library['plugin_path']);
         }
       }
-
     }
 
     // Move deprecated libraries last.
