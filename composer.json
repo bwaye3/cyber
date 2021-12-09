@@ -46,7 +46,7 @@
         "drupal/token": "^1.6",
         "drupal/tvi": "^1.0@beta",
         "drupal/views_infinite_scroll": "^1.6",
-        "drupal/webform": "^6.0.4",
+        "drupal/webform": "^6.1",
         "drupal/xmlsitemap": "^1.0@RC",
         "drupal/yoast_seo": "^1.5",
         "drush/drush": "^10.6"
