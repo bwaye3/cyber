@@ -216,23 +216,6 @@ function feeds_form_field_ui_field_overview_form_alter(array &$form, FormStateIn
 }
 
 /**
- * Implements hook_menu_links_discovered_alter().
- */
-function feeds_menu_links_discovered_alter(&$links) {
-  // Add "Mapping" link for each feed type.
-  foreach (\Drupal::entityTypeManager()->getStorage('feeds_feed_type')->loadMultiple() as $machine_name => $bundle) {
-    $links['entity.feeds_feed_type.mapping' . $machine_name] = [
-      'title' => t('Mapping'),
-      'route_name' => 'entity.feeds_feed_type.mapping',
-      'menu_name' => 'admin',
-      'parent' => 'entity.feeds_feed_type.edit_form.' . $machine_name,
-      'route_parameters' => ['feeds_feed_type' => $machine_name],
-      'weight' => -1,
-    ];
-  }
-}
-
-/**
  * Prepares variables for feed templates.
  *
  * Default template: feeds_feed.html.twig.

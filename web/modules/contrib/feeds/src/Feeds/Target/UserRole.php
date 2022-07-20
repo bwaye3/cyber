@@ -77,7 +77,7 @@ class UserRole extends ConfigEntityReference {
         }
 
         // Merge the remaining values.
-        $values = array_merge($item_list->getValue(), $original_values);
+        $values = $this->mergeRoles($item_list->getValue(), $original_values);
 
         $item_list->setValue($values);
       }
@@ -251,6 +251,37 @@ class UserRole extends ConfigEntityReference {
     }
 
     return $summary;
+  }
+
+  /**
+   * Merge two arrays of user roles together and remove duplicates.
+   *
+   * @param array $roles
+   *   An array of roles.
+   * @param array $merging_roles
+   *   An array of merging roles.
+   *
+   * @return array
+   *   An array of merged roles.
+   */
+  protected function mergeRoles(array $roles, array $merging_roles) {
+    $merged_roles = array_merge($roles, $merging_roles);
+
+    $existing_map = [];
+    $unique_roles = [];
+
+    foreach ($merged_roles as $role) {
+      // Ignore role ids that already exist.
+      if (isset($existing_map[$role['target_id']])) {
+        continue;
+      }
+
+      // Add the role and mark the role id as existed.
+      $unique_roles[] = $role;
+      $existing_map[$role['target_id']] = 1;
+    }
+
+    return $unique_roles;
   }
 
 }

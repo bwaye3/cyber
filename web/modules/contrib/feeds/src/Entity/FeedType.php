@@ -702,7 +702,7 @@ class FeedType extends ConfigEntityBundleBase implements FeedTypeInterface, Enti
    * {@inheritdoc}
    */
   public function onDependencyRemoval(array $dependencies) {
-    $changed = FALSE;
+    $changed = parent::onDependencyRemoval($dependencies);
 
     // Don't intervene if the feeds module is removed.
     if (isset($dependencies['module']) && in_array('feeds', $dependencies['module'])) {

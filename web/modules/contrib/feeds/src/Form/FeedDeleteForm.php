@@ -55,13 +55,19 @@ class FeedDeleteForm extends ContentEntityConfirmFormBase {
     $this->entity->delete();
 
     try {
-      $args = ['@type' => $this->entity->getType()->label(), '%title' => $this->entity->label()];
+      $args = [
+        '@type'  => $this->entity->getType()->label(),
+        '%title' => $this->entity->label(),
+      ];
       $this->logger('feeds')->notice('@type: deleted %title.', $args);
     }
     catch (EntityStorageException $e) {
       // There was an error loading the feed type. Log a different message
       // instead.
-      $args = ['@type' => $this->entity->bundle(), '%title' => $this->entity->label()];
+      $args = [
+        '@type'  => $this->entity->bundle(),
+        '%title' => $this->entity->label(),
+      ];
       $this->logger('feeds')->notice('Deleted %title of unknown feed type @type.', $args);
     }
     $this->messenger()->addMessage($this->t('%title has been deleted.', $args));

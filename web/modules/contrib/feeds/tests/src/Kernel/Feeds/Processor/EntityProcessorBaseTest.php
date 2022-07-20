@@ -91,6 +91,11 @@ class EntityProcessorBaseTest extends FeedsKernelTestBase {
       \Drupal::service('entity_type.manager'),
       \Drupal::service('entity_type.bundle.info'),
       \Drupal::service('language_manager'),
+      \Drupal::service('datetime.time'),
+      \Drupal::service('plugin.manager.action'),
+      \Drupal::service('renderer'),
+      \Drupal::service('logger.factory')->get('feeds'),
+      \Drupal::service('database'),
     ]);
 
     $this->feed = $this->createMock(FeedInterface::class);

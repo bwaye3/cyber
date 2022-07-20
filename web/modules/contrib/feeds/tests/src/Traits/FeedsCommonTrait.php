@@ -146,6 +146,30 @@ trait FeedsCommonTrait {
   }
 
   /**
+   * Asserts that the given number of queue items exist for the specified queue.
+   *
+   * @param int $expected
+   *   The expected number of queue items.
+   * @param string $queue_name
+   *   The queue to inspect the number of items for.
+   * @param string $message
+   *   (optional) The message to assert.
+   */
+  protected function assertQueueItemCount(int $expected, string $queue_name, string $message = '') {
+    if (!$message) {
+      $message = '@expected queue items exist on @queue (actual: @count).';
+    }
+
+    $queue = $this->container->get('queue')->get($queue_name);
+    $item_count = $queue->numberOfItems();
+    $this->assertEquals($expected, $item_count, strtr($message, [
+      '@expected' => $expected,
+      '@queue' => $queue_name,
+      '@count' => $item_count,
+    ]));
+  }
+
+  /**
    * Returns the absolute path to the Drupal root.
    *
    * @return string
@@ -220,6 +244,28 @@ trait FeedsCommonTrait {
 
     // Process all items of queue.
     while ($item = $queue->claimItem()) {
+      $queue_worker->processItem($item->data);
+      $queue->deleteItem($item);
+    }
+  }
+
+  /**
+   * Runs specified number of items from one queue.
+   *
+   * @param string $queue_name
+   *   The name of the queue to run all items from.
+   * @param int $number
+   *   The number of items to process from the queue.
+   */
+  protected function runQueue(string $queue_name, int $number) {
+    // Create queue.
+    $queue = $this->container->get('queue')->get($queue_name);
+    $queue->createQueue();
+    $queue_worker = $this->container->get('plugin.manager.queue_worker')->createInstance($queue_name);
+
+    // Process all items of the queue.
+    for ($i = 0; $i < $number; $i++) {
+      $item = $queue->claimItem();
       $queue_worker->processItem($item->data);
       $queue->deleteItem($item);
     }

@@ -26,3 +26,11 @@ feeds.custom_source.foo:
       type: boolean
     proptext:
       type: string
+
+# Custom third party settings.
+feeds.feed_type.*.third_party.feeds_test_plugin:
+  type: mapping
+  label: 'Foo settings'
+  mapping:
+    status:
+      type: boolean

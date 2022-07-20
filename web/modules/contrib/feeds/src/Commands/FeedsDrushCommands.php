@@ -6,6 +6,7 @@ use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\feeds\FeedInterface;
 use Drush\Commands\DrushCommands;
 use Drush\Exceptions\UserAbortException;
@@ -14,6 +15,10 @@ use Drush\Exceptions\UserAbortException;
  * Defines Drush commands for the Feeds module.
  */
 class FeedsDrushCommands extends DrushCommands {
+
+  use StringTranslationTrait;
+
+  const EXIT_ERROR = 1;
 
   /**
    * The entity type manager.
@@ -126,10 +131,13 @@ class FeedsDrushCommands extends DrushCommands {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   In case the feed could not be loaded.
+   * @throws \Drush\Exceptions\UserAbortException
+   *   In case the user aborts the import process.
    */
   public function enableFeed($fid = NULL) {
     if (empty($fid)) {
-      throw new \Exception($this->t('Please specify the ID of the feed you want to enable.'));
+      $this->logger()->error($this->t('Please specify the ID of the feed you want to enable.'));
+      return self::EXIT_ERROR;
     }
     $feed = $this->getFeed($fid);
 
@@ -139,16 +147,20 @@ class FeedsDrushCommands extends DrushCommands {
         $this->logger()->notice($this->t('This feed is already enabled.'));
         return;
       }
-      if (!$this->io()->confirm($this->t('The following feed will be enabled: ":label" (id :id)', [':label' => $feed->label(), ':id' => $fid]))) {
+      if (!$this->io()->confirm($this->t('The following feed will be enabled: ":label" (id :id)', [
+        ':label' => $feed->label(),
+        ':id' => $fid,
+      ]))) {
         throw new UserAbortException();
       }
 
       $feed->setActive(TRUE);
       $feed->save();
-      $this->logger->success($this->t('The feed ":label" has been enabled.', [':label' => $feed->label()]));
+      $this->logger()->success($this->t('The feed ":label" has been enabled.', [':label' => $feed->label()]));
     }
     else {
-      throw new \Exception($this->t('There is no feed with id :id', [':id' => $fid]));
+      $this->logger()->error($this->t('There is no feed with id @id.', ['@id' => $fid]));
+      return self::EXIT_ERROR;
     }
   }
 
@@ -164,10 +176,13 @@ class FeedsDrushCommands extends DrushCommands {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   In case the feed could not be loaded.
+   * @throws \Drush\Exceptions\UserAbortException
+   *   In case the user aborts the import process.
    */
   public function disableFeed($fid = NULL) {
     if (empty($fid)) {
-      throw new \Exception($this->t('Please specify the ID of the feed you want to disable.'));
+      $this->logger()->error($this->t('Please specify the ID of the feed you want to disable.'));
+      return self::EXIT_ERROR;
     }
     $feed = $this->getFeed($fid);
 
@@ -177,16 +192,20 @@ class FeedsDrushCommands extends DrushCommands {
         $this->logger()->notice($this->t('This feed is already disabled.'));
         return;
       }
-      if (!$this->io()->confirm($this->t('The following feed will be disabled: ":label" (id :id)', [':label' => $feed->label(), ':id' => $fid]))) {
+      if (!$this->io()->confirm($this->t('The following feed will be disabled: ":label" (id :id)', [
+        ':label' => $feed->label(),
+        ':id' => $fid,
+      ]))) {
         throw new UserAbortException();
       }
 
       $feed->setActive(FALSE);
       $feed->save();
-      $this->logger->success($this->t('The feed ":label" has been disabled.', [':label' => $feed->label()]));
+      $this->logger()->success($this->t('The feed ":label" has been disabled.', [':label' => $feed->label()]));
     }
     else {
-      throw new \Exception($this->t('There is no feed with id :id', [':id' => $fid]));
+      $this->logger()->error($this->t('There is no feed with id @id.', ['@id' => $fid]));
+      return self::EXIT_ERROR;
     }
   }
 
@@ -204,12 +223,13 @@ class FeedsDrushCommands extends DrushCommands {
    *   Also import feed if it is not active.
    * @usage feeds:import 1
    *
-   * @throws \Exception
-   *   In case something went wrong when importing the feed.
+   * @throws \Drush\Exceptions\UserAbortException
+   *   In case the user aborts the import process.
    */
   public function importFeed($fid = NULL, array $options = ['import-disabled' => FALSE]) {
     if (empty($fid)) {
-      throw new \Exception($this->t('Please specify the ID of the feed you want to import.'));
+      $this->logger()->error($this->t('Please specify the ID of the feed you want to import.'));
+      return self::EXIT_ERROR;
     }
     $feed = $this->getFeed($fid);
 
@@ -218,10 +238,14 @@ class FeedsDrushCommands extends DrushCommands {
       // Only import feed if it is either active, or the user specifically wants
       // to import the feed regardless of its active state.
       if (!$feed->isActive() && !$options['import-disabled']) {
-        throw new \Exception($this->t('The specified feed is disabled. If you want to force importing, specify --import-disabled.'));
+        $this->logger()->error($this->t('The specified feed is disabled. If you want to force importing, specify --import-disabled.'));
+        return self::EXIT_ERROR;
       }
 
-      if (!$this->io()->confirm($this->t('Do you really want to import the feed ":label" (id :id)?', [':label' => $feed->label(), ':id' => $fid]))) {
+      if (!$this->io()->confirm($this->t('Do you really want to import the feed ":label" (id :id)?', [
+        ':label' => $feed->label(),
+        ':id' => $fid,
+      ]))) {
         throw new UserAbortException();
       }
 
@@ -229,7 +253,8 @@ class FeedsDrushCommands extends DrushCommands {
       $feed->import();
     }
     else {
-      throw new \Exception($this->t('There is no feed with id :id', [':id' => $fid]));
+      $this->logger()->error($this->t('There is no feed with id @id.', ['@id' => $fid]));
+      return self::EXIT_ERROR;
     }
   }
 
@@ -248,9 +273,6 @@ class FeedsDrushCommands extends DrushCommands {
    * @usage feeds:import-all
    * @usage feeds:import-all my_feed_type
    * @usage feeds:import-all my_feed_type my_second_feed_type
-   *
-   * @throws \Exception
-   *   In case something went wrong when importing the feeds.
    */
   public function importAllFeeds(array $feed_types, array $options = ['import-disabled' => FALSE]) {
     $entityQuery = $this->entityTypeManager->getStorage('feeds_feed')->getQuery()
@@ -307,10 +329,14 @@ class FeedsDrushCommands extends DrushCommands {
    * @command feeds:lock
    * @aliases feeds-lk
    * @usage feeds:lock 1
+   *
+   * @throws \Drush\Exceptions\UserAbortException
+   *   In case the user aborts the import process.
    */
   public function lockFeed($fid = NULL) {
     if (empty($fid)) {
-      throw new \Exception($this->t('Please specify the ID of the feed you want to lock.'));
+      $this->logger()->error($this->t('Please specify the ID of the feed you want to lock.'));
+      return self::EXIT_ERROR;
     }
     $feed = $this->getFeed($fid);
 
@@ -320,15 +346,19 @@ class FeedsDrushCommands extends DrushCommands {
         $this->logger()->notice($this->t('This feed is already locked.'));
         return;
       }
-      if (!$this->io()->confirm($this->t('The following feed will be locked: ":label" (id :id)', [':label' => $feed->label(), ':id' => $fid]))) {
+      if (!$this->io()->confirm($this->t('The following feed will be locked: ":label" (id :id)', [
+        ':label' => $feed->label(),
+        ':id' => $fid,
+      ]))) {
         throw new UserAbortException();
       }
 
       $feed->lock();
-      $this->logger->success($this->t('The feed ":label" has been locked.', [':label' => $feed->label()]));
+      $this->logger()->success($this->t('The feed ":label" has been locked.', [':label' => $feed->label()]));
     }
     else {
-      throw new \Exception($this->t('There is no feed with id :id', [':id' => $fid]));
+      $this->logger()->error($this->t('There is no feed with id @id.', ['@id' => $fid]));
+      return self::EXIT_ERROR;
     }
   }
 
@@ -341,10 +371,14 @@ class FeedsDrushCommands extends DrushCommands {
    * @command feeds:unlock
    * @aliases feeds-ulk
    * @usage feeds:unlock 1
+   *
+   * @throws \Drush\Exceptions\UserAbortException
+   *   In case the user aborts the import process.
    */
   public function unlockFeed($fid = NULL) {
     if (empty($fid)) {
-      throw new \Exception($this->t('Please specify the ID of the feed you want to unlock.'));
+      $this->logger()->error($this->t('Please specify the ID of the feed you want to unlock.'));
+      return self::EXIT_ERROR;
     }
     $feed = $this->getFeed($fid);
 
@@ -354,15 +388,19 @@ class FeedsDrushCommands extends DrushCommands {
         $this->logger()->notice($this->t('This feed is already unlocked.'));
         return;
       }
-      if (!$this->io()->confirm($this->t('The following feed will be unlocked: ":label" (id :id)', [':label' => $feed->label(), ':id' => $fid]))) {
+      if (!$this->io()->confirm($this->t('The following feed will be unlocked: ":label" (id :id)', [
+        ':label' => $feed->label(),
+        ':id' => $fid,
+      ]))) {
         throw new UserAbortException();
       }
 
       $feed->unlock();
-      $this->logger->success($this->t('The feed ":label" has been unlocked.', [':label' => $feed->label()]));
+      $this->logger()->success($this->t('The feed ":label" has been unlocked.', [':label' => $feed->label()]));
     }
     else {
-      throw new \Exception($this->t('There is no feed with id :id', [':id' => $fid]));
+      $this->logger()->error($this->t('There is no feed with id @id.', ['@id' => $fid]));
+      return self::EXIT_ERROR;
     }
   }
 
@@ -383,28 +421,13 @@ class FeedsDrushCommands extends DrushCommands {
         ->load($fid);
     }
     catch (InvalidPluginDefinitionException $e) {
-      $this->logger->error($e->getMessage());
+      $this->logger()->error($e->getMessage());
     }
     catch (PluginNotFoundException $e) {
-      $this->logger->error($e->getMessage());
+      $this->logger()->error($e->getMessage());
     }
     // An error seems to have occurred when getting here, return null.
     return NULL;
-  }
-
-  /**
-   * Translates a string using the dt function.
-   *
-   * @param string $message
-   *   The message to translate.
-   * @param array $arguments
-   *   (optional) The translation arguments.
-   *
-   * @return string
-   *   The translated message.
-   */
-  protected function t($message, array $arguments = []) {
-    return dt($message, $arguments);
   }
 
 }

@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\feeds\Exception\MissingTargetException;
 use Drupal\feeds\FeedTypeInterface;
 use Drupal\feeds\MissingTargetDefinition;
@@ -94,6 +95,9 @@ class MappingForm extends FormBase {
       $target_options[$key] = $target->getLabel() . ' (' . $key . ')';
     }
     $target_options = $this->sortOptions($target_options);
+
+    // Check if two mappings are exactly the same.
+    $this->checkDuplicateMappings($feed_type, $target_options);
 
     if ($form_state->getValues()) {
       $this->processFormState($form, $form_state);
@@ -520,7 +524,7 @@ class MappingForm extends FormBase {
       $element['sources']['#rows'][$key] = [
         'label' => $info['label'],
         'name' => $key,
-        'description' => isset($info['description']) ? $info['description'] : NULL,
+        'description' => $info['description'] ?? NULL,
       ];
     }
     asort($element['sources']['#rows']);
@@ -815,6 +819,45 @@ class MappingForm extends FormBase {
     // There might turn out to be other things that need to be copied and passed
     // into plugins. This works for now.
     return (new FormState())->setValues($form_state->getValue($key, []));
+  }
+
+  /**
+   * Displays a warning when two duplicate configured mappings are found.
+   *
+   * Two mappings are considered a duplicate if they are configured the same. So
+   * the same source, the same target and the same target configuration.
+   *
+   * @param \Drupal\feeds\FeedTypeInterface $feed_type
+   *   The feed type.
+   * @param array $target_options
+   *   The mapping sources target list.
+   */
+  protected function checkDuplicateMappings(FeedTypeInterface $feed_type, array $target_options) {
+    $output = [];
+    $existing_mappings = $feed_type->getMappings();
+    $existing_mappings_json_strings = array_map(
+      static function ($item) {
+        return json_encode($item, JSON_THROW_ON_ERROR);
+      }, $existing_mappings
+    );
+    $count_existing_mappings = array_count_values($existing_mappings_json_strings);
+    $duplicates = [];
+    foreach ($count_existing_mappings as $key => $count) {
+      if ($count > 1) {
+        $duplicates[] = json_decode($key, TRUE, 512, JSON_THROW_ON_ERROR);
+      }
+    }
+
+    $duplicates = array_map(
+      function ($item) use ($target_options) {
+        return $this->t('The target %target pairs more than once with the same source and the same settings.', [
+          '%target' => $target_options[$item['target']],
+        ]);
+      }, $duplicates
+    );
+
+    $message = array_filter(array_merge($output, $duplicates), 'strlen');
+    !empty($message) ? $this->messenger()->addWarning(Markup::create(implode('<br />', $message))) : TRUE;
   }
 
 }

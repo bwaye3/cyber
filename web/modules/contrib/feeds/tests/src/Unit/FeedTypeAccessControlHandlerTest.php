@@ -53,25 +53,16 @@ class FeedTypeAccessControlHandlerTest extends FeedsUnitTestCase {
     ]);
     $this->assertTrue($result->isAllowed());
 
+    $this->entity->getCacheContexts()->willReturn([]);
+    $this->entity->getCacheTags()->willReturn([]);
+    $this->entity->getCacheMaxAge()->willReturn(0);
+
     $result = $method->invokeArgs($this->controller, [
       $this->entity->reveal(),
       'delete',
       $this->account->reveal(),
     ]);
     $this->assertTrue($result->isAllowed());
-
-    $this->entity->getCacheContexts()->willReturn([]);
-    $this->entity->getCacheTags()->willReturn([]);
-    $this->entity->getCacheMaxAge()->willReturn(0);
-
-    $this->entity->isLocked()->willReturn(TRUE);
-    $this->entity->isNew()->willReturn(FALSE);
-    $result = $method->invokeArgs($this->controller, [
-      $this->entity->reveal(),
-      'delete',
-      $this->account->reveal(),
-    ]);
-    $this->assertFalse($result->isAllowed());
 
     $this->account->hasPermission('administer feeds')->willReturn(FALSE);
     $result = $method->invokeArgs($this->controller, [

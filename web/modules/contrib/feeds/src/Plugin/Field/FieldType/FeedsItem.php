@@ -129,7 +129,9 @@ class FeedsItem extends EntityReferenceItem implements FeedsItemInterface {
       // Only trim if url is a string.
       $this->url = trim($this->url);
     }
-    $this->guid = trim($this->guid);
+    if (is_string($this->guid)) {
+      $this->guid = trim($this->guid);
+    }
     $this->imported = (int) $this->imported;
   }
 

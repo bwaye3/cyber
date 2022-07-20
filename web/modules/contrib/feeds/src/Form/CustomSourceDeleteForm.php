@@ -87,7 +87,7 @@ class CustomSourceDeleteForm extends ConfirmFormBase {
     }
     $this->source = $feeds_feed_type->getCustomSource($key);
 
-    return parent::buildForm($form, $form_state);;
+    return parent::buildForm($form, $form_state);
   }
 
   /**

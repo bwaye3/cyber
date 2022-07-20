@@ -49,7 +49,7 @@ class CustomSourceListControllerTest extends FeedsBrowserTestBase {
     $session->pageTextContains('foo.title');
     $session->linkByHrefExists('/admin/structure/feeds/manage/' . $feed_type->id() . '/sources/_foo');
     $session->linkByHrefExists('/admin/structure/feeds/manage/' . $feed_type->id() . '/sources/_foo/delete');
-    $session->pageTextContains('Custom CSV sources');
+    $session->pageTextContains('Custom CSV column sources');
     $session->pageTextContains('Bar-label');
     $session->pageTextContains('bar.title');
     $session->linkByHrefExists('/admin/structure/feeds/manage/' . $feed_type->id() . '/sources/_bar');

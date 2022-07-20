@@ -22,7 +22,36 @@ function feeds_install() {
  * Implements hook_uninstall().
  */
 function feeds_uninstall() {
-  // @todo remove keyvalue store and queue things.
+  $database = \Drupal::database();
+
+  // Delete Feeds states.
+  if ($database->schema()->tableExists('key_value')) {
+    $collections = $database->select('key_value')
+      ->fields('key_value', ['collection'])
+      ->condition('collection', 'feeds_feed.%', 'LIKE')
+      ->groupBy('collection')
+      ->execute();
+
+    foreach ($collections as $collection_record) {
+      \Drupal::keyValue($collection_record->collection)->deleteAll();
+    }
+  }
+
+  // Delete all Feeds queues.
+  if ($database->schema()->tableExists('queue')) {
+    $queues = $database->select('queue')
+      ->fields('queue', ['name'])
+      ->condition('name', 'feeds_feed_refresh:%', 'LIKE')
+      ->groupBy('name')
+      ->execute();
+
+    foreach ($queues as $queue_record) {
+      $queue = \Drupal::queue($queue_record->name);
+      if ($queue) {
+        $queue->deleteQueue();
+      }
+    }
+  }
 }
 
 /**

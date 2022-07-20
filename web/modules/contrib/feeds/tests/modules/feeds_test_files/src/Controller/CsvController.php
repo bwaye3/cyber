@@ -3,7 +3,10 @@
 namespace Drupal\feeds_test_files\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\State\StateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,6 +22,43 @@ class CsvController extends ControllerBase {
    * @var string
    */
   const DATE_RFC7231 = 'D, d M Y H:i:s \G\M\T';
+
+  /**
+   * The state handler service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * The module extension list service.
+   *
+   * @var Drupal\Core\Extension\ModuleExtensionList|null
+   */
+  protected $extensionList;
+
+  /**
+   * Constructs a CsvController object.
+   *
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state handler service.
+   * @param Drupal\Core\Extension\ModuleExtensionList $extensionList
+   *   The module extension list service.
+   */
+  public function __construct(StateInterface $state, ModuleExtensionList $extensionList = NULL) {
+    $this->state = $state;
+    $this->extensionList = $extensionList;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('state'),
+      $container->has('extension.list.module') ? $container->get('extension.list.module') : NULL,
+    );
+  }
 
   /**
    * Generates an absolute url to the resources folder.
@@ -77,7 +117,7 @@ class CsvController extends ControllerBase {
    *   A HTTP response.
    */
   public function nodes() {
-    $last_modified = \Drupal::state()->get('feeds_test_nodes_last_modified');
+    $last_modified = $this->state->get('feeds_test_nodes_last_modified');
     if (!$last_modified) {
       $file = 'nodes.csv';
       $last_modified = strtotime('Sun, 19 Nov 1978 05:00:00 GMT');
@@ -127,11 +167,11 @@ class CsvController extends ControllerBase {
    */
   protected function getModulePath(string $module_name): string {
     // @todo Remove drupal_get_path() when Drupal 9.2 is no longer supported.
-    if (!\Drupal::hasService('extension.list.module')) {
+    if ($this->extensionList == NULL) {
       return drupal_get_path('module', $module_name);
     }
 
-    return \Drupal::service('extension.list.module')->getPath($module_name);
+    return $this->extensionList->getPath($module_name);
   }
 
 }
