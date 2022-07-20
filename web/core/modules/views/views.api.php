@@ -70,14 +70,6 @@ use Drupal\views\ViewExecutable;
  */
 
 /**
- * @defgroup views_hooks Views hooks
- * @{
- * Hooks that allow other modules to implement the Views API.
- * @ingroup views_overview
- * @}
- */
-
-/**
  * @addtogroup hooks
  * @{
  */
@@ -133,6 +125,7 @@ function hook_views_analyze(\Drupal\views\ViewExecutable $view) {
 function hook_views_data() {
   // This example describes how to write hook_views_data() for a table defined
   // like this:
+  // @code
   // CREATE TABLE example_table (
   //   nid INT(11) NOT NULL         COMMENT 'Primary key: {node}.nid.',
   //   plain_text_field VARCHAR(32) COMMENT 'Just a plain text field.',
@@ -142,6 +135,7 @@ function hook_views_data() {
   //   langcode VARCHAR(12)         COMMENT 'Language code field.',
   //   PRIMARY KEY(nid)
   // );
+  // @endcode
 
   // Define the return array.
   $data = [];
@@ -193,8 +187,10 @@ function hook_views_data() {
   //
   // If you've decided an automatic join is a good idea, here's how to do it;
   // the resulting SQL query will look something like this:
+  // @code
   //   ... FROM example_table et ... JOIN node_field_data nfd
   //   ON et.nid = nfd.nid AND ('extra' clauses will be here) ...
+  // @endcode
   // although the table aliases will be different.
   $data['example_table']['table']['join'] = [
     // Within the 'join' section, list one or more tables to automatically
@@ -243,10 +239,12 @@ function hook_views_data() {
   // shown above), you could join to 'node_field_table' via the 'foo' table.
   // Here's how to do this, and the resulting SQL query would look something
   // like this:
+  // @code
   //   ... FROM example_table et ... JOIN foo foo
   //   ON et.nid = foo.nid AND ('extra' clauses will be here) ...
   //   JOIN node_field_data nfd ON (definition of the join from the foo
   //   module goes here) ...
+  // @endcode
   // although the table aliases will be different.
   $data['example_table']['table']['join']['node_field_data'] = [
     // 'node_field_data' above is the base we're joining to in Views.
@@ -503,9 +501,11 @@ function hook_views_data_alter(array &$data) {
 /**
  * Override the default Views data for a Field API field.
  *
- * The field module's implementation of hook_views_data() invokes this for each
- * field storage, in the module that defines the field type. It is not invoked
- * in other modules.
+ * When collecting the views data, views_views_data() invokes this hook for each
+ * field storage definition, on the module that provides the field storage
+ * definition. If the return value is empty, the result of
+ * views_field_default_views_data() is used instead. Then the result is altered
+ * by invoking hook_field_views_data_alter() on all modules.
  *
  * If no hook implementation exists, hook_views_data() falls back to
  * views_field_default_views_data().
@@ -561,7 +561,7 @@ function hook_field_views_data_alter(array &$data, \Drupal\field\FieldStorageCon
   $pseudo_field_name = 'reverse_' . $field_name . '_' . $entity_type_id;
   $table_mapping = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getTableMapping();
 
-  list($label) = views_entity_field_label($entity_type_id, $field_name);
+  [$label] = views_entity_field_label($entity_type_id, $field_name);
 
   $data['file_managed'][$pseudo_field_name]['relationship'] = [
     'title' => t('@entity using @field', ['@entity' => $entity_type->getLabel(), '@field' => $label]),
@@ -587,7 +587,7 @@ function hook_field_views_data_alter(array &$data, \Drupal\field\FieldStorageCon
 /**
  * Alter the Views data on a per field basis.
  *
- * The field module's implementation of hook_views_data_alter() invokes this for
+ * The Views module's implementation of hook_views_data_alter() invokes this for
  * each field storage, in the module that defines the field type. It is not
  * invoked in other modules.
  *
@@ -616,7 +616,7 @@ function hook_field_views_data_views_data_alter(array &$data, \Drupal\field\Fiel
   $entity_type_id = $field->entity_type;
   $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
   $pseudo_field_name = 'reverse_' . $field_name . '_' . $entity_type_id;
-  list($label) = views_entity_field_label($entity_type_id, $field_name);
+  [$label] = views_entity_field_label($entity_type_id, $field_name);
   $table_mapping = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getTableMapping();
 
   // Views data for this field is in $data[$data_key].
@@ -822,36 +822,37 @@ function hook_views_pre_render(ViewExecutable $view) {
 }
 
 /**
- * Post-process any rendered data.
+ * Post-process any render data.
  *
- * This can be valuable to be able to cache a view and still have some level of
- * dynamic output. In an ideal world, the actual output will include HTML
- * comment-based tokens, and then the post process can replace those tokens.
- * This hook can be used by themes.
+ * The module or theme may add, modify or remove elements in $output after
+ * rendering.
  *
- * Example usage. If it is known that the view is a node view and that the
- * primary field will be a nid, you can do something like this:
+ * If a module wishes to act on the rendered HTML of the view rather than the
+ * structured content array, it may use this hook to add a #post_render
+ * callback:
  * @code
- *   <!--post-FIELD-NID-->
+ * // The object must implement \Drupal\Core\Security\TrustedCallbackInterface.
+ * $output['#post_render'][] = '\Drupal\my_module\View::postRender';
  * @endcode
- * And then in the post-render, create an array with the text that should
- * go there:
- * @code
- *   strtr($output, array('<!--post-FIELD-1-->' => 'output for FIELD of nid 1');
- * @endcode
- * All of the cached result data will be available in $view->result, as well,
- * so all ids used in the query should be discoverable.
+ *
+ * See \Drupal\Core\Render\RendererInterface::render() for #post_render
+ * documentation.
+ *
+ * Alternatively, it could also implement hook_preprocess_HOOK() for
+ * the particular view template, if there is one.
  *
  * @param \Drupal\views\ViewExecutable $view
- *   The view object about to be processed.
- * @param string $output
- *   A flat string with the rendered output of the view.
+ *   The view object being processed.
+ * @param array $output
+ *   A structured content array representing the view output. The given array
+ *   depends on the style plugin and can be either a render array or an array of
+ *   render arrays.
  * @param \Drupal\views\Plugin\views\cache\CachePluginBase $cache
  *   The cache settings.
  *
  * @see \Drupal\views\ViewExecutable
  */
-function hook_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+function hook_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
   // When using full pager, disable any time-based caching if there are fewer
   // than 10 results.
   if ($view->pager instanceof Drupal\views\Plugin\views\pager\Full && $cache instanceof Drupal\views\Plugin\views\cache\Time && count($view->result) < 10) {
@@ -865,7 +866,7 @@ function hook_views_post_render(ViewExecutable $view, &$output, CachePluginBase 
  *
  * @param \Drupal\views\ViewExecutable $view
  *   The view object about to be processed.
- * @param QueryPluginBase $query
+ * @param \Drupal\views\Plugin\views\query\QueryPluginBase $query
  *   The query plugin object for the query.
  *
  * @see hook_views_query_substitutions()
@@ -1242,8 +1243,4 @@ function hook_views_plugins_sort_alter(array &$plugins) {
 
 /**
  * @} End of "addtogroup hooks".
- */
-
-/**
- * @}
  */

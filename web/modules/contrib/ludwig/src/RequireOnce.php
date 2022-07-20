@@ -2,7 +2,6 @@
 
 namespace Drupal\ludwig;
 
-use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -16,6 +15,14 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class RequireOnce {
 
   use StringTranslationTrait;
+
+  /**
+   * The dummy constructor.
+   *
+   * All we need from this service class is the helper function below.
+   */
+  public function __construct() {
+  }
 
   /**
    * The helper function for Ludwig integration.

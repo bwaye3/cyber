@@ -8,6 +8,7 @@ use Drupal\views\Entity\View;
  * Tests display of aggregator items on the page.
  *
  * @group aggregator
+ * @group legacy
  */
 class AggregatorRenderingTest extends AggregatorTestBase {
 
@@ -80,7 +81,7 @@ class AggregatorRenderingTest extends AggregatorTestBase {
     $block->save();
     // Check that the block is no longer displayed.
     $this->drupalGet('test-page');
-    $this->assertNoText($block->label());
+    $this->assertSession()->pageTextNotContains($block->label());
   }
 
   /**

@@ -35,8 +35,8 @@ class ViewsEscapingTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp(TRUE);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp(TRUE, $modules);
 
     $this->enableViewsTestModule();
   }
@@ -83,7 +83,7 @@ class ViewsEscapingTest extends ViewTestBase {
     $this->drupalGet('test_field_header_xss');
 
     // Assert that harmful tags are escaped in header label.
-    $this->assertNoRaw('<script>alert("XSS")</script>');
+    $this->assertSession()->responseNotContains('<script>alert("XSS")</script>');
   }
 
 }

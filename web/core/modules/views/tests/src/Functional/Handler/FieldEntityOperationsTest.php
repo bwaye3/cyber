@@ -33,8 +33,8 @@ class FieldEntityOperationsTest extends ViewTestBase {
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     // Create Article content type.
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
@@ -86,8 +86,7 @@ class FieldEntityOperationsTest extends ViewTestBase {
           // Update destination property of the URL as generating it in the
           // test would by default point to the frontpage.
           $operation['url']->setOption('query', ['destination' => $expected_destination]);
-          $result = $this->xpath('//ul[contains(@class, dropbutton)]/li/a[@href=:path and text()=:title]', [':path' => $operation['url']->toString(), ':title' => (string) $operation['title']]);
-          $this->assertCount(1, $result, t('Found entity @operation link with destination parameter.', ['@operation' => $operation['title']]));
+          $this->assertSession()->elementsCount('xpath', "//ul[contains(@class, dropbutton)]/li/a[@href='{$operation['url']->toString()}' and text()='{$operation['title']}']", 1);
           // Entities which were created in Hungarian should link to the Hungarian
           // edit form, others to the English one (which has no path prefix here).
           $base_path = \Drupal::request()->getBasePath();

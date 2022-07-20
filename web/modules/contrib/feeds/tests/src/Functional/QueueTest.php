@@ -86,6 +86,10 @@ class QueueTest extends FeedsBrowserTestBase {
     // Assert that 6 nodes have been created.
     $this->assertNodeCount(6);
 
+    // Unlock the feed manually again, since it still exists in memory.
+    // @see \Drupal\Core\Lock\DatabaseLockBackend::acquire()
+    $feed->unlock();
+
     // Add feed to queue again but delete the feed before cron has run.
     $feed->startCronImport();
     $feed->delete();
@@ -94,8 +98,7 @@ class QueueTest extends FeedsBrowserTestBase {
     $this->cronRun();
 
     // Assert that the queue is empty.
-    $queue = \Drupal::service('queue')->get('feeds_feed_refresh:' . $feed_type->id());
-    $this->assertEquals(0, $queue->numberOfItems());
+    $this->assertQueueItemCount(0, 'feeds_feed_refresh:' . $feed_type->id());
   }
 
 }

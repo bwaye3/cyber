@@ -9,8 +9,7 @@ use Drupal\feeds\Feeds\Parser\SyndicationParser;
 use Drupal\feeds\Result\RawFetcherResult;
 use Drupal\feeds\State;
 use Drupal\Tests\feeds\Unit\FeedsUnitTestCase;
-use RuntimeException;
-use Zend\Feed\Reader\StandaloneExtensionManager;
+use Laminas\Feed\Reader\StandaloneExtensionManager;
 
 /**
  * @coversDefaultClass \Drupal\feeds\Feeds\Parser\SyndicationParser
@@ -52,17 +51,18 @@ class SyndicationParserTest extends FeedsUnitTestCase {
    * @var array
    */
   protected $readerExtensions = [
-    'feed.reader.dublincoreentry' => 'Zend\Feed\Reader\Extension\DublinCore\Entry',
-    'feed.reader.dublincorefeed' => 'Zend\Feed\Reader\Extension\DublinCore\Feed',
-    'feed.reader.contententry' => 'Zend\Feed\Reader\Extension\Content\Entry',
-    'feed.reader.atomentry' => 'Zend\Feed\Reader\Extension\Atom\Entry',
-    'feed.reader.atomfeed' => 'Zend\Feed\Reader\Extension\Atom\Feed',
-    'feed.reader.slashentry' => 'Zend\Feed\Reader\Extension\Slash\Entry',
-    'feed.reader.wellformedwebentry' => 'Zend\Feed\Reader\Extension\WellFormedWeb\Entry',
-    'feed.reader.threadentry' => 'Zend\Feed\Reader\Extension\Thread\Entry',
-    'feed.reader.podcastentry' => 'Zend\Feed\Reader\Extension\Podcast\Entry',
-    'feed.reader.podcastfeed' => 'Zend\Feed\Reader\Extension\Podcast\Feed',
-    'feed.reader.georssentry' => 'Drupal\feeds\Zend\Extension\Georss\Entry',
+    'feed.reader.dublincoreentry' => 'Laminas\Feed\Reader\Extension\DublinCore\Entry',
+    'feed.reader.dublincorefeed' => 'Laminas\Feed\Reader\Extension\DublinCore\Feed',
+    'feed.reader.contententry' => 'Laminas\Feed\Reader\Extension\Content\Entry',
+    'feed.reader.atomentry' => 'Laminas\Feed\Reader\Extension\Atom\Entry',
+    'feed.reader.atomfeed' => 'Laminas\Feed\Reader\Extension\Atom\Feed',
+    'feed.reader.slashentry' => 'Laminas\Feed\Reader\Extension\Slash\Entry',
+    'feed.reader.wellformedwebentry' => 'Laminas\Feed\Reader\Extension\WellFormedWeb\Entry',
+    'feed.reader.threadentry' => 'Laminas\Feed\Reader\Extension\Thread\Entry',
+    'feed.reader.podcastentry' => 'Laminas\Feed\Reader\Extension\Podcast\Entry',
+    'feed.reader.podcastfeed' => 'Laminas\Feed\Reader\Extension\Podcast\Feed',
+    'feed.reader.georssentry' => 'Drupal\feeds\Laminas\Extension\Georss\Entry',
+    'feed.reader.mediarssentry' => 'Drupal\feeds\Laminas\Extension\Mediarss\Entry',
   ];
 
   /**
@@ -116,6 +116,42 @@ class SyndicationParserTest extends FeedsUnitTestCase {
   }
 
   /**
+   * Tests parsing a RSS feed that contains media.
+   *
+   * @covers ::parse
+   */
+  public function testParseMediaFeed() {
+    $file = $this->resourcesPath() . '/rss/media-rss.rss2';
+    $fetcher_result = new RawFetcherResult(file_get_contents($file), $this->getMockFileSystem());
+
+    $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
+    $this->assertSame(count($result), 6);
+
+    $expected = [
+      1 => [
+        'mediarss_content' => 'https://www.example.com/image1.png',
+        'mediarss_description' => '',
+        'mediarss_thumbnail' => 'https://www.example.com/thumbnail1.png',
+      ],
+      2 => [
+        'mediarss_content' => 'https://www.example.com/image2.png',
+        'mediarss_description' => '',
+      ],
+      3 => [
+        'mediarss_thumbnail' => 'https://www.example.com/thumbnail3.png',
+      ],
+      4 => [
+        'mediarss_description' => 'Example media description',
+      ],
+    ];
+    foreach ($expected as $index => $expected_values) {
+      foreach ($expected_values as $key => $value) {
+        $this->assertSame($value, $result[$index]->get($key), "Entry $index got expected value for $key.");
+      }
+    }
+  }
+
+  /**
    * Tests parsing an Atom feed.
    *
    * @covers ::parse
@@ -144,7 +180,7 @@ class SyndicationParserTest extends FeedsUnitTestCase {
   public function testInvalidFeed() {
     $fetcher_result = new RawFetcherResult('beep boop', $this->getMockFileSystem());
 
-    $this->expectException(RuntimeException::class);
+    $this->expectException(\RuntimeException::class);
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
   }
 
@@ -164,8 +200,9 @@ class SyndicationParserTest extends FeedsUnitTestCase {
    * @covers ::getMappingSources
    */
   public function testGetMappingSources() {
-    // Not really much to test here.
-    $this->assertSame(count($this->parser->getMappingSources()), 17);
+    $mapping_sources = $this->parser->getMappingSources();
+    $this->assertIsArray($mapping_sources);
+    $this->assertNotEmpty($mapping_sources);
   }
 
 }

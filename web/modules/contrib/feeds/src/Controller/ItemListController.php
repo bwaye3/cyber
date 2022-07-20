@@ -3,10 +3,10 @@
 namespace Drupal\feeds\Controller;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Plugin\Type\Processor\EntityProcessorInterface;
@@ -115,14 +115,16 @@ class ItemListController extends ControllerBase {
 
       // Imported ago.
       $row[] = $this->t('@time ago', ['@time' => $ago]);
+
       // Item GUID.
       $row[] = [
-        'data' => Html::escape(Unicode::truncate($entity->get('feeds_item')->guid, 30, FALSE, TRUE)),
+        'data' => $this->getPropertyFromFeedsItem($entity, 'guid'),
         'title' => $entity->get('feeds_item')->guid,
       ];
+
       // Item URL.
       $row[] = [
-        'data' => Html::escape(Unicode::truncate($entity->get('feeds_item')->url, 30, FALSE, TRUE)),
+        'data' => $this->getPropertyFromFeedsItem($entity, 'url'),
         'title' => $entity->get('feeds_item')->url,
       ];
 
@@ -133,6 +135,32 @@ class ItemListController extends ControllerBase {
     $build['#title'] = $this->t('%title items', ['%title' => $feeds_feed->label()]);
 
     return $build;
+  }
+
+  /**
+   * Returns a property of the feeds item.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The imported entity that is being listed.
+   * @param string $property
+   *   The property to get from the feeds item.
+   *
+   * @return string|null|mixed
+   *   If the value on the feed is a string, it will be returned truncated to 30
+   *   characters. In case it is not a string, but still a scalar value, the
+   *   value will be returned as is. Null is returned when it is not a scalar
+   *   value.
+   */
+  protected function getPropertyFromFeedsItem(EntityInterface $entity, string $property) {
+    $value = $entity->get('feeds_item')->{$property};
+    if (!is_scalar($value)) {
+      return NULL;
+    }
+    if (!is_string($value)) {
+      return $value;
+    }
+
+    return Unicode::truncate($value, 30, FALSE, TRUE);
   }
 
 }

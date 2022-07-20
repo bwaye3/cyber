@@ -27,7 +27,7 @@ class FieldFormatterFromViewDisplayTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_test',
     'user',
     'field',
@@ -38,7 +38,7 @@ class FieldFormatterFromViewDisplayTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installSchema('system', ['sequences']);
@@ -47,6 +47,7 @@ class FieldFormatterFromViewDisplayTest extends KernelTestBase {
 
     $admin_role = Role::create([
       'id' => 'admin',
+      'label' => 'Test role admin',
       'permissions' => ['view test entity'],
     ]);
     $admin_role->save();

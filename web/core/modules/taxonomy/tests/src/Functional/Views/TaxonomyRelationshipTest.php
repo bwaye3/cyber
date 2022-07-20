@@ -35,8 +35,8 @@ class TaxonomyRelationshipTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = []): void {
+    parent::setUp($import_test_views, $modules);
 
     // Make term2 parent of term1.
     $this->term1->set('parent', $this->term2->id());
@@ -79,7 +79,7 @@ class TaxonomyRelationshipTest extends TaxonomyTestBase {
     // Check the parent relationship data.
     $this->assertEquals('taxonomy_term_field_data', $views_data['parent_target_id']['relationship']['base']);
     $this->assertEquals('tid', $views_data['parent_target_id']['relationship']['base field']);
-    $this->assertEquals(t('Parent'), $views_data['parent_target_id']['relationship']['label']);
+    $this->assertEquals('Parent', $views_data['parent_target_id']['relationship']['label']);
     $this->assertEquals('standard', $views_data['parent_target_id']['relationship']['id']);
     // Check the parent filter and argument data.
     $this->assertEquals('numeric', $views_data['parent_target_id']['filter']['id']);

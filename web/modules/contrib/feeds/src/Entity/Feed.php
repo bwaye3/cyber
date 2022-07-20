@@ -7,6 +7,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -73,7 +74,8 @@ use Drupal\user\UserInterface;
  *     "edit-form" = "/feed/{feeds_feed}/edit",
  *     "import-form" = "/feed/{feeds_feed}/import",
  *     "schedule-import-form" = "/feed/{feeds_feed}/schedule-import",
- *     "clear-form" = "/feed/{feeds_feed}/delete-items"
+ *     "clear-form" = "/feed/{feeds_feed}/delete-items",
+ *     "unlock" = "/feed/{feeds_feed}/unlock",
  *   }
  * )
  */
@@ -186,7 +188,21 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public function getType() {
-    return $this->get('type')->entity;
+    $type = $this->get('type')->entity;
+    if (empty($type)) {
+      if ($this->id()) {
+        throw new EntityStorageException(strtr('The feed type "@type" for feed @id no longer exists.', [
+          '@type' => $this->bundle(),
+          '@id' => $this->id(),
+        ]));
+      }
+      else {
+        throw new EntityStorageException(strtr('The feed type "@type" no longer exists.', [
+          '@type' => $this->bundle(),
+        ]));
+      }
+    }
+    return $type;
   }
 
   /**
@@ -545,8 +561,22 @@ class Feed extends ContentEntityBase implements FeedInterface {
     foreach ($grouped as $group) {
       // Grab the first feed to get its type.
       $feed = reset($group);
-      foreach ($feed->getType()->getPlugins() as $plugin) {
-        $plugin->onFeedDeleteMultiple($group);
+      try {
+        // Clear all state objects for the feed.
+        $feed->clearStates();
+
+        foreach ($feed->getType()->getPlugins() as $plugin) {
+          $plugin->onFeedDeleteMultiple($group);
+        }
+      }
+      catch (EntityStorageException $e) {
+        // Ignore the case where the feed type no longer exists, but do log an
+        // error.
+        $args = [
+          '%title' => $feed->label(),
+          '@error' => $e->getMessage(),
+        ];
+        \Drupal::logger('feeds')->warning('Could not perform some post cleanups for feed %title because of the following error: @error', $args);
       }
     }
 
@@ -695,7 +725,8 @@ class Feed extends ContentEntityBase implements FeedInterface {
         'label' => 'inline',
         'type' => 'number_integer',
         'weight' => 0,
-      ]);
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
     return $fields;
   }

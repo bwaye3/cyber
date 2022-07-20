@@ -32,9 +32,9 @@ function webform_token_info() {
   $types = [];
   $tokens = [];
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Webform submission.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   $types['webform_submission'] = [
     'name' => t('Webform submissions'),
@@ -62,6 +62,14 @@ function webform_token_info() {
   $webform_submission['ip-address'] = [
     'name' => t('IP address'),
     'description' => t('The IP address that was used when submitting the webform submission.'),
+  ];
+  $webform_submission['source-type'] = [
+    'name' => t('Source entity type'),
+    'description' => t('The source entity type.'),
+  ];
+  $webform_submission['source-id'] = [
+    'name' => t('Source entity type'),
+    'description' => t('The source entity type.'),
   ];
   $webform_submission['source-title'] = [
     'name' => t('Source URL'),
@@ -307,9 +315,9 @@ function webform_token_info() {
 
   $tokens['webform_submission'] = $webform_submission;
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Webform.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   $types['webform'] = [
     'name' => t('Webforms'),
@@ -381,9 +389,9 @@ function webform_token_info() {
 
   $tokens['webform'] = $webform;
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Webform role.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   $roles = \Drupal::config('webform.settings')->get('mail.roles');
   if ($roles) {
@@ -408,7 +416,7 @@ function webform_token_info() {
     $tokens['webform_role'] = $webform_role;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   return ['types' => $types, 'tokens' => $tokens];
 }
@@ -533,6 +541,14 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
 
         case 'language':
           $replacements[$original] = \Drupal::languageManager()->getLanguage($webform_submission->langcode->value)->getName();
+          break;
+
+        case 'source-type':
+          $replacements[$original] = ($source_entity) ? $source_entity->getEntityTypeId() : '';
+          break;
+
+        case 'source-id':
+          $replacements[$original] = ($source_entity) ? $source_entity->id() : '';
           break;
 
         case 'source-title':
@@ -811,7 +827,7 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
           $element_property = 'title';
         }
         else {
-          list($element_key, $element_property) = explode(':', $key);
+          [$element_key, $element_property] = explode(':', $key);
         }
         $element_property = $element_property ?: 'title';
         $element = $webform->getElement($element_key);
@@ -831,7 +847,7 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
 
     if (($handler_tokens = $token_service->findWithPrefix($tokens, 'handler'))) {
       foreach ($handler_tokens as $key => $original) {
-        $webform_handler = isset($data['webform_handler']) ? $data['webform_handler'] : [];
+        $webform_handler = $data['webform_handler'] ?? [];
         $parents = explode(':', $key);
         $key_exists = NULL;
         $value = NestedArray::getValue($webform_handler, $parents, $key_exists);
@@ -884,6 +900,7 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
 function _webform_token_get_submission_value($value_token, array $options, WebformSubmissionInterface $webform_submission, WebformElementManagerInterface $element_manager, BubbleableMetadata $bubbleable_metadata) {
   $submission_data = $webform_submission->getData();
 
+  // phpcs:disable Drupal.Commenting.InlineComment.InvalidEndChar
   // Formats:
   // [html]
   // [values:{element_key}:{format}]
@@ -894,6 +911,7 @@ function _webform_token_get_submission_value($value_token, array $options, Webfo
   // [values:{element_key}:{format}:{items}:urlencode]
   // [values:{element_key}:{delta}:{format}]
   // [values:{element_key}:{delta}:{sub-element}]
+  // phpcs:enable Drupal.Commenting.InlineComment.InvalidEndChar
   $keys = explode(':', $value_token);
   $element_key = array_shift($keys);
 
@@ -965,9 +983,9 @@ function _webform_token_get_submission_value($value_token, array $options, Webfo
     $composite_key = NULL;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Get value.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   // Set entity reference chaining.
   if ($keys && $keys[0] === 'entity' && $element_plugin instanceof WebformElementEntityReferenceInterface) {
@@ -984,7 +1002,7 @@ function _webform_token_get_submission_value($value_token, array $options, Webfo
         'taxonomy_term' => 'term',
         'taxonomy_vocabulary' => 'vocabulary',
       ];
-      $entity_token_name = (isset($entity_token_names[$entity_type])) ? $entity_token_names[$entity_type] : $entity_type;
+      $entity_token_name = $entity_token_names[$entity_type] ?? $entity_type;
       $entity_token = implode(':', $keys);
       $token_value = Markup::create(\Drupal::token()->replace(
         "[$entity_token_name:$entity_token]",

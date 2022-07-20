@@ -2,14 +2,16 @@
 
 namespace Drupal\feeds\Feeds\Target;
 
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
+use Drupal\feeds\EntityFinderInterface;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\Exception\TargetValidationException;
 use Drupal\feeds\FieldTargetDefinition;
@@ -71,15 +73,15 @@ class File extends EntityReference {
    *   The token service.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository service.
+   * @param \Drupal\feeds\EntityFinderInterface $entity_finder
+   *   The Feeds entity finder service.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   The file and stream wrapper helper.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ClientInterface $client, Token $token, EntityFieldManagerInterface $entity_field_manager, EntityRepositoryInterface $entity_repository, FileSystemInterface $file_system) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ClientInterface $client, Token $token, EntityFieldManagerInterface $entity_field_manager, EntityFinderInterface $entity_finder, FileSystemInterface $file_system) {
     $this->client = $client;
     $this->token = $token;
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $entity_repository);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $entity_finder);
     $this->fileExtensions = array_filter(explode(' ', $this->settings['file_extensions']));
     $this->fileSystem = $file_system;
   }
@@ -96,7 +98,7 @@ class File extends EntityReference {
       $container->get('http_client'),
       $container->get('token'),
       $container->get('entity_field.manager'),
-      $container->get('entity.repository'),
+      $container->get('feeds.entity_finder'),
       $container->get('file_system')
     );
   }
@@ -180,7 +182,7 @@ class File extends EntityReference {
     }
 
     // Perform a lookup agains the value using the configured reference method.
-    if (FALSE !== ($fid = $this->findEntity($value, $this->configuration['reference_by']))) {
+    if (FALSE !== ($fid = $this->findEntity($this->configuration['reference_by'], $value))) {
       return $fid;
     }
 
@@ -189,16 +191,16 @@ class File extends EntityReference {
 
     switch ($this->configuration['existing']) {
       case FileSystemInterface::EXISTS_ERROR:
-        if (file_exists($filepath) && $fid = $this->findEntity($filepath, 'uri')) {
+        if (file_exists($filepath) && $fid = $this->findEntity('uri', $filepath)) {
           return $fid;
         }
-        if ($file = file_save_data($this->getContent($value), $filepath, FileSystemInterface::EXISTS_REPLACE)) {
+        if ($file = $this->writeData($this->getContent($value), $filepath, FileSystemInterface::EXISTS_REPLACE)) {
           return $file->id();
         }
         break;
 
       default:
-        if ($file = file_save_data($this->getContent($value), $filepath, $this->configuration['existing'])) {
+        if ($file = $this->writeData($this->getContent($value), $filepath, $this->configuration['existing'])) {
           return $file->id();
         }
     }
@@ -350,6 +352,49 @@ class File extends EntityReference {
     $entity->save();
 
     return $entity->id();
+  }
+
+  /**
+   * Saves a file to the specified destination and creates a database entry.
+   *
+   * @param string $data
+   *   A string containing the contents of the file.
+   * @param string|null $destination
+   *   (optional) A string containing the destination URI. This must be a stream
+   *   wrapper URI. If no value or NULL is provided, a randomized name will be
+   *   generated and the file will be saved using Drupal's default files scheme,
+   *   usually "public://".
+   * @param int $replace
+   *   (optional) The replace behavior when the destination file already exists.
+   *   Possible values include:
+   *   - FileSystemInterface::EXISTS_REPLACE: Replace the existing file. If a
+   *     managed file with the destination name exists, then its database entry
+   *     will be updated. If no database entry is found, then a new one will be
+   *     created.
+   *   - FileSystemInterface::EXISTS_RENAME: (default) Append
+   *     _{incrementing number} until the filename is unique.
+   *   - FileSystemInterface::EXISTS_ERROR: Do nothing and return FALSE.
+   *
+   * @return \Drupal\file\FileInterface|false
+   *   A file entity, or FALSE on error.
+   */
+  protected function writeData($data, $destination = NULL, $replace = FileSystemInterface::EXISTS_RENAME) {
+    // @todo Remove file_save_data() when Drupal 9.2 is no longer supported.
+    if (!\Drupal::hasService('file.repository')) {
+      return file_save_data($data, $destination, $replace);
+    }
+
+    if (empty($destination)) {
+      $destination = \Drupal::config('system.file')->get('default_scheme') . '://';
+    }
+    /** @var \Drupal\file\FileRepositoryInterface $fileRepository */
+    $fileRepository = \Drupal::service('file.repository');
+    try {
+      return $fileRepository->writeData($data, $destination, $replace);
+    }
+    catch (EntityStorageException | FileException $e) {
+      return FALSE;
+    }
   }
 
 }

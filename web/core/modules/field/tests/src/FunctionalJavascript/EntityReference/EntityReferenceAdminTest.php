@@ -258,7 +258,7 @@ class EntityReferenceAdminTest extends WebDriverTestBase {
     // Check that the field settings form can be submitted again, even when the
     // field is required.
     // The first 'Edit' link is for the Body field.
-    $this->clickLink(t('Edit'), 1);
+    $this->clickLink('Edit', 1);
     $this->submitForm([], 'Save settings');
 
     // Switch the target type to 'taxonomy_term' and check that the settings
@@ -352,14 +352,18 @@ class EntityReferenceAdminTest extends WebDriverTestBase {
    *   The field name.
    * @param array $expected_options
    *   An array of expected options.
+   *
+   * @internal
    */
-  protected function assertFieldSelectOptions($name, array $expected_options) {
+  protected function assertFieldSelectOptions(string $name, array $expected_options): void {
     $field = $this->assertSession()->selectExists($name);
     $options = $field->findAll('xpath', 'option');
     $optgroups = $field->findAll('xpath', 'optgroup');
+    $nested_options = [];
     foreach ($optgroups as $optgroup) {
-      $options = array_merge($options, $optgroup->findAll('xpath', 'option'));
+      $nested_options[] = $optgroup->findAll('xpath', 'option');
     }
+    $options = array_merge($options, ...$nested_options);
     array_walk($options, function (NodeElement &$option) {
       $option = $option->getAttribute('value');
     });

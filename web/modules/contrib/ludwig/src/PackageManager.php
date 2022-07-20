@@ -46,6 +46,10 @@ class PackageManager implements PackageManagerInterface {
     $extensions = $profiles + $modules;
 
     $packages = [];
+    // We need the main drupal version for the compatibility check later.
+    $drupal_main_version = 'd' . explode('.', \Drupal::VERSION, 2)[0];
+    // We need a list for unique extension-package check later.
+    $packages_list = [];
     foreach ($extensions as $extension_name => $extension) {
       $extension_path = $extension->getPath();
       // Let's check if this module has ludwig.json file and
@@ -55,21 +59,28 @@ class PackageManager implements PackageManagerInterface {
         $config += [
           'require' => [],
         ];
-        // Let's check if this module has .module file and
-        // load its content if it has. We will need it later.
-        if (is_file($this->root . '/' . $extension_path . '/' . $extension_name . '.module')) {
-          $module_file = file_get_contents($this->root . '/' . $extension_path . '/' . $extension_name . '.module');
-          $has_ludwig_service = strpos($module_file, 'ludwig.require_once') !== FALSE;
-        }
         foreach ($config['require'] as $package_name => $package_data) {
-          $package_path = $extension_path . '/lib/' . str_replace('/', '-', $package_name) . '/' . $package_data['version'];
-          $disable_warnings = isset($package_data['disable_warnings']) ? $package_data['disable_warnings'] : FALSE;
-          // Disable the 'classmap' or 'files' warning if this
-          // module's .module file is calling ludwig.require_once
-          // service with this package name as an argument.
-          if (!empty($has_ludwig_service) && !empty($module_file) && ((strpos($module_file, "requireOnce('".$package_name) !== FALSE) || (strpos($module_file, "requireOnce( '".$package_name) !== FALSE) || (strpos($module_file, 'requireOnce("'.$package_name) !== FALSE) || (strpos($module_file, 'requireOnce( "'.$package_name) !== FALSE))) {
-             $disable_warnings = TRUE;
+          // The package name can be appended with core compatibility strings
+          // (one or multiple drupal core versons all separated with spaces).
+          $package_name_plus = explode(' ', $package_name);
+          $package_name = $package_name_plus[0];
+          // Multiple extensions can require the same package. We need the
+          // unique extension+package name for our $packages array items.
+          $extension_package_name = $extension_name . '_' . $package_name;
+          if (isset($package_name_plus[1]) && !in_array($drupal_main_version, $package_name_plus)) {
+            // Core compatibility doesn't match. Skip this package version.
+            continue;
           }
+          // We don't want the extension to require the same package twice
+          // due to the improperly configured ludwig.json file.
+          if (isset($packages_list[$extension_package_name])) {
+            // Skipping the package. This one exists already.
+            continue;
+          }
+          else {
+            $packages_list[$extension_package_name] = TRUE;
+          }
+          $package_path = $extension_path . '/lib/' . str_replace('/', '-', $package_name) . '/' . $package_data['version'];
           $package = $this->jsonRead($this->root . '/' . $package_path . '/composer.json');
           $description = !empty($package['description']) ? $package['description'] : '';
           $homepage = !empty($package['homepage']) ? $package['homepage'] : '';
@@ -82,28 +93,48 @@ class PackageManager implements PackageManagerInterface {
             'provider' => $extension_name,
             'provider_path' => $extension_path,
             'download_url' => $package_data['url'],
-            'disable_warnings' => $disable_warnings,
             'path' => $package_path,
           ];
           if (empty($package)) {
-            // Add new package. This one needs a download.
+            // Missing package. This one needs a download.
             $package_append = [
               'namespace' => '',
               'paths' => [],
-              'installed' => FALSE,
+              'status' => 'Missing',
               'resource' => '',
             ];
-            $packages[$package_name] = array_merge($package_base, $package_append);
+            $packages[$extension_package_name] = array_merge($package_base, $package_append);
             continue;
           }
           if (!empty($package['autoload'])) {
             $resources = array_keys($package['autoload']);
-            // Iterate through all autoload types.
+            // Iterate through all autoload types (resources).
             foreach ($resources as $resource) {
+              // Making the package name unique for multi-resource packages.
+              $extension_package_resource_name = $extension_package_name . '_' . $resource;
               if (!empty($package['autoload'][$resource])) {
+                $status = '';
                 if ($resource == 'files' || $resource == 'classmap' || $resource == 'exclude-from-classmap' || $resource == 'target-dir') {
                   $autoload = $package['autoload'];
                   $package_namespaces = [$resource];
+                  if ($resource == 'classmap' || $resource == 'files') {
+                    // Additional integration inside .module file is needed.
+                    $status = 'Not installed';
+                    // The .module file integration check.
+                    if (is_file($this->root . '/' . $extension_path . '/' . $extension_name . '.module')) {
+                      $module_file = file_get_contents($this->root . '/' . $extension_path . '/' . $extension_name . '.module');
+                    }
+                    // Mark back this package as 'Installed' if this
+                    // module's .module file is calling ludwig.require_once
+                    // service with this package name as an argument.
+                    if (!empty($module_file) && (strpos($module_file, 'ludwig.require_once') !== FALSE) && ((strpos($module_file, "requireOnce('" . $package_name) !== FALSE) || (strpos($module_file, "requireOnce( '" . $package_name) !== FALSE) || (strpos($module_file, 'requireOnce("' . $package_name) !== FALSE) || (strpos($module_file, 'requireOnce( "' . $package_name) !== FALSE))) {
+                      $status = 'Installed';
+                    }
+                  }
+                  else {
+                    // 'exclude-from-classmap' and 'target-dir' types.
+                    $status = 'Not supported';
+                  }
                 }
                 elseif ($resource == 'psr-4' || $resource == 'psr-0') {
                   $autoload = $package['autoload'][$resource];
@@ -114,14 +145,18 @@ class PackageManager implements PackageManagerInterface {
                   $package_append = [
                     'namespace' => '',
                     'paths' => [],
-                    'installed' => TRUE,
+                    'status' => 'Unknown type',
                     'resource' => 'unknown',
                   ];
-                  $packages[$package_name] = array_merge($package_base, $package_append);
+                  $packages[$extension_package_resource_name] = array_merge($package_base, $package_append);
                   continue;
                 }
-                // Iterate through all the resources inside single autoload type.
-                foreach ($package_namespaces as $namespace) {
+                $status = !empty($status) ? $status : 'Installed';
+                // Iterate through all the records inside single autoload type.
+                foreach ($package_namespaces as $namespace_key => $namespace) {
+                  // Making the package name unique for multi-namespaced
+                  // resources.
+                  $extension_package_resource_namespace_name = $extension_package_resource_name . '_' . $namespace_key;
                   $paths_raw = $autoload[$namespace];
                   // Support for both single path (string) and multiple
                   // paths (array) inside one resource.
@@ -147,29 +182,14 @@ class PackageManager implements PackageManagerInterface {
                       $paths[$key] .= str_replace('\\', '/', $namespace);
                     }
                   }
-                  // Combine $package_name an $paths into uniuqe $name_path value.
-                  $name_path = $package_name . '_' . implode('-', $paths);
-                  // Two versions of the same package are not possible.
-                  // If multiple providers require the same package
-                  // we keep the highest required version only, since it has
-                  // the best probability to work for all providers, and
-                  // it is the most secure.
-                  if (!isset($packages[$name_path]) || $packages[$name_path]['version'] < $package_data['version']) {
-                    // If the current item is going to be replaced with the new
-                    // one, unset the current item first to keep all packages
-                    // nicely sorted by provider name inside the 'Packages' table.
-                    if (isset($packages[$name_path])) {
-                      unset($packages[$name_path]);
-                    }
-                    // Add new package.
-                    $package_append = [
-                      'namespace' => $namespace,
-                      'paths' => $paths,
-                      'installed' => TRUE,
-                      'resource' => $resource,
-                    ];
-                    $packages[$name_path] = array_merge($package_base, $package_append);
-                  }
+                  // Add new package.
+                  $package_append = [
+                    'namespace' => $namespace,
+                    'paths' => $paths,
+                    'status' => $status,
+                    'resource' => $resource,
+                  ];
+                  $packages[$extension_package_resource_namespace_name] = array_merge($package_base, $package_append);
                 }
               }
             }
@@ -181,21 +201,39 @@ class PackageManager implements PackageManagerInterface {
             $package_append = [
               'namespace' => '',
               'paths' => [],
-              'installed' => TRUE,
+              'status' => 'Not supported',
               'resource' => 'legacy',
             ];
-            $packages[$package_name] = array_merge($package_base, $package_append);
+            $packages[$extension_package_name] = array_merge($package_base, $package_append);
           }
           else {
             // The library without the autoload section.
             $package_append = [
               'namespace' => '',
               'paths' => [],
-              'installed' => TRUE,
+              'status' => 'Inactive',
               'resource' => 'inactive',
             ];
-            $packages[$package_name] = array_merge($package_base, $package_append);
+            $packages[$extension_package_name] = array_merge($package_base, $package_append);
           }
+        }
+      }
+    }
+
+    // Two versions of the same package are not possible.
+    // If multiple providers require the same package
+    // we keep the highest required version only, since it has
+    // the best probability to work for all providers, and
+    // it is the most secure. And we mark all lower package
+    // versions as 'Overriden'.
+    $loop1_packages = $packages;
+    $loop2_packages = $packages;
+    foreach ($loop1_packages as $loop1_name => $loop1_package) {
+      foreach ($loop2_packages as $loop2_name => $loop2_package) {
+        // Let's strip all non-numeric characters from the package
+        // versions in order to compare them successfully.
+        if (($loop2_package['name'] == $loop1_package['name']) && ($loop2_name != $loop1_name) && (preg_replace("/[^0-9.]/", "", $loop2_package['version']) < preg_replace("/[^0-9.]/", "", $loop1_package['version']))) {
+          $packages[$loop2_name]['status'] = 'Overridden';
         }
       }
     }

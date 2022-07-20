@@ -21,7 +21,7 @@ class FeedRefresh extends FeedQueueWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($data) {
-    list($feed, $stage, $params) = $data;
+    [$feed, $stage, $params] = $data;
 
     if (!$feed instanceof FeedInterface) {
       return;

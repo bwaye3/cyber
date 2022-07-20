@@ -45,8 +45,8 @@ class TaxonomyTermViewTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = []): void {
+    parent::setUp($import_test_views, $modules);
 
     // Create an administrative user.
     $this->adminUser = $this->drupalCreateUser([
@@ -120,11 +120,11 @@ class TaxonomyTermViewTest extends TaxonomyTestBase {
     $this->drupalGet('taxonomy/term/' . $term->id());
     $this->assertSession()->pageTextContains($term->label());
     $this->assertSession()->pageTextContains($original_title);
-    $this->assertNoText($translated_title);
+    $this->assertSession()->pageTextNotContains($translated_title);
 
     $this->drupalGet('ur/taxonomy/term/' . $term->id());
     $this->assertSession()->pageTextContains($term->label());
-    $this->assertNoText($original_title);
+    $this->assertSession()->pageTextNotContains($original_title);
     $this->assertSession()->pageTextContains($translated_title);
 
     // Uninstall language module and ensure that the language is not part of the

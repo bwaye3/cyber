@@ -29,7 +29,7 @@ class MenuLinkTest extends ViewTestBase {
     'views_ui',
     'user',
     'node',
-    'menu_ui',
+    'menu_link_content',
     'block',
   ];
 
@@ -48,8 +48,8 @@ class MenuLinkTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->enableViewsTestModule();
 
@@ -102,7 +102,7 @@ class MenuLinkTest extends ViewTestBase {
     // Test if the primary menu item (node) is visible, and the secondary menu
     // item (view) is hidden.
     $this->assertSession()->pageTextContains('Primary level node');
-    $this->assertNoText('Secondary level view page');
+    $this->assertSession()->pageTextNotContains('Secondary level view page');
 
     // Go to the node page and ensure that both the first and second level items
     // are visible.

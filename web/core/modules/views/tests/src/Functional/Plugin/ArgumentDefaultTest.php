@@ -42,8 +42,8 @@ class ArgumentDefaultTest extends ViewTestBase {
    */
   protected static $modules = ['node', 'views_ui', 'block'];
 
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->enableViewsTestModule();
   }
@@ -105,13 +105,7 @@ class ArgumentDefaultTest extends ViewTestBase {
     $this->submitForm($edit, 'Apply');
 
     // Note, the undefined index error has two spaces after it.
-    $error = [
-      '%type' => 'Notice',
-      '@message' => 'Undefined index:  ' . $argument_type,
-      '%function' => 'views_handler_argument->validateOptionsForm()',
-    ];
-    $message = t('%type: @message in %function', $error);
-    $this->assertNoRaw($message);
+    $this->assertSession()->pageTextNotContains("Notice: Undefined index:  {$argument_type} in views_handler_argument->validateOptionsForm()");
   }
 
   /**

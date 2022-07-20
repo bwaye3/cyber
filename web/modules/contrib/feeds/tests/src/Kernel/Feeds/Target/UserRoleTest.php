@@ -15,7 +15,7 @@ class UserRoleTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'user',
     'feeds',
@@ -503,6 +503,45 @@ class UserRoleTest extends FeedsKernelTestBase {
     $this->assertHasRole($account, 'manager', 'Pugsley still has the manager role.');
     $this->assertHasRole($account, 'editor', 'Pugsley still has the editor role.');
     $this->assertRoleCount(2, $account, 'Pugsley has two roles.');
+  }
+
+  /**
+   * Tests updating a user with an existing role.
+   */
+  public function testImportWithExistingRole() {
+    // Create a user with the editor role.
+    $this->createRole([], 'editor');
+    $user = $this->createUser([
+      'name' => 'Morticia',
+    ]);
+    $user->addRole('editor');
+    $user->save();
+
+    // Add mapping to role.
+    $this->feedType->addMapping([
+      'target' => 'roles',
+      'map' => ['target_id' => 'role_ids'],
+      'settings' => [
+        'allowed_roles' => [
+          'editor' => 'editor',
+        ],
+      ],
+    ]);
+    $this->feedType->save();
+
+    // Import CSV file.
+    $feed = $this->createFeed($this->feedType->id(), [
+      'source' => $this->resourcesPath() . '/csv/users_roles.csv',
+    ]);
+    $feed->import();
+
+    /** @var \Drupal\user\Entity\User $account */
+    $account = user_load_by_name('Morticia');
+
+    // Assert that the editor role is still there.
+    $this->assertHasRole($account, 'editor');
+    // Assert that there is only 1 role, editor.
+    $this->assertRoleCount(1, $account);
   }
 
 }

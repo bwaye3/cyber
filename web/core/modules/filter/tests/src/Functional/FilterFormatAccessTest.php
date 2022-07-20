@@ -97,7 +97,7 @@ class FilterFormatAccessTest extends BrowserTestBase {
       $this->resetFilterCaches();
       $formats[] = FilterFormat::load($edit['format']);
     }
-    list($this->allowedFormat, $this->secondAllowedFormat, $this->disallowedFormat) = $formats;
+    [$this->allowedFormat, $this->secondAllowedFormat, $this->disallowedFormat] = $formats;
     $this->drupalLogout();
 
     // Create a regular user with access to two of the formats.
@@ -226,7 +226,7 @@ class FilterFormatAccessTest extends BrowserTestBase {
     // Try to edit with a less privileged user.
     $this->drupalLogin($this->webUser);
     $this->drupalGet('node/' . $node->id());
-    $this->clickLink(t('Edit'));
+    $this->clickLink('Edit');
 
     // Verify that body field is read-only and contains replacement value.
     $this->assertSession()->fieldDisabled($body_value_key);
@@ -241,7 +241,7 @@ class FilterFormatAccessTest extends BrowserTestBase {
     // Save and verify that only the title was changed.
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->submitForm($new_edit, 'Save');
-    $this->assertNoText($edit['title[0][value]']);
+    $this->assertSession()->pageTextNotContains($edit['title[0][value]']);
     $this->assertSession()->pageTextContains($new_edit['title[0][value]']);
     $this->assertSession()->pageTextContains($edit[$body_value_key]);
 
@@ -282,10 +282,10 @@ class FilterFormatAccessTest extends BrowserTestBase {
     $edit['title[0][value]'] = $new_title;
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->submitForm($edit, 'Save');
-    $this->assertSession()->pageTextContains('Text format field is required.');
+    $this->assertSession()->statusMessageContains('Text format field is required.', 'error');
     $this->drupalGet('node/' . $node->id());
     $this->assertSession()->pageTextContains($old_title);
-    $this->assertNoText($new_title);
+    $this->assertSession()->pageTextNotContains($new_title);
 
     // Now select a new text format and make sure the node can be saved.
     $edit[$body_format_key] = filter_fallback_format();
@@ -293,7 +293,7 @@ class FilterFormatAccessTest extends BrowserTestBase {
     $this->submitForm($edit, 'Save');
     $this->assertSession()->addressEquals('node/' . $node->id());
     $this->assertSession()->pageTextContains($new_title);
-    $this->assertNoText($old_title);
+    $this->assertSession()->pageTextNotContains($old_title);
 
     // Switch the text format to a new one, then disable that format and all
     // other formats on the site (leaving only the fallback format).
@@ -320,16 +320,16 @@ class FilterFormatAccessTest extends BrowserTestBase {
     $edit['title[0][value]'] = $new_title;
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->submitForm($edit, 'Save');
-    $this->assertSession()->pageTextContains('Text format field is required.');
+    $this->assertSession()->statusMessageContains('Text format field is required.', 'error');
     $this->drupalGet('node/' . $node->id());
     $this->assertSession()->pageTextContains($old_title);
-    $this->assertNoText($new_title);
+    $this->assertSession()->pageTextNotContains($new_title);
     $edit[$body_format_key] = filter_fallback_format();
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->submitForm($edit, 'Save');
     $this->assertSession()->addressEquals('node/' . $node->id());
     $this->assertSession()->pageTextContains($new_title);
-    $this->assertNoText($old_title);
+    $this->assertSession()->pageTextNotContains($old_title);
   }
 
   /**
