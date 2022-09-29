@@ -12,7 +12,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser([
@@ -66,7 +66,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
     foreach ($values as $i => $value) {
       $actual = xmlsitemap_get_changefreq($value);
-      $this->assertEquals($expected[$i], $actual);
+      $this->assertSame($expected[$i], $actual);
     }
   }
 

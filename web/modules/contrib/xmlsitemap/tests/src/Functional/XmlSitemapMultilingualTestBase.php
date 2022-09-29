@@ -18,7 +18,7 @@ abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
   /**
    * Set up an administrative user account and testing keys.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     // Call parent::setUp() allowing test cases to pass further modules.
     parent::setUp();
 

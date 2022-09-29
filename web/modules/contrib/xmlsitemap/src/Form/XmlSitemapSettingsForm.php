@@ -197,7 +197,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#size' => 30,
       '#maxlength' => 255,
       '#description' => $this->t('Subdirectory where the sitemap data will be stored. This folder <strong>must not be shared</strong> with any other Drupal site or install using XML Sitemap.'),
-      '#field_prefix' => file_build_uri(''),
+      '#field_prefix' => xmlsitemap_get_directory(),
       '#required' => TRUE,
     ];
     $base_url_override = Settings::get('xmlsitemap_base_url', FALSE);

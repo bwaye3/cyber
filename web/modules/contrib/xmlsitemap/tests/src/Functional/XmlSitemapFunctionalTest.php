@@ -17,7 +17,7 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser([
@@ -54,18 +54,22 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     // @codingStandardsIgnoreEnd
     $this->drupalLogin($this->admin_user);
     $edit = ['xmlsitemap_base_url' => ''];
-    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, 'Save configuration');
+    $this->drupalGet('admin/config/search/xmlsitemap/settings');
+    $this->submitForm($edit, 'Save configuration');
 
     $edit = ['xmlsitemap_base_url' => 'invalid'];
-    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, 'Save configuration');
+    $this->drupalGet('admin/config/search/xmlsitemap/settings');
+    $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->pageTextContains('Invalid base URL.');
 
     $edit = ['xmlsitemap_base_url' => 'http://example.com/ '];
-    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, 'Save configuration');
+    $this->drupalGet('admin/config/search/xmlsitemap/settings');
+    $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->pageTextContains('Invalid base URL.');
 
     $edit = ['xmlsitemap_base_url' => 'http://example.com/'];
-    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, 'Save configuration');
+    $this->drupalGet('admin/config/search/xmlsitemap/settings');
+    $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->pageTextContains('The configuration options have been saved.');
 
     $this->regenerateSitemap();

@@ -9,7 +9,6 @@
         "source": "https://git.drupalcode.org/project/xmlsitemap"
     },
     "require": {
-        "drupal/core": "^9",
         "ext-xmlwriter": "*"
     },
     "require-dev": {
@@ -23,7 +22,7 @@
     "extra": {
         "drush": {
              "services": {
-                 "drush.services.yml": "^9 || ^10"
+                 "drush.services.yml": "^10 || ^11"
              }
         }
     }

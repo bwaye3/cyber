@@ -5,6 +5,7 @@ namespace Drupal\xmlsitemap\Controller;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\State\StateInterface;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,16 +37,26 @@ class XmlSitemapController extends ControllerBase {
   protected $configFactory;
 
   /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleExtensionList;
+
+  /**
    * Constructs a new XmlSitemapController object.
    *
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
+   *   The module extension list.
    */
-  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory) {
+  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory, ModuleExtensionList $module_extension_list) {
     $this->state = $state;
     $this->configFactory = $config_factory;
+    $this->moduleExtensionList = $module_extension_list;
   }
 
   /**
@@ -54,7 +65,8 @@ class XmlSitemapController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('state'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('extension.list.module')
     );
   }
 
@@ -159,7 +171,7 @@ class XmlSitemapController extends ControllerBase {
    */
   public function renderSitemapXsl() {
     // Read the XSL content from the file.
-    $module_path = drupal_get_path('module', 'xmlsitemap');
+    $module_path = $this->moduleExtensionList->getPath('xmlsitemap');
     $xsl_content = file_get_contents($module_path . '/xsl/xmlsitemap.xsl');
 
     // Make sure the strings in the XSL content are translated properly.

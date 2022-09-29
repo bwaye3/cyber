@@ -20,7 +20,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Add a vocabulary.
@@ -62,7 +62,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, t('Save'));
 
     $term = taxonomy_term_load_multiple_by_name($term_name, 'tags')[1];
     $link = $this->linkStorage->load('taxonomy_term', $term->id());

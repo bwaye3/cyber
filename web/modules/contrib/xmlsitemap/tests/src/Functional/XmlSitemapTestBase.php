@@ -96,7 +96,7 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->entityTypeManager = $this->container->get('entity_type.manager');
@@ -131,7 +131,7 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function tearDown() {
+  public function tearDown(): void {
     // Capture any (remaining) watchdog errors.
     $this->assertNoWatchdogErrors();
 
@@ -446,7 +446,6 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
    */
   protected function assertNoWatchdogErrors() {
     $messages = $this->getWatchdogMessages();
-    $verbose = [];
 
     foreach ($messages as $message) {
       $message->text = $this->formatWatchdogMessage($message);
@@ -455,12 +454,6 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
       ])) {
         $this->fail($message->text);
       }
-      $verbose[] = $message->text;
-    }
-
-    if ($verbose) {
-      array_unshift($verbose, '<h2>Watchdog messages</h2>');
-      $this->verbose(implode('<br />', $verbose), 'Watchdog messages from test run');
     }
 
     // Clear the seen watchdog messages since we've failed on any errors.
@@ -481,7 +474,6 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
     static $levels;
 
     if (!isset($levels)) {
-      module_load_include('admin.inc', 'dblog');
       $levels = RfcLogLevel::getLevels();
     }
 
@@ -492,29 +484,6 @@ abstract class XmlSitemapTestBase extends BrowserTestBase {
         // @codingStandardsIgnoreLine
         // '@message' => theme_dblog_message(array('event' => $message, 'link' => FALSE)),.
     ]);
-  }
-
-  /**
-   * Log verbose message in a text file.
-   *
-   * This is a copy of DrupalWebTestCase->verbose() but allows a customizable
-   * summary message rather than hard-coding 'Verbose message'.
-   *
-   * @param string $verbose_message
-   *   The verbose message to be stored.
-   * @param string $message
-   *   Message to display.
-   *
-   * @see simpletest_verbose()
-   *
-   * @todo Remove when https://www.drupal.org/node/800426 is fixed.
-   */
-  protected function verbose($verbose_message, $message = 'Verbose message') {
-    if ($id = parent::verbose($verbose_message)) {
-      $url = file_create_url($this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html');
-      $message_url = Url::fromUri($url, ['attributes' => ['target' => '_blank']]);
-      $this->error(\Drupal::linkGenerator()->generate($message, $message_url), 'User notice');
-    }
   }
 
 }

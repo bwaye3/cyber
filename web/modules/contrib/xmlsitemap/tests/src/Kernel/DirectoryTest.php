@@ -31,7 +31,7 @@ class DirectoryTest extends KernelTestBase {
 
     // Test that only the xmlsitemap directory was deleted.
     $result = xmlsitemap_clear_directory(NULL, TRUE);
-    $this->assertDirectoryNotExists('public://xmlsitemap/test');
+    $this->assertDirectoryDoesNotExist('public://xmlsitemap/test');
     $this->assertDirectoryExists('public://not-xmlsitemap');
     $this->assertFileExists('public://file.txt');
     $this->assertTrue($result);

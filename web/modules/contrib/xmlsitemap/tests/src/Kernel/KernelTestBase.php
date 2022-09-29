@@ -28,7 +28,7 @@ abstract class KernelTestBase extends CoreKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
 
     // This is required to not fail the @covers for global functions.
