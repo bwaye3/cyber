@@ -1,16 +1,15 @@
 # gitignore template for Drupal 8 projects
 #
 # earlier versions of Drupal are tracked in `community/PHP/`
-
+_sql
 # Ignore configuration files that may contain sensitive information
-/web/sites/settings.php
-/web/sites/services.yml
+/web/sites/*/*settings*.php
+/web/sites/*/*services*.yml
 /web/sites/development.services.yml
 /web/sites/default/settings.local.php
 /web/sites/default/settings.php
 # Ignore paths that may contain user-generated content
 /web/sites/*/files
-/web/sites/*/files/php
 /web/sites/*/public
 /web/sites/*/private
 /web/sites/*/files-public
@@ -117,6 +116,8 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 .idea/workspace.xml
+/.idea/workspace.xml
+
 # Sonarlint plugin
 .idea/sonarlint
 # End of https://www.gitignore.io/api/phpstorm

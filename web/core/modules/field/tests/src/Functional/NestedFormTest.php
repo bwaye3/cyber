@@ -25,6 +25,21 @@ class NestedFormTest extends FieldTestBase {
    */
   protected $defaultTheme = 'stark';
 
+  /**
+   * @var array
+   */
+  protected $fieldStorageSingle;
+
+  /**
+   * @var array
+   */
+  protected $fieldStorageUnlimited;
+
+  /**
+   * @var array
+   */
+  protected $field;
+
   protected function setUp(): void {
     parent::setUp();
 
@@ -129,7 +144,7 @@ class NestedFormTest extends FieldTestBase {
     ];
     $this->drupalGet('test-entity/nested/1/2');
     $this->submitForm($edit, 'Save');
-    $this->assertRaw(t('%label does not accept the value -1', ['%label' => 'Unlimited field']));
+    $this->assertSession()->pageTextContains("Unlimited field does not accept the value -1.");
     // Entity 1: check that the error was flagged on the correct element.
     $error_field = $this->assertSession()->fieldExists('edit-field-unlimited-1-value');
     $this->assertTrue($error_field->hasClass('error'));
@@ -138,7 +153,7 @@ class NestedFormTest extends FieldTestBase {
     ];
     $this->drupalGet('test-entity/nested/1/2');
     $this->submitForm($edit, 'Save');
-    $this->assertRaw(t('%label does not accept the value -1', ['%label' => 'Unlimited field']));
+    $this->assertSession()->pageTextContains("Unlimited field does not accept the value -1.");
     // Entity 2: check that the error was flagged on the correct element.
     $error_field = $this->assertSession()->fieldExists('edit-entity-2-field-unlimited-1-value');
     $this->assertTrue($error_field->hasClass('error'));
@@ -204,7 +219,7 @@ class NestedFormTest extends FieldTestBase {
     // Submit the form and check that the entities are updated accordingly.
     $assert_session->hiddenFieldExists('entity_2[changed]')
       ->setValue(REQUEST_TIME - 86400);
-    $page->pressButton(t('Save'));
+    $page->pressButton('Save');
 
     $elements = $this->cssSelect('.entity-2.error');
     $this->assertCount(1, $elements, 'The whole nested entity form has been correctly flagged with an error class.');

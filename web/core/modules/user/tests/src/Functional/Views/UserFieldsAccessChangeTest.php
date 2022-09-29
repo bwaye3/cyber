@@ -19,7 +19,7 @@ class UserFieldsAccessChangeTest extends UserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * Views used by this test.
@@ -39,9 +39,9 @@ class UserFieldsAccessChangeTest extends UserTestBase {
     $this->assertSession()->pageTextContains('Created');
 
     // User does not by default have access to init, mail and status.
-    $this->assertNoText('Init');
-    $this->assertNoText('Email');
-    $this->assertNoText('Status');
+    $this->assertSession()->pageTextNotContains('Init');
+    $this->assertSession()->pageTextNotContains('Email');
+    $this->assertSession()->pageTextNotContains('Status');
 
     // Assign sub-admin role to grant extra access.
     $user = $this->drupalCreateUser(['sub-admin']);
@@ -60,11 +60,10 @@ class UserFieldsAccessChangeTest extends UserTestBase {
    */
   public function testUserNameLink() {
     $test_user = $this->drupalCreateUser();
-    $xpath = "//td/a[.='" . $test_user->getAccountName() . "'][@class='username']/@href[.='" . $test_user->toUrl()->toString() . "']";
+    $xpath = "//td/a[.='" . $test_user->getAccountName() . "']/@href[.='" . $test_user->toUrl()->toString() . "']";
 
     $attributes = [
       'title' => 'View user profile.',
-      'class' => 'username',
     ];
     $link = $test_user->toLink(NULL, 'canonical', ['attributes' => $attributes])->toString();
 

@@ -8,6 +8,7 @@ use Drupal\filter\Entity\FilterFormat;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
 /**
@@ -31,7 +32,7 @@ class FilterAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * A user with administration permissions.
@@ -177,7 +178,7 @@ class FilterAdminTest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/content/formats/add');
     $this->submitForm($edit, 'Save configuration');
-    $this->assertSession()->pageTextContains('The machine-readable name is already in use. It must be unique.');
+    $this->assertSession()->statusMessageContains('The machine-readable name is already in use. It must be unique.', 'error');
 
     // Attempt to create a format of the same human readable name as the
     // disabled format but with a different machine name.
@@ -187,9 +188,7 @@ class FilterAdminTest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/content/formats/add');
     $this->submitForm($edit, 'Save configuration');
-    $this->assertRaw(t('Text format names must be unique. A format named %name already exists.', [
-      '%name' => $name,
-    ]));
+    $this->assertSession()->statusMessageContains("Text format names must be unique. A format named $name already exists.", 'error');
   }
 
   /**
@@ -207,7 +206,7 @@ class FilterAdminTest extends BrowserTestBase {
     // Check that the fallback format exists and cannot be disabled.
     $this->assertSame($plain, filter_fallback_format(), 'The fallback format is set to plain text.');
     $this->drupalGet('admin/config/content/formats');
-    $this->assertNoRaw('admin/config/content/formats/manage/' . $plain . '/disable');
+    $this->assertSession()->responseNotContains('admin/config/content/formats/manage/' . $plain . '/disable');
     $this->drupalGet('admin/config/content/formats/manage/' . $plain . '/disable');
     $this->assertSession()->statusCodeEquals(403);
 
@@ -267,7 +266,7 @@ class FilterAdminTest extends BrowserTestBase {
     $this->drupalGet('admin/config/content/formats/add');
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->addressEquals('admin/config/content/formats');
-    $this->assertRaw(t('Added text format %format.', ['%format' => $edit['name']]));
+    $this->assertSession()->statusMessageContains("Added text format {$edit['name']}.", 'status');
 
     filter_formats_reset();
     $format = FilterFormat::load($edit['format']);
@@ -276,12 +275,19 @@ class FilterAdminTest extends BrowserTestBase {
     $this->assertSession()->checkboxChecked('roles[' . RoleInterface::AUTHENTICATED_ID . ']');
     $this->assertSession()->checkboxChecked('filters[' . $second_filter . '][status]');
     $this->assertSession()->checkboxChecked('filters[' . $first_filter . '][status]');
+    /** @var \Drupal\user\Entity\Role $role */
+    \Drupal::entityTypeManager()->getStorage('user_role')->resetCache([RoleInterface::AUTHENTICATED_ID]);
+    $role = Role::load(RoleInterface::AUTHENTICATED_ID);
+    $this->assertTrue($role->hasPermission($format->getPermissionName()), 'The authenticated role has permission to use the filter.');
 
     // Disable new filter.
     $this->drupalGet('admin/config/content/formats/manage/' . $format->id() . '/disable');
     $this->submitForm([], 'Disable');
     $this->assertSession()->addressEquals('admin/config/content/formats');
-    $this->assertRaw(t('Disabled text format %format.', ['%format' => $edit['name']]));
+    $this->assertSession()->statusMessageContains("Disabled text format {$edit['name']}.", 'status');
+    \Drupal::entityTypeManager()->getStorage('user_role')->resetCache([RoleInterface::AUTHENTICATED_ID]);
+    $role = Role::load(RoleInterface::AUTHENTICATED_ID);
+    $this->assertFalse($role->hasPermission($format->getPermissionName()), 'The filter permission has been removed from the authenticated role');
 
     // Allow authenticated users on full HTML.
     $format = FilterFormat::load($full);
@@ -291,13 +297,13 @@ class FilterAdminTest extends BrowserTestBase {
     $this->drupalGet('admin/config/content/formats/manage/' . $full);
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->addressEquals('admin/config/content/formats/manage/' . $full);
-    $this->assertRaw(t('The text format %format has been updated.', ['%format' => $format->label()]));
+    $this->assertSession()->statusMessageContains("The text format {$format->label()} has been updated.", 'status');
 
     // Switch user.
     $this->drupalLogin($this->webUser);
 
     $this->drupalGet('node/add/page');
-    $this->assertRaw('<option value="' . $full . '">Full HTML</option>');
+    $this->assertSession()->responseContains('<option value="' . $full . '">Full HTML</option>');
 
     // Use basic HTML and see if it removes tags that are not allowed.
     $body = '<em>' . $this->randomMachineName() . '</em>';
@@ -310,17 +316,17 @@ class FilterAdminTest extends BrowserTestBase {
     $edit['body[0][format]'] = $basic;
     $this->drupalGet('node/add/page');
     $this->submitForm($edit, 'Save');
-    $this->assertSession()->pageTextContains('Basic page ' . $edit['title[0][value]'] . ' has been created.');
+    $this->assertSession()->statusMessageContains('Basic page ' . $edit['title[0][value]'] . ' has been created.', 'status');
 
     // Verify that the creation message contains a link to a node.
-    $this->assertSession()->elementExists('xpath', '//div[contains(@class, "messages")]//a[contains(@href, "node/")]');
+    $this->assertSession()->elementExists('xpath', '//div[@aria-label="Status message"]//a[contains(@href, "node/")]');
 
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
     $this->assertNotEmpty($node, 'Node found in database.');
 
     $this->drupalGet('node/' . $node->id());
     // Check that filter removed invalid tag.
-    $this->assertRaw($body . $extra_text);
+    $this->assertSession()->responseContains($body . $extra_text);
 
     // Use plain text and see if it escapes all tags, whether allowed or not.
     // In order to test plain text, we have to enable the hidden variable for
@@ -357,7 +363,7 @@ class FilterAdminTest extends BrowserTestBase {
     $this->drupalGet('admin/config/content/formats/manage/' . $full);
     $this->submitForm($edit, 'Save configuration');
     $this->assertSession()->addressEquals('admin/config/content/formats/manage/' . $full);
-    $this->assertRaw(t('The text format %format has been updated.', ['%format' => $format->label()]));
+    $this->assertSession()->statusMessageContains("The text format {$format->label()} has been updated.", 'status');
     $this->drupalGet('admin/config/content/formats/manage/' . $full);
     $this->assertSession()->fieldValueEquals('roles[' . RoleInterface::AUTHENTICATED_ID . ']', $edit['roles[' . RoleInterface::AUTHENTICATED_ID . ']']);
 
@@ -383,7 +389,7 @@ class FilterAdminTest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/content/formats/manage/basic_html');
     $this->submitForm($edit, 'Save configuration');
-    $this->assertNoRaw(t('The text format %format has been updated.', ['%format' => 'Basic HTML']));
+    $this->assertSession()->statusMessageNotContains('The text format Basic HTML has been updated.');
   }
 
   /**
@@ -405,10 +411,10 @@ class FilterAdminTest extends BrowserTestBase {
 
     $this->drupalGet('filter/tips');
 
-    $this->assertRaw('<td class="type">' . $link_as_code . '</td>');
-    $this->assertRaw('<td class="get">' . $link . '</td>');
-    $this->assertRaw('<td class="type">' . $ampersand_as_code . '</td>');
-    $this->assertRaw('<td class="get">' . $ampersand . '</td>');
+    $this->assertSession()->responseContains('<td class="type">' . $link_as_code . '</td>');
+    $this->assertSession()->responseContains('<td class="get">' . $link . '</td>');
+    $this->assertSession()->responseContains('<td class="type">' . $ampersand_as_code . '</td>');
+    $this->assertSession()->responseContains('<td class="get">' . $ampersand . '</td>');
   }
 
   /**
@@ -449,16 +455,16 @@ class FilterAdminTest extends BrowserTestBase {
     $this->drupalGet($node->toUrl());
 
     // The format is not used anymore.
-    $this->assertNoText('filtered text');
+    $this->assertSession()->pageTextNotContains('filtered text');
     // The text is not displayed unfiltered or escaped.
-    $this->assertNoRaw($body_value);
+    $this->assertSession()->responseNotContains($body_value);
     $this->assertSession()->assertNoEscaped($body_value);
 
     // Visit the dblog report page.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/reports/dblog');
     // The correct message has been logged.
-    $this->assertRaw(sprintf('Disabled text format: %s.', $format_id));
+    $this->assertSession()->pageTextContains(sprintf('Disabled text format: %s.', $format_id));
 
     // Programmatically change the text format to something random so we trigger
     // the missing text format message.
@@ -467,13 +473,13 @@ class FilterAdminTest extends BrowserTestBase {
     $node->save();
     $this->drupalGet($node->toUrl());
     // The text is not displayed unfiltered or escaped.
-    $this->assertNoRaw($body_value);
+    $this->assertSession()->responseNotContains($body_value);
     $this->assertSession()->assertNoEscaped($body_value);
 
     // Visit the dblog report page.
     $this->drupalGet('admin/reports/dblog');
     // The missing text format message has been logged.
-    $this->assertRaw(sprintf('Missing text format: %s.', $format_id));
+    $this->assertSession()->pageTextContains(sprintf('Missing text format: %s.', $format_id));
   }
 
 }

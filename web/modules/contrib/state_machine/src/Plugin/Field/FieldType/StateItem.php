@@ -366,6 +366,9 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
       $this->dispatchTransitionEvent('post_transition');
     }
     $this->originalValue = $this->value;
+    // Nullify the transition to apply, to ensure the next entity save
+    // doesn't trigger the same transition by mistake.
+    $this->transitionToApply = NULL;
   }
 
   /**
@@ -393,7 +396,7 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
         'state_machine.' . $phase,
       ];
       foreach ($events as $event_id) {
-        $event_dispatcher->dispatch($event_id, $event);
+        $event_dispatcher->dispatch($event, $event_id);
       }
     }
   }

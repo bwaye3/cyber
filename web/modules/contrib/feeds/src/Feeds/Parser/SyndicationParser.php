@@ -6,12 +6,11 @@ use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Feeds\Item\SyndicationItem;
 use Drupal\feeds\Plugin\Type\Parser\ParserInterface;
-use Drupal\feeds\Plugin\Type\PluginBase;
 use Drupal\feeds\Result\FetcherResultInterface;
 use Drupal\feeds\Result\ParserResult;
 use Drupal\feeds\StateInterface;
-use Zend\Feed\Reader\Exception\ExceptionInterface;
-use Zend\Feed\Reader\Reader;
+use Laminas\Feed\Reader\Exception\ExceptionInterface;
+use Laminas\Feed\Reader\Reader;
 
 /**
  * Defines an RSS and Atom feed parser.
@@ -22,7 +21,7 @@ use Zend\Feed\Reader\Reader;
  *   description = @Translation("Default parser for RSS, Atom and RDF feeds.")
  * )
  */
-class SyndicationParser extends PluginBase implements ParserInterface {
+class SyndicationParser extends ParserBase implements ParserInterface {
 
   /**
    * {@inheritdoc}
@@ -31,6 +30,7 @@ class SyndicationParser extends PluginBase implements ParserInterface {
     $result = new ParserResult();
     Reader::setExtensionManager(\Drupal::service('feed.bridge.reader'));
     Reader::registerExtension('GeoRSS');
+    Reader::registerExtension('MediaRSS');
 
     $raw = $fetcher_result->getRaw();
     if (!strlen(trim($raw))) {
@@ -79,6 +79,15 @@ class SyndicationParser extends PluginBase implements ParserInterface {
       }
       if ($date = $entry->getDateModified()) {
         $item->set('updated', $date->getTimestamp());
+      }
+
+      if ($media_content = $entry->getMediaContent()) {
+        $item->set('mediarss_content', $media_content['url']);
+        $item->set('mediarss_description', $media_content['description']);
+      }
+
+      if ($media_thumbnail = $entry->getMediaThumbnail()) {
+        $item->set('mediarss_thumbnail', $media_thumbnail['url']);
       }
 
       if ($point = $entry->getGeoPoint()) {
@@ -177,6 +186,18 @@ class SyndicationParser extends PluginBase implements ParserInterface {
           'targets' => ['field_tags'],
           'types' => ['field_item:taxonomy_term_reference' => []],
         ],
+      ],
+      'mediarss_content' => [
+        'label' => $this->t('Media content'),
+        'description' => $this->t('Available if the feed supports the Media RSS specification. Can contain audio, video or other media.'),
+      ],
+      'mediarss_description' => [
+        'label' => $this->t('Media description'),
+        'description' => $this->t('Available if the feed supports the Media RSS specification. Text that describes the media object.'),
+      ],
+      'mediarss_thumbnail' => [
+        'label' => $this->t('Media thumbnail'),
+        'description' => $this->t('Available if the feed supports the Media RSS specification. An image that is representative for the media object.'),
       ],
       'georss_lat' => [
         'label' => $this->t('Item latitude'),

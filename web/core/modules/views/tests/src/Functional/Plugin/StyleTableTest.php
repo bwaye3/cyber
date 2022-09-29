@@ -29,8 +29,8 @@ class StyleTableTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->enableViewsTestModule();
   }
@@ -122,7 +122,7 @@ class StyleTableTest extends ViewTestBase {
    * Tests that a number with the value of "0" is displayed in the table.
    */
   public function testNumericFieldVisible() {
-    // Adds a new datapoint in the views_test_data table to have a person with
+    // Adds a new data point in the views_test_data table to have a person with
     // an age of zero.
     $data_set = $this->dataSet();
     $query = Database::getConnection()->insert('views_test_data')
@@ -157,8 +157,8 @@ class StyleTableTest extends ViewTestBase {
     $this->drupalGet('test-table');
 
     // Test that only one of the job columns still shows.
-    $result = $this->xpath('//thead/tr/th/a[text()="Job"]');
-    $this->assertCount(1, $result, 'Ensure that empty column header is hidden.');
+    // Ensure that empty column header is hidden.
+    $this->assertSession()->elementsCount('xpath', '//thead/tr/th/a[text()="Job"]', 1);
 
     $result = $this->xpath('//tbody/tr/td[contains(concat(" ", @class, " "), " views-field-job-1 ")]');
     $this->assertCount(0, $result, 'Ensure the empty table cells are hidden.');
@@ -210,7 +210,7 @@ class StyleTableTest extends ViewTestBase {
     ];
 
     // Ensure that we don't find the caption containing unsafe markup.
-    $this->assertNoRaw($unsafe_markup);
+    $this->assertSession()->responseNotContains($unsafe_markup);
     // Ensure that the summary isn't shown.
     $this->assertEmpty($this->xpath('//caption/details'));
 
@@ -234,7 +234,7 @@ class StyleTableTest extends ViewTestBase {
     ];
 
     // Ensure that we don't find the caption containing unsafe markup.
-    $this->assertNoRaw($unsafe_markup);
+    $this->assertSession()->responseNotContains($unsafe_markup);
 
     // Ensure that all expected captions are found.
     foreach ($expected_captions as $raw_caption) {

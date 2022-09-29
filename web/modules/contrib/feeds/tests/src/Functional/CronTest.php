@@ -2,6 +2,9 @@
 
 namespace Drupal\Tests\feeds\Functional;
 
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\feeds\FeedTypeInterface;
+
 /**
  * Tests behavior involving periodic import.
  *
@@ -89,7 +92,10 @@ class CronTest extends FeedsBrowserTestBase {
   public function testImportSourceWithMultipleCronRuns() {
     // Install module that alters how many items can be processed per cron run.
     // By default, the module limits the number of processable items to 5.
-    $this->container->get('module_installer')->install(['feeds_test_files', 'feeds_test_multiple_cron_runs']);
+    $this->container->get('module_installer')->install([
+      'feeds_test_files',
+      'feeds_test_multiple_cron_runs',
+    ]);
     $this->rebuildContainer();
 
     // Create a feed type. Do not set a column as unique.
@@ -133,6 +139,108 @@ class CronTest extends FeedsBrowserTestBase {
     // Run cron again. Another four nodes should be imported.
     $this->cronRun();
     $this->assertNodeCount(9);
+  }
+
+  /**
+   * Tests that a cron run does not fail after deleting a feed type.
+   *
+   * When a feed is using periodic import, an import for that feed gets
+   * eventually triggered on a cron run. But when the feed's feed type no longer
+   * exists by then, an import for it should not run and an error should be
+   * logged about that feed.
+   */
+  public function testDeleteFeedTypeForWhichImportIsScheduled() {
+    // Create a feed type and a feed.
+    $feed_type = $this->createFeedType([
+      'id' => 'foo',
+    ]);
+    $feed_type->setImportPeriod(FeedTypeInterface::SCHEDULE_CONTINUOUSLY);
+    $feed_type->save();
+
+    $feed = $this->createFeed($feed_type->id(), [
+      'source' => $this->resourcesUrl() . '/rss/googlenewstz.rss2',
+    ]);
+
+    // Now delete the feed type.
+    $feed_type->delete();
+
+    // And run cron.
+    $this->cronRun();
+
+    // Assert that an exception gets thrown upon trying to start an import.
+    $this->expectException(EntityStorageException::class);
+    $this->expectExceptionMessage('The feed type "foo" for feed 1 no longer exists.');
+    $feed->startCronImport();
+  }
+
+  /**
+   * Tests that an unchanged feed finishes an import correctly.
+   *
+   * When a source gets fetched, but it is unchanged, the import gets aborted
+   * early. In such case we want that:
+   * - the fetch tasks no longer remains on the queue;
+   * - the feed gets unlocked so a new import can be done.
+   */
+  public function testUnchangedFeedImport() {
+    // Install module that will throw a 304 when the same data is fetched again.
+    $this->container->get('module_installer')->install(['feeds_test_files']);
+    $this->rebuildContainer();
+
+    // Create a feed type. Do not set a column as unique.
+    $feed_type = $this->createFeedTypeForCsv([
+      'guid' => 'GUID',
+      'title' => 'Title',
+    ], [
+      'fetcher' => 'http',
+      'fetcher_configuration' => [],
+      'mappings' => [
+        [
+          'target' => 'feeds_item',
+          'map' => ['guid' => 'guid'],
+        ],
+        [
+          'target' => 'title',
+          'map' => ['value' => 'title'],
+        ],
+      ],
+    ]);
+    $queue_name = 'feeds_feed_refresh:' . $feed_type->id();
+
+    // Create a feed that contains 9 items.
+    $feed = $this->createFeed($feed_type->id(), [
+      'source' => \Drupal::request()->getSchemeAndHttpHost() . '/testing/feeds/nodes.csv',
+    ]);
+
+    // Schedule import.
+    $feed->startCronImport();
+    $this->assertTrue($feed->isLocked());
+    $this->assertQueueItemCount(1, $queue_name);
+
+    // Run cron. Nine nodes should be imported.
+    $this->cronRun();
+    $this->assertNodeCount(9);
+
+    // Check that the queue is empty and that the feed is unlocked.
+    $this->assertQueueItemCount(0, $queue_name);
+    $feed = $this->reloadEntity($feed);
+    $this->assertFalse($feed->isLocked());
+    // Unlock the feed manually again, since it still exists in memory.
+    // @see \Drupal\Core\Lock\DatabaseLockBackend::acquire()
+    $feed->unlock();
+
+    // Schedule another import and run cron again. No nodes should be imported.
+    // The total should remain 9.
+    $feed->startCronImport();
+    $this->assertTrue($feed->isLocked());
+
+    $this->assertQueueItemCount(1, $queue_name);
+    $this->cronRun();
+    $this->assertNodeCount(9);
+
+    // Check that the queue is empty and that the feed is unlocked.
+    $this->assertQueueItemCount(0, $queue_name);
+    $feed = $this->reloadEntity($feed);
+    $this->assertFalse($feed->isLocked());
   }
 
 }

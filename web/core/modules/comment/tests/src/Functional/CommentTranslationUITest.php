@@ -64,7 +64,6 @@ class CommentTranslationUITest extends ContentTranslationUITestBase {
 
   protected function setUp(): void {
     $this->entityTypeId = 'comment';
-    $this->nodeBundle = 'article';
     $this->bundle = 'comment_article';
     $this->testLanguageSelector = FALSE;
     $this->subject = $this->randomMachineName();
@@ -76,7 +75,7 @@ class CommentTranslationUITest extends ContentTranslationUITestBase {
    */
   public function setupBundle() {
     parent::setupBundle();
-    $this->drupalCreateContentType(['type' => $this->nodeBundle, 'name' => $this->nodeBundle]);
+    $this->drupalCreateContentType(['type' => 'article', 'name' => 'article']);
     // Add a comment field to the article content type.
     $this->addDefaultCommentField('node', 'article', 'comment_article', CommentItemInterface::OPEN, 'comment_article');
     // Create a page content type.
@@ -229,13 +228,7 @@ class CommentTranslationUITest extends ContentTranslationUITestBase {
         $options = ['language' => $languages[$langcode]];
         $url = $entity->toUrl('edit-form', $options);
         $this->drupalGet($url);
-
-        $title = t('Edit @type @title [%language translation]', [
-          '@type' => $this->entityTypeId,
-          '@title' => $entity->getTranslation($langcode)->label(),
-          '%language' => $languages[$langcode]->getName(),
-        ]);
-        $this->assertRaw($title);
+        $this->assertSession()->pageTextContains("Edit {$this->entityTypeId} {$entity->getTranslation($langcode)->label()} [{$languages[$langcode]->getName()} translation]");
       }
     }
   }

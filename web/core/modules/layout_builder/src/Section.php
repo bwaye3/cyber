@@ -3,6 +3,7 @@
 namespace Drupal\layout_builder;
 
 use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
+use Drupal\Core\Plugin\PreviewAwarePluginInterface;
 
 /**
  * Provides a domain object for layout sections.
@@ -88,7 +89,12 @@ class Section implements ThirdPartySettingsInterface {
       }
     }
 
-    return $this->getLayout($contexts)->build($regions);
+    $layout = $this->getLayout($contexts);
+    if ($layout instanceof PreviewAwarePluginInterface) {
+      $layout->setInPreview($in_preview);
+    }
+
+    return $layout->build($regions);
   }
 
   /**
@@ -161,7 +167,7 @@ class Section implements ThirdPartySettingsInterface {
    * Returns the components of the section.
    *
    * @return \Drupal\layout_builder\SectionComponent[]
-   *   The components.
+   *   An array of components, keyed by the component UUID.
    */
   public function getComponents() {
     return $this->components;
@@ -258,7 +264,7 @@ class Section implements ThirdPartySettingsInterface {
       return $component->getRegion() === $region;
     });
     uasort($components, function (SectionComponent $a, SectionComponent $b) {
-      return $a->getWeight() > $b->getWeight() ? 1 : -1;
+      return $a->getWeight() <=> $b->getWeight();
     });
     return $components;
   }
@@ -391,14 +397,14 @@ class Section implements ThirdPartySettingsInterface {
    * {@inheritdoc}
    */
   public function getThirdPartySetting($provider, $key, $default = NULL) {
-    return isset($this->thirdPartySettings[$provider][$key]) ? $this->thirdPartySettings[$provider][$key] : $default;
+    return $this->thirdPartySettings[$provider][$key] ?? $default;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getThirdPartySettings($provider) {
-    return isset($this->thirdPartySettings[$provider]) ? $this->thirdPartySettings[$provider] : [];
+    return $this->thirdPartySettings[$provider] ?? [];
   }
 
   /**

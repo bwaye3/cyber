@@ -15,14 +15,14 @@ class DisplayFeedTest extends UITestBase {
    *
    * @var array
    */
-  public static $testViews = ['test_display_feed', 'test_style_opml'];
+  public static $testViews = ['test_display_feed'];
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  protected static $modules = ['views_ui', 'aggregator'];
+  protected static $modules = ['views_ui'];
 
   /**
    * {@inheritdoc}
@@ -33,7 +33,7 @@ class DisplayFeedTest extends UITestBase {
    * Tests feed display admin UI.
    */
   public function testFeedUI() {
-    // Test both RSS and OPML feeds.
+    // Test the RSS feed.
     foreach (self::$testViews as $view_name) {
       $this->checkFeedViewUi($view_name);
     }
@@ -75,7 +75,7 @@ class DisplayFeedTest extends UITestBase {
     $this->submitForm(['displays[page]' => 'page'], 'Apply');
     // Options summary should be escaped.
     $this->assertSession()->assertEscaped('<em>Page</em>');
-    $this->assertNoRaw('<em>Page</em>');
+    $this->assertSession()->responseNotContains('<em>Page</em>');
 
     $this->drupalGet('admin/structure/views/view/' . $view_name . '/edit/feed_1');
     $this->assertSession()->elementTextContains('xpath', '//*[@id="views-feed-1-displays"]', 'Page');

@@ -189,14 +189,14 @@ class CleanState extends State implements CleanStateInterface {
   /**
    * {@inheritdoc}
    */
-  public function getIterator() {
+  public function getIterator(): \Traversable {
     return new ArrayIterator($this->getList());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function count() {
+  public function count(): int {
     return (int) $this->connection->query('SELECT COUNT(feed_id) FROM {' . static::TABLE_NAME . '} WHERE feed_id = :feed_id', [':feed_id' => $this->feedId])
       ->fetchField();
   }

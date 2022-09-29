@@ -41,8 +41,8 @@ class TaxonomyVocabularyArgumentTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = []): void {
+    parent::setUp($import_test_views, $modules);
 
     // Add default vocabulary to list of vocabularies.
     $this->vocabularies[] = $this->vocabulary;
@@ -75,7 +75,7 @@ class TaxonomyVocabularyArgumentTest extends TaxonomyTestBase {
     // First term should be present.
     $this->assertSession()->pageTextContains($this->terms[0]->label());
     // Second term should not be present.
-    $this->assertNoText($this->terms[1]->label());
+    $this->assertSession()->pageTextNotContains($this->terms[1]->label());
   }
 
 }

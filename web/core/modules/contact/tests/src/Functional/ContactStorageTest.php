@@ -34,7 +34,7 @@ class ContactStorageTest extends ContactSitewideTest {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * Tests configuration options and the site-wide contact form.
@@ -61,7 +61,7 @@ class ContactStorageTest extends ContactSitewideTest {
     $this->drupalLogout();
     $this->drupalGet('contact');
     $this->assertSession()->pageTextContains('Your email address');
-    $this->assertNoText('Form');
+    $this->assertSession()->pageTextNotContains('Form');
     $this->submitContact($name = $this->randomMachineName(16), $mail, $subject = $this->randomMachineName(16), $id, $message = $this->randomMachineName(64));
     $this->assertSession()->pageTextContains('Your message has been sent.');
 

@@ -77,7 +77,6 @@ final class Locale
         'en-BS' => 'en-001',
         'en-BW' => 'en-001',
         'en-BZ' => 'en-001',
-        'en-CA' => 'en-001',
         'en-CC' => 'en-001',
         'en-CK' => 'en-001',
         'en-CM' => 'en-001',
@@ -125,7 +124,6 @@ final class Locale
         'en-NU' => 'en-001',
         'en-NZ' => 'en-001',
         'en-PG' => 'en-001',
-        'en-PH' => 'en-001',
         'en-PK' => 'en-001',
         'en-PN' => 'en-001',
         'en-PW' => 'en-001',
@@ -197,37 +195,38 @@ final class Locale
         'pt-MZ' => 'pt-PT',
         'pt-ST' => 'pt-PT',
         'pt-TL' => 'pt-PT',
-        'az-Arab' => 'root',
-        'az-Cyrl' => 'root',
-        'blt-Latn' => 'root',
-        'bs-Cyrl' => 'root',
-        'byn-Latn' => 'root',
-        'en-Dsrt' => 'root',
-        'en-Shaw' => 'root',
-        'hi-Latn' => 'root',
-        'iu-Latn' => 'root',
-        'kk-Arab' => 'root',
-        'ks-Deva' => 'root',
-        'ku-Arab' => 'root',
-        'ky-Arab' => 'root',
-        'ky-Latn' => 'root',
-        'ml-Arab' => 'root',
-        'mn-Mong' => 'root',
-        'mni-Mtei' => 'root',
-        'ms-Arab' => 'root',
-        'pa-Arab' => 'root',
-        'sat-Deva' => 'root',
-        'sd-Deva' => 'root',
-        'sd-Khoj' => 'root',
-        'sd-Sind' => 'root',
-        'so-Arab' => 'root',
-        'sr-Latn' => 'root',
-        'sw-Arab' => 'root',
-        'tg-Arab' => 'root',
-        'uz-Arab' => 'root',
-        'uz-Cyrl' => 'root',
-        'yue-Hans' => 'root',
-        'zh-Hant' => 'root',
+        'az-Arab' => 'und',
+        'az-Cyrl' => 'und',
+        'bal-Latn' => 'und',
+        'blt-Latn' => 'und',
+        'bs-Cyrl' => 'und',
+        'byn-Latn' => 'und',
+        'en-Dsrt' => 'und',
+        'en-Shaw' => 'und',
+        'hi-Latn' => 'und',
+        'iu-Latn' => 'und',
+        'kk-Arab' => 'und',
+        'ks-Deva' => 'und',
+        'ku-Arab' => 'und',
+        'ky-Arab' => 'und',
+        'ky-Latn' => 'und',
+        'ml-Arab' => 'und',
+        'mn-Mong' => 'und',
+        'mni-Mtei' => 'und',
+        'ms-Arab' => 'und',
+        'pa-Arab' => 'und',
+        'sat-Deva' => 'und',
+        'sd-Deva' => 'und',
+        'sd-Khoj' => 'und',
+        'sd-Sind' => 'und',
+        'so-Arab' => 'und',
+        'sr-Latn' => 'und',
+        'sw-Arab' => 'und',
+        'tg-Arab' => 'und',
+        'uz-Arab' => 'und',
+        'uz-Cyrl' => 'und',
+        'yue-Hans' => 'und',
+        'zh-Hant' => 'und',
         'zh-Hant-MO' => 'zh-Hant-HK',
     ];
 
@@ -239,7 +238,7 @@ final class Locale
      *
      * @return bool TRUE if the locales match, FALSE otherwise.
      */
-    public static function match($firstLocale, $secondLocale)
+    public static function match(string $firstLocale, string $secondLocale): bool
     {
         if (empty($firstLocale) || empty($secondLocale)) {
             return false;
@@ -254,14 +253,15 @@ final class Locale
      * For example, "de" and "de-AT" will match because they both have
      * "de" in common. This is useful for partial locale matching.
      *
-     * @see self::getCandidates
-     *
      * @param string $firstLocale  The first locale.
      * @param string $secondLocale The second locale.
      *
      * @return bool TRUE if there is a common candidate, FALSE otherwise.
+     * @see self::getCandidates
+     * TODO Check if typehints could be added (NULL)
+     *
      */
-    public static function matchCandidates($firstLocale, $secondLocale)
+    public static function matchCandidates($firstLocale, $secondLocale): bool
     {
         if (empty($firstLocale) || empty($secondLocale)) {
             return false;
@@ -283,17 +283,17 @@ final class Locale
      * locale list. The first found locale is returned.
      * If no candidate is found in the list, an exception is thrown.
      *
-     * @see self::getCandidates
-     *
      * @param array  $availableLocales The available locales.
      * @param string $locale           The requested locale (i.e. fr-FR).
-     * @param string $fallbackLocale   A fallback locale (i.e "en").
+     * @param string|null $fallbackLocale   A fallback locale (i.e "en").
      *
      * @return string
      *
      * @throws UnknownLocaleException
+     *@see self::getCandidates
+     *
      */
-    public static function resolve(array $availableLocales, $locale, $fallbackLocale = null)
+    public static function resolve(array $availableLocales, string $locale, string $fallbackLocale = null): string
     {
         $locale = self::canonicalize($locale);
         $resolvedLocale = null;
@@ -321,7 +321,7 @@ final class Locale
      *
      * @return string The canonicalized locale.
      */
-    public static function canonicalize($locale)
+    public static function canonicalize(?string $locale): ?string
     {
         if (empty($locale)) {
             return $locale;
@@ -360,11 +360,11 @@ final class Locale
      * 2) sr
      *
      * @param string $locale         The locale (i.e. fr-FR).
-     * @param string $fallbackLocale A fallback locale (i.e "en").
+     * @param string|null $fallbackLocale A fallback locale (i.e "en").
      *
      * @return array An array of all variants of a locale.
      */
-    public static function getCandidates($locale, $fallbackLocale = null)
+    public static function getCandidates(string $locale, string $fallbackLocale = null): array
     {
         $locale = self::replaceAlias($locale);
         $candidates = [$locale];
@@ -392,7 +392,7 @@ final class Locale
      * @return string|null
      *   The parent, or null if none found.
      */
-    public static function getParent($locale)
+    public static function getParent(string $locale): ?string
     {
         $parent = null;
         if (isset(self::$parents[$locale])) {
@@ -402,9 +402,9 @@ final class Locale
             array_pop($localeParts);
             $parent = implode('-', $localeParts);
         }
-        // The library doesn't have data for the empty 'root' locale, it
+        // The library doesn't have data for the empty 'und' locale, it
         // is more user friendly to use the configured fallback instead.
-        if ($parent == 'root') {
+        if ($parent == 'und') {
             $parent = null;
         }
 
@@ -416,11 +416,9 @@ final class Locale
      *
      * For example, "zh-CN" is replaced with "zh-Hans-CN".
      *
-     * @param string $locale The locale.
-     *
      * @return string The locale.
      */
-    public static function replaceAlias($locale)
+    public static function replaceAlias(?string $locale): ?string
     {
         if (!empty($locale) && isset(self::$aliases[$locale])) {
             $locale = self::$aliases[$locale];
