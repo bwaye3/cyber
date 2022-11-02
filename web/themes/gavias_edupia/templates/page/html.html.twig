@@ -53,7 +53,18 @@
         {% endif %}
         <link rel="stylesheet" href="https://use.typekit.net/vug0eeb.css">
 
+
+
         </head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PMHEGNL85W"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-PMHEGNL85W');
+        </script>
 
         {% set body_classes = [
           logged_in ? 'logged-in',
