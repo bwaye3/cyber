@@ -17,7 +17,7 @@
     "require": {
         "composer/installers": "^1.2",
         "drupal/address": "^1.7",
-        "drupal/admin_toolbar": "^3.0",
+        "drupal/admin_toolbar": "^3.2",
         "drupal/back_to_top": "^1.1",
         "drupal/body_node_id_class": "^1.1",
         "drupal/captcha": "^1.0@beta",
@@ -32,6 +32,7 @@
         "drupal/feeds": "^3.0@alpha",
         "drupal/field_formatter": "^3.0.0-alpha2",
         "drupal/field_formatter_class": "^1.1",
+        "drupal/google_analytics": "^4.0",
         "drupal/honeypot": "^2.0.1",
         "drupal/image_url_formatter": "^1.0@beta",
         "drupal/imce": "^1.7",
