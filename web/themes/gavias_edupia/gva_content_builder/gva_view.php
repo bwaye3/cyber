@@ -136,7 +136,7 @@ if(!class_exists('element_gva_view')):
 
          if(isset($_view[0]) && isset($_view[1])){
             $output .= '<div>';
-               $output .= '<div class="widget block clearfix gsc-block-view  gsc-block-drupal block-view '.implode($class, ' ') .'" ' . gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) .'>';
+               $output .= '<div class="widget block clearfix gsc-block-view  gsc-block-drupal block-view '.implode(' ', $class) .'" ' . gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) .'>';
                if($title && $show_title == 'title_block'){
                   $output .= '<h2 class="block-title title-shortcode"><span>' . $title . '</span></h2>';
                }

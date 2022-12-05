@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies: {  }
+name: square
+label: 'Square (350 x 350)'
+effects:
+  9548dcfc-4556-4d69-80e6-96d507222365:
+    uuid: 9548dcfc-4556-4d69-80e6-96d507222365
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 350
+      height: 350
+      anchor: center-center

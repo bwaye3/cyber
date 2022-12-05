@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_portfolio_information
+    - node.type.portfolio
+id: node.portfolio.field_portfolio_information
+field_name: field_portfolio_information
+entity_type: node
+bundle: portfolio
+label: 'Portfolio information'
+description: 'Format: [Label] -- [information],  Sample: Location -- Mountain View CA 94043'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

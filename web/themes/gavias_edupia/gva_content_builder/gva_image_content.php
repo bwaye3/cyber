@@ -110,8 +110,8 @@ if(!class_exists('element_gva_image_content')):
 
          if($skin) $el_class .= ' ' . $skin;
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-         <?php ob_start() ?>
 
          <?php if($skin == 'skin-v1'){ ?>
             <div class="gsc-image-content <?php print $el_class; ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>

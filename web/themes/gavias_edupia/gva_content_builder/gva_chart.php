@@ -77,8 +77,8 @@ if(!class_exists('element_gva_chart')):
 
          if(!$color) $color = '#008FD5';
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="widget gsc-chart <?php print $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="pieChart" data-bar-color="<?php print $color ?>" data-bar-width="150" data-percent="<?php print $percent ?>">
                <span><?php print $percent; ?>%</span>  

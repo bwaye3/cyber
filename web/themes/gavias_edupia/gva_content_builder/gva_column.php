@@ -477,12 +477,12 @@ class element_gva_column{
          $array_class_inner[] = $inner_class;
          $array_class[] = $style_class;
 
-      $column_class = implode($array_class, ' ');
-			$column_class_inner = implode($array_class_inner, ' ');
+         $column_class = implode(' ', $array_class);
+			$column_class_inner = implode(' ', $array_class_inner);
 			$column_style 	= implode('; ', $array_style );
          
-		?>
-		<?php ob_start() ?>
+         ob_start();
+      ?>
 		<div <?php if($id_column) print 'id="'.$id_column.'"' ?> class="gsc-column <?php print $column_class; ?>" <?php echo(($column_style) ? 'style="'.$column_style.'"' : '');  ?>>
 	      <div class="column-inner <?php print $column_class_inner ?>">
 	         <div class="column-content-inner">

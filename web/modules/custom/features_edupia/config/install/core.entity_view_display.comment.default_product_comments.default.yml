@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.default_product_comments
+    - field.field.comment.default_product_comments.comment_body
+  module:
+    - text
+id: comment.default_product_comments.default
+targetEntityType: comment
+bundle: default_product_comments
+mode: default
+content:
+  comment_body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

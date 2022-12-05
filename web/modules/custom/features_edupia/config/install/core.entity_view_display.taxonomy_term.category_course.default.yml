@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.category_course
+id: taxonomy_term.category_course.default
+targetEntityType: taxonomy_term
+bundle: category_course
+mode: default
+content: {  }
+hidden:
+  description: true

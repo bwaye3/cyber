@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: content
+label: Content
+type: 'canonical_entities:node'
+pattern: '[node:title]'
+selection_criteria:
+  fb401831-51e4-4633-92bc-e79db56adc58:
+    id: node_type
+    bundles:
+      article: article
+      page: page
+      portfolio: portfolio
+    negate: false
+    context_mapping:
+      node: node
+    uuid: fb401831-51e4-4633-92bc-e79db56adc58
+selection_logic: and
+weight: -5
+relationships: {  }

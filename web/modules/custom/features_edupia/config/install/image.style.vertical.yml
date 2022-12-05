@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies: {  }
+name: vertical
+label: Vertical(770x757)
+effects:
+  85ac8589-9dff-400e-bb04-b3faf5a04873:
+    uuid: 85ac8589-9dff-400e-bb04-b3faf5a04873
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 770
+      height: 757
+      anchor: center-center

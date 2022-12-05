@@ -87,8 +87,9 @@ if(!class_exists('element_gva_accordion')):
 
          if($animate) $classes .= ' wow ' . $animate; 
          
+         ob_start();
          ?>
-          <?php ob_start() ?>
+
          <div class="gsc-accordion<?php print $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="panel-group <?php print $classes ?>" id="<?php print $_id; ?>" role="tablist" aria-multiselectable="true">
               <?php for($i=1; $i<=10; $i++){ ?>

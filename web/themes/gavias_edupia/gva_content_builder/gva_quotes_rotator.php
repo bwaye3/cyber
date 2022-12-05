@@ -98,8 +98,8 @@ if(!class_exists('element_gva_quotes_rotator')):
          if($min_height) $style .= "min-height:{$min_height};";
          if($style) $style = " style=\"{$style}\"";
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-          <?php ob_start() ?>
           <script type="text/javascript" src="<?php print (base_path() . drupal_get_path('theme', 'gavias_edupia')) ?>/vendor/quotes_rotator/js/modernizr.custom.js"></script>
          <script type="text/javascript" src="<?php print (base_path() . drupal_get_path('theme', 'gavias_edupia')) ?>/vendor/quotes_rotator/js/jquery.cbpQTRotator.min.js"></script>
          <div class="gsc-quotes-rotator <?php print $skin_text ?> <?php print $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>

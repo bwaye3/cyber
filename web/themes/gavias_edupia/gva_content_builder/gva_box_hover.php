@@ -107,8 +107,8 @@ if(!class_exists('element_gva_box_hover')):
          if($height) $style .= "min-height:{$height};";
          if($style) $style = "style=\"{$style}\"";
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="widget gsc-box-hover clearfix <?php print $el_class; ?>" <?php if($style) print $style ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="box-content">
                <div class="frontend">

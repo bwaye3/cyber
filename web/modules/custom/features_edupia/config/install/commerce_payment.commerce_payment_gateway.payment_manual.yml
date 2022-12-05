@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies: {  }
+id: payment_manual
+label: 'Payment Manual'
+weight: null
+plugin: manual
+configuration:
+  instructions:
+    value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac neque at mi elementum gravida et vitae elit. Etiam ullamcorper auctor orci, id luctus felis laoreet a. Nam nec nulla sit amet tellus pretium rhoncus. Integer interdum, nibh sed posuere aliquet, enim ante lacinia augue, ut ultricies augue erat vel lorem. Vestibulum bibendum dolor sit amet tincidunt lacinia. Nunc sapien libero, condimentum et turpis eget, eleifend hendrerit augue. Duis molestie volutpat feugiat.'
+    format: plain_text
+  display_label: 'Payment Manual'
+  mode: n/a
+  payment_method_types:
+    - credit_card
+conditions: {  }
+conditionOperator: AND

@@ -1,0 +1,76 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser_4
+    - field.field.node.team.body
+    - field.field.node.team.field_team_contact
+    - field.field.node.team.field_team_description
+    - field.field.node.team.field_team_education
+    - field.field.node.team.field_team_email
+    - field.field.node.team.field_team_facebook
+    - field.field.node.team.field_team_google
+    - field.field.node.team.field_team_image
+    - field.field.node.team.field_team_linkedin
+    - field.field.node.team.field_team_name
+    - field.field.node.team.field_team_pinterest
+    - field.field.node.team.field_team_position
+    - field.field.node.team.field_team_quote
+    - field.field.node.team.field_team_skills
+    - field.field.node.team.field_team_twitter
+    - image.style.height
+    - node.type.team
+  module:
+    - image
+    - user
+id: node.team.teaser_4
+targetEntityType: node
+bundle: team
+mode: teaser_4
+content:
+  field_team_contact:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_team_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: height
+      image_link: content
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_team_name:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_team_position:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  body: true
+  field_team_description: true
+  field_team_education: true
+  field_team_email: true
+  field_team_facebook: true
+  field_team_google: true
+  field_team_linkedin: true
+  field_team_pinterest: true
+  field_team_quote: true
+  field_team_skills: true
+  field_team_twitter: true
+  links: true

@@ -1,0 +1,112 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    0: commerce_product.commerce_product_type.course
+    1: core.entity_view_mode.commerce_product.teaser_2
+    2: field.field.commerce_product.course.body
+    3: field.field.commerce_product.course.field_course_category
+    4: field.field.commerce_product.course.field_course_comment
+    5: field.field.commerce_product.course.field_course_duration
+    6: field.field.commerce_product.course.field_course_featured
+    7: field.field.commerce_product.course.field_course_features
+    8: field.field.commerce_product.course.field_course_headline
+    9: field.field.commerce_product.course.field_course_images
+    10: field.field.commerce_product.course.field_course_includes
+    11: field.field.commerce_product.course.field_course_level
+    12: field.field.commerce_product.course.field_course_teacher
+    13: field.field.commerce_product.course.field_course_video
+    14: field.field.commerce_product.course.field_what_learn
+    17: image.style.medium
+  module:
+    - commerce_product
+    - image
+    - options
+    - text
+id: commerce_product.course.teaser_2
+targetEntityType: commerce_product
+bundle: course
+mode: teaser_2
+content:
+  body:
+    label: hidden
+    type: text_trimmed
+    weight: 0
+    settings:
+      trim_length: 120
+    third_party_settings: {  }
+    region: content
+  field_course_category:
+    weight: 2
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_course_duration:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_course_features:
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_course_images:
+    weight: 5
+    label: hidden
+    settings:
+      image_style: medium
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_course_level:
+    weight: 6
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_course_teacher:
+    weight: 7
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  title:
+    label: hidden
+    type: string
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  variations:
+    type: commerce_add_to_cart
+    weight: 1
+    label: hidden
+    settings:
+      combine: true
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  field_course_comment: true
+  field_course_featured: true
+  field_course_headline: true
+  field_course_includes: true
+  field_course_video: true
+  field_what_learn: true
+  stores: true
+  uid: true

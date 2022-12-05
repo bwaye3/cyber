@@ -302,11 +302,11 @@ class element_gva_row{
 			      showYTLogo: false, realfullscreen: true, addRaster: false, optimizeDisplay: true, stopMovieOnBlur: true}\"";
 			}
 
-			$row_class = implode($array_class, ' ');
+			$row_class = implode(' ', $array_class);
 			$row_style 	= implode('; ', $array_style );
 
-		?>
-		<?php ob_start() ?>
+         ob_start();
+         ?>
 		<div class="gbb-row-wrapper">
 		  	<?php if($icon){ ?><span class="icon-row <?php print $icon ?>"></span><?php } ?>
 		  	<div class="<?php print $row_class ?> <?php print ($bg_particles=='on') ? ' row-background-particles-js' : ''; ?>" <?php if($row_id) print 'id="'.$row_id.'"' ?> style="<?php print $row_style ?>" <?php if($data_bg_video) print $data_bg_video; ?>>

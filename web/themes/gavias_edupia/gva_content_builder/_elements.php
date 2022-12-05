@@ -28,7 +28,6 @@ function gavias_content_builder_set_elements(){
     'gva_quote_text',
     'gva_quotes_rotator',
     'gva_image_content',
-    'gva_instagram',
     'gva_job_box',
     'gva_services_box',
     'gva_gallery',

@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_video.field_paragraphs_video_embed
+    - field.field.paragraph.paragraphs_video.field_paragraphs_video_upload
+    - paragraphs.paragraphs_type.paragraphs_video
+  module:
+    - file
+id: paragraph.paragraphs_video.default
+targetEntityType: paragraph
+bundle: paragraphs_video
+mode: default
+content:
+  field_paragraphs_video_embed:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_paragraphs_video_upload:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+    region: content
+hidden: {  }

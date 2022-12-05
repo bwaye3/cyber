@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_images.field_paragraphs_images
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.paragraphs_images
+  module:
+    - image
+    - imce
+id: paragraph.paragraphs_images.default
+targetEntityType: paragraph
+bundle: paragraphs_images
+mode: default
+content:
+  field_paragraphs_images:
+    weight: 0
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
+    type: image_image
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

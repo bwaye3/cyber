@@ -88,8 +88,8 @@ if(!class_exists('element_gva_video_box')):
             $image = $base_url .$image; 
          }
          if($animate) $el_class .= ' wow ' . $animate; 
-      ?>
-      <?php ob_start() ?>
+          ob_start();
+         ?>
       
       <?php if($style == 'style-1'){ ?>
          <div class="widget gsc-video-box <?php print $el_class;?> clearfix <?php print $style ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>

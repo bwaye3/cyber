@@ -147,8 +147,8 @@ if(!class_exists('element_gva_gmap')):
          if(theme_get_setting('google_api_key')){
             $google_api = theme_get_setting('google_api_key');
          }
-       ?>
-         <?php ob_start() ?>
+         ob_start();
+         ?>
          <script src="//maps.googleapis.com/maps/api/js?key=<?php print $google_api ?>&libraries=places&language=en&ver=4.9.3"></script>
          <script type="text/javascript" src="<?php print (base_path() . drupal_get_path('theme', 'gavias_edupia')) ?>/vendor/gmap3.js"></script>
          <script type="text/javascript" src="<?php print (base_path() . drupal_get_path('theme', 'gavias_edupia')) ?>/vendor/jquery.ui.map.min.js"></script>

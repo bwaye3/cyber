@@ -1,0 +1,51 @@
+name: 'Features Edupia'
+description: 'Features Edupia - Import content type, field, view ... for Edupia theme.'
+type: module
+core_version_requirement: ^8.8 || ^9
+dependencies:
+  - admin_toolbar
+  - address
+  - block
+  - block_content
+  - comment
+  - commerce
+  - commerce_checkout
+  - commerce_number_pattern
+  - commerce_order
+  - commerce_payment
+  - commerce_payment_example
+  - commerce_paypal
+  - commerce_price
+  - commerce_product
+  - commerce_store
+  - contact
+  - ctools
+  - datetime
+  - entity_reference_revisions
+  - field
+  - file
+  - gavias_content_builder
+  - gavias_view
+  - gavias_views_magazine
+  - gaviasthemer
+  - image
+  - imce
+  - mailchimp_signup
+  - menu_ui
+  - node
+  - options
+  - paragraphs
+  - path
+  - pathauto
+  - profile
+  - rdf
+  - system
+  - taxonomy
+  - text
+  - user
+  - views
+  - views_infinite_scroll
+  - webform
+  - config_update
+  - features
+version: 9.x

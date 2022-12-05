@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_paypal
+id: paypal
+label: Paypal
+weight: null
+plugin: paypal_express_checkout
+configuration:
+  api_username: gaviasthemes-facilitator_api1.gmail.com
+  api_password: EVD3K72LEG58UKS2
+  shipping_prompt: shipping_skip
+  signature: A9.v3Z12UkkZ8kOnhrv2qAmjnv2SAI-QfVDy3NODRuBGXwHrJKeo1tl-
+  solution_type: Mark
+  display_label: PayPal
+  mode: test
+  payment_method_types:
+    - credit_card
+  collect_billing_information: true
+conditions: {  }
+conditionOperator: AND

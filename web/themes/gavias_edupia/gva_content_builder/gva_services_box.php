@@ -124,8 +124,8 @@ if(!class_exists('element_gva_services_box')):
          if($animate) $el_class .= ' wow ' . $animate; 
          $_id = gavias_content_builder_makeid();
          
+         ob_start();
          ?>
-         <?php ob_start() ?>
          
          <?php if($display == 'carousel'){ ?>
             <div class="gsc-services-box <?php echo $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>> 

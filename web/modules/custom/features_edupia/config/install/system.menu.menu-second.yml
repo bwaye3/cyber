@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: menu-second
+label: 'Menu second'
+description: 'Menu of sidebar'
+locked: false

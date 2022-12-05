@@ -165,10 +165,8 @@ if(!class_exists('element_gva_button')):
             $styles_hover[] = "border-color:{$border_color_hover};";
          }
          if($animate) $classes[] = 'wow ' . $animate; 
+         ob_start();
          ?>
-
-         <?php ob_start() ?>
-
          <style rel="stylesheet">
             <?php print "#{$_id}{".implode('', $styles)."}" ?>
             <?php print "#{$_id}:hover{".implode('', $styles_hover)."}" ?>

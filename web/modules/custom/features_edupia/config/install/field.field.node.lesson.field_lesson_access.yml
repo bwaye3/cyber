@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lesson_access
+    - node.type.lesson
+  module:
+    - options
+id: node.lesson.field_lesson_access
+field_name: field_lesson_access
+entity_type: node
+bundle: lesson
+label: 'Lesson Access'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: registered
+default_value_callback: ''
+settings: {  }
+field_type: list_string

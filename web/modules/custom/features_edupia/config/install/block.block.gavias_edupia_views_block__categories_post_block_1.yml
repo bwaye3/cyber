@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.categories_post
+  module:
+    - gaviasthemer
+    - system
+    - views
+  theme:
+    - gavias_edupia
+third_party_settings:
+  gaviasthemer:
+    classes: ''
+id: gavias_edupia_views_block__categories_post_block_1
+theme: gavias_edupia
+region: sidebar_right
+weight: -15
+provider: null
+plugin: 'views_block:categories_post-block_1'
+settings:
+  id: 'views_block:categories_post-block_1'
+  label: Categories
+  provider: views
+  label_display: visible
+  views_label: Categories
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /blogs-list
+    negate: false
+    context_mapping: {  }

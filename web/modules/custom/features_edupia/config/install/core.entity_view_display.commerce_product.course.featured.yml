@@ -1,0 +1,166 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    0: commerce_product.commerce_product_type.course
+    1: core.entity_view_display.comment.default_product_comments.default
+    2: core.entity_view_mode.commerce_product.featured
+    3: field.field.commerce_product.course.body
+    4: field.field.commerce_product.course.field_course_category
+    5: field.field.commerce_product.course.field_course_comment
+    6: field.field.commerce_product.course.field_course_duration
+    7: field.field.commerce_product.course.field_course_featured
+    8: field.field.commerce_product.course.field_course_features
+    9: field.field.commerce_product.course.field_course_headline
+    10: field.field.commerce_product.course.field_course_images
+    11: field.field.commerce_product.course.field_course_includes
+    12: field.field.commerce_product.course.field_course_level
+    13: field.field.commerce_product.course.field_course_price_override
+    14: field.field.commerce_product.course.field_course_teacher
+    15: field.field.commerce_product.course.field_course_video
+    16: field.field.commerce_product.course.field_what_learn
+    19: image.style.normal_size
+  module:
+    - comment
+    - commerce_product
+    - image
+    - options
+    - text
+id: commerce_product.course.featured
+targetEntityType: commerce_product
+bundle: course
+mode: featured
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: -4
+    settings:
+      trim_length: 140
+    third_party_settings: {  }
+    region: content
+  field_course_category:
+    weight: 11
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_course_comment:
+    weight: 12
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
+    region: content
+  field_course_duration:
+    weight: 13
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_course_featured:
+    weight: 14
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_course_features:
+    weight: 15
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_course_headline:
+    weight: 20
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_course_images:
+    weight: 16
+    label: hidden
+    settings:
+      image_style: normal_size
+      image_link: content
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_course_includes:
+    weight: 22
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_course_level:
+    weight: 17
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_course_price_override:
+    weight: 23
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_course_teacher:
+    weight: 18
+    label: hidden
+    settings:
+      view_mode: teaser_3
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+  field_course_video:
+    weight: 19
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_what_learn:
+    weight: 21
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  title:
+    label: hidden
+    type: string
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  variations:
+    type: commerce_add_to_cart
+    weight: 10
+    label: hidden
+    settings:
+      combine: true
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  stores: true
+  uid: true

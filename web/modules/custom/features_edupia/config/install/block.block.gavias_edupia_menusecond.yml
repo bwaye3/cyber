@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.menu-second
+  module:
+    - gaviasthemer
+    - system
+  theme:
+    - gavias_edupia
+third_party_settings:
+  gaviasthemer:
+    classes: ''
+id: gavias_edupia_menusecond
+theme: gavias_edupia
+region: sidebar_right
+weight: -13
+provider: null
+plugin: 'system_menu_block:menu-second'
+settings:
+  id: 'system_menu_block:menu-second'
+  label: 'Menu second'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: "/team-grid\r\n/team-list\r\n/node/69\r\n/node/71\r\n/node/73\r\n/node/74\r\n/node/75\r\n/team-grid\r\n/team-list"
+    negate: false
+    context_mapping: {  }

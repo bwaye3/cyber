@@ -110,9 +110,9 @@ if(!class_exists('element_gva_image')):
          $class_array[] = $align;
          $class_array[] = $el_class;
          if($animate) $class_array[] = 'wow ' . $animate;
+          ob_start();
          ?>
-         <?php ob_start() ?>
-            <div class="widget gsc-image<?php if(count($class_array) > 0) print (' ' . implode($class_array, ' ')) ?>" <?php print $margin ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+            <div class="widget gsc-image<?php if(count($class_array) > 0) print (' ' . implode(' ', $class_array)) ?>" <?php print $margin ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
                <div class="widget-content">
                   <?php if($link){ ?>
                      <a href="<?php print $link ?>" <?php print $target ?>>

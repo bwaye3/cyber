@@ -315,11 +315,11 @@ if(!class_exists('element_gva_icon_box')):
 
          if($animate) $class[] = 'wow ' . $animate;
 
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <?php if($icon_position=='top-center' || $icon_position=='top-left' || $icon_position=='top-right' || $icon_position=='right' || $icon_position=='left'){ ?>
-            <div class="widget gsc-icon-box <?php if(count($class)>0) print implode($class, ' ') ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
-               <div class="icon-box-content" <?php if(count($style) > 0) print 'style="'.implode($style, ';').'"' ?>> 
+            <div class="widget gsc-icon-box <?php if(count($class)>0) print implode(' ', $class) ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+               <div class="icon-box-content" <?php if(count($style) > 0) print 'style="'.implode(';', $style).'"' ?>> 
                   <?php if(($icon || $image) && $icon_position != 'right'){ ?>
                      <div class="highlight-icon">
                         <span class="icon-inner <?php echo $icon_class_inner ?>">   
@@ -355,8 +355,8 @@ if(!class_exists('element_gva_icon_box')):
          <?php } ?>   
 
          <?php if($icon_position == 'top-left-title' || $icon_position == 'top-right-title'){ ?>
-            <div class="widget gsc-icon-box <?php if(count($class)>0) print implode($class, ' ') ?>" <?php if(count($style) > 0) print 'style="'.implode($style, ';').'"' ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
-               <div class="icon-box-content" <?php if(count($style) > 0) print 'style="'.implode($style, ';').'"' ?>> 
+            <div class="widget gsc-icon-box <?php if(count($class)>0) print implode(' ', $class) ?>" <?php if(count($style) > 0) print 'style="'.implode(';', $style).'"' ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+               <div class="icon-box-content" <?php if(count($style) > 0) print 'style="'.implode(';', $style).'"' ?>> 
                   <div class="highlight_content">
                      <div class="title-inner">
                         

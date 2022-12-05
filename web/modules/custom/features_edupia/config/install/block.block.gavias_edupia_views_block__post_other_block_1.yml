@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.post_other
+  module:
+    - ctools
+    - gaviasthemer
+    - views
+  theme:
+    - gavias_edupia
+third_party_settings:
+  gaviasthemer:
+    classes: ''
+id: gavias_edupia_views_block__post_other_block_1
+theme: gavias_edupia
+region: sidebar_right
+weight: -12
+provider: null
+plugin: 'views_block:post_other-block_1'
+settings:
+  id: 'views_block:post_other-block_1'
+  label: 'Recent Posts'
+  provider: views
+  label_display: visible
+  views_label: 'Recent Posts'
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+      portfolio: portfolio
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

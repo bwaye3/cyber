@@ -134,8 +134,8 @@ if(!class_exists('element_gva_our_team')):
             $target = false;
          }
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <?php
          //Style display horizontal
           if($style=='horizontal'){ ?>

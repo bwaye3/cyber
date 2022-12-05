@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lesson_content
+    - node.type.lesson
+    - paragraphs.paragraphs_type.paragraphs_images
+    - paragraphs.paragraphs_type.paragraphs_text
+    - paragraphs.paragraphs_type.paragraphs_video
+  module:
+    - entity_reference_revisions
+id: node.lesson.field_lesson_content
+field_name: field_lesson_content
+entity_type: node
+bundle: lesson
+label: 'Lesson Content'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      paragraphs_images: paragraphs_images
+      paragraphs_text: paragraphs_text
+      paragraphs_video: paragraphs_video
+    target_bundles_drag_drop:
+      paragraphs_images:
+        enabled: true
+        weight: 4
+      paragraphs_text:
+        enabled: true
+        weight: 5
+      paragraphs_video:
+        enabled: true
+        weight: 6
+field_type: entity_reference_revisions

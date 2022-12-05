@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.categories_post
+  module:
+    - ctools
+    - gaviasthemer
+    - views
+  theme:
+    - gavias_edupia
+third_party_settings:
+  gaviasthemer:
+    classes: ''
+id: gavias_edupia_views_block__categories_post_block_2
+theme: gavias_edupia
+region: sidebar_right
+weight: -10
+provider: null
+plugin: 'views_block:categories_post-block_2'
+settings:
+  id: 'views_block:categories_post-block_2'
+  label: 'Tags '
+  provider: views
+  label_display: visible
+  views_label: 'Tags '
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+      portfolio: portfolio
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

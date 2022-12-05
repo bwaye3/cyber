@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.course
+    - field.storage.commerce_product.field_course_category
+    - taxonomy.vocabulary.category_course
+id: commerce_product.course.field_course_category
+field_name: field_course_category
+entity_type: commerce_product
+bundle: course
+label: 'Course Category'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      category_course: category_course
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

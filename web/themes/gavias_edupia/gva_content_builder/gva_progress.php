@@ -77,8 +77,8 @@ if(!class_exists('element_gva_progress')):
          $class_array[] = $el_class;
          $class_array[] = $skin_text;
          if($animate) $class_array[] = 'wow ' . $animate;
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="widget gsc-progress<?php if(count($class_array)) print (' ' . implode(' ', $class_array)) ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="progress-label"><?php print $title ?></div>
             <div class="progress">

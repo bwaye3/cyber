@@ -1,0 +1,50 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser_2
+    - field.field.node.gallery.body
+    - field.field.node.gallery.field_gallery_image
+    - field.field.node.gallery.field_gallery_images
+    - image.style.normal_size
+    - node.type.gallery
+  module:
+    - image
+    - text
+    - user
+id: node.gallery.teaser_2
+targetEntityType: node
+bundle: gallery
+mode: teaser_2
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_gallery_image:
+    weight: 104
+    label: hidden
+    settings:
+      image_style: vertical
+      image_link: content
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_gallery_images:
+    weight: 105
+    label: hidden
+    settings:
+      image_style: normal_size
+      image_link: content
+    third_party_settings: {  }
+    type: image
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

@@ -225,7 +225,7 @@ function gavias_sliderlayer_slide($vars, $index){
         $vars['attributes_video_array']['data-nextslideatend'] = isset($slide->mp4_nextslideatend) ? $slide->mp4_nextslideatend : true;
         $vars['attributes_video_array']['data-videoloop'] = isset($slide->mp4_videoloop) ? $slide->mp4_videoloop : 'loopandnoslidestop';
       }
-      $vars['attributes_video_array']['data-videorate'] = '1.5';
+      $vars['attributes_video_array']['data-videorate'] = '1';
       $vars['attributes_video_array']['data-videowidth'] = '100%';
       $vars['attributes_video_array']['data-videoheight'] = '100%';
       $vars['attributes_video_array']['data-videocontrols'] = 'none';
@@ -317,7 +317,7 @@ function gavias_sliderlayer_layer($vars, $layer_count, $slider_id){
    if(is_numeric($top_sm)) $top_sm = round($top_sm);
   if(is_numeric($top_xs)) $left_sm = round($top_xs);
   if($gridheight_sm || $gridheight_xs || $top_sm || $top_xs){
-    if(!$top_xs) $top_xs = round($top_sm);
+    if(!$top_xs && is_numeric($top_sm)) $top_xs = round($top_sm);
     if(!$top_sm & !$top_xs) $top_sm = $top_xs = round($layer->top);
     $data_y = "['{$layer->top}', '{$layer->top}', '{$top_sm}', '{$top_xs}']";
     $vars['attributes_array']['data-y'] = $data_y;

@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Category Course'
+vid: category_course
+description: 'Category for course '
+weight: 0

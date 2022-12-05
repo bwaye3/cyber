@@ -106,9 +106,8 @@
             $bg_style = "style=\"background-color: {$bg_color};\"";
          }
          if($animate) $el_class .= ' wow ' . $animate;
+         ob_start();
          ?>
-         <?php ob_start() ?>
-         
          <div class="gsc-carousel-content <?php print $el_class ?>"> 
             <div class="owl-carousel init-carousel-owl"data-items="1" data-items_lg="1" data-items_md="1" data-items_sm="1" data-items_xs="1" data-loop="1" data-speed="500" data-auto_play="0" data-auto_play_speed="0" data-auto_play_timeout="0" data-auto_play_hover="1" data-navigation="1" data-rewind_nav="0" data-pagination="0" data-mouse_drag="1" data-touch_drag="1">
                <?php for($i=1; $i<=8; $i++){ ?>

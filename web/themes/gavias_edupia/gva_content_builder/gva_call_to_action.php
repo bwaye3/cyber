@@ -146,10 +146,9 @@ if(!class_exists('element_gva_call_to_action')):
          if($box_background) $style .= "background: {$box_background};";
          $style = !empty($style) ? "style=\"".$style ."\"" : '';
          if($animate) $class[] = 'wow ' . $animate; 
+         ob_start();
          ?>
-
-         <?php ob_start() ?>
-         <div class="widget gsc-call-to-action <?php print implode($class, ' ') ?>" <?php print $style ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+         <div class="widget gsc-call-to-action <?php print implode(' ', $class) ?>" <?php print $style ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="content-inner clearfix" >
                <div class="content">
                   <h2 class="title"><span><?php print $title; ?></span></h2>

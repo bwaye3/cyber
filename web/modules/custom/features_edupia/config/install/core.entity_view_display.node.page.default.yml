@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.page.field_content_builder
+    - node.type.page
+  module:
+    - gavias_content_builder
+    - text
+    - user
+id: node.page.default
+targetEntityType: node
+bundle: page
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_content_builder:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: gavias_content_builder_formatter
+    region: content
+hidden:
+  links: true

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_paragraphs_video_embed
+    - paragraphs.paragraphs_type.paragraphs_video
+id: paragraph.paragraphs_video.field_paragraphs_video_embed
+field_name: field_paragraphs_video_embed
+entity_type: paragraph
+bundle: paragraphs_video
+label: 'Paragraphs Video Embed'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

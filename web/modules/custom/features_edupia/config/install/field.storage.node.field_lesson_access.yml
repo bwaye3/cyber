@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_lesson_access
+field_name: field_lesson_access
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: registered
+      label: 'Registered (Purchased Course)'
+    -
+      value: logged_in
+      label: 'Logged in users'
+    -
+      value: public
+      label: Everyone
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

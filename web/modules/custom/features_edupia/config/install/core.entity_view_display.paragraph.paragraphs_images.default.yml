@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_images.field_paragraphs_images
+    - paragraphs.paragraphs_type.paragraphs_images
+  module:
+    - image
+id: paragraph.paragraphs_images.default
+targetEntityType: paragraph
+bundle: paragraphs_images
+mode: default
+content:
+  field_paragraphs_images:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden: {  }

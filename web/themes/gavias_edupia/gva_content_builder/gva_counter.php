@@ -113,10 +113,10 @@ if(!class_exists('element_gva_counter')):
          $style = '';
          if($color) $style = "color: {$color};";
          if($style) $style = 'style="'.$style.'"';
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <?php if($type == 'icon-top-2'){ ?>
-            <div class="widget milestone-block <?php if(count($class) > 0){ print implode($class, ' '); } ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+            <div class="widget milestone-block <?php if(count($class) > 0){ print implode(' ', $class); } ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
                <div class="milestone-text"><?php print $title ?></div>
                <?php if($icon){ ?>
                   <div class="milestone-icon"><span <?php print $style ?> class="<?php print $icon; ?>"></span></div>
@@ -127,7 +127,7 @@ if(!class_exists('element_gva_counter')):
                </div>
             </div>
          <?php }else{ ?>
-            <div class="widget milestone-block <?php if(count($class) > 0){ print implode($class, ' '); } ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
+            <div class="widget milestone-block <?php if(count($class) > 0){ print implode(' ', $class); } ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
                <?php if($icon){ ?>
                   <div class="milestone-icon"><span <?php print $style ?> class="<?php print $icon; ?>"></span></div>
                <?php } ?>   

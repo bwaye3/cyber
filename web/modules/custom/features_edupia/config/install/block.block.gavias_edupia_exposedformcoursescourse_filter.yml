@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.courses
+  module:
+    - gaviasthemer
+    - views
+  theme:
+    - gavias_edupia
+third_party_settings:
+  gaviasthemer:
+    classes: ''
+id: gavias_edupia_exposedformcoursescourse_filter
+theme: gavias_edupia
+region: other
+weight: -14
+provider: null
+plugin: 'views_exposed_filter_block:courses-course_filter'
+settings:
+  id: 'views_exposed_filter_block:courses-course_filter'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility: {  }

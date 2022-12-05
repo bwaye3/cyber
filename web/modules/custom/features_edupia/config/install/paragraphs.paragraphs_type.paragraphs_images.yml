@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: paragraphs_images
+label: 'Paragraphs Images'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

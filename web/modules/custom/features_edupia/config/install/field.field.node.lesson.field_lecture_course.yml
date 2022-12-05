@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.course
+    - field.storage.node.field_lecture_course
+    - node.type.lesson
+id: node.lesson.field_lecture_course
+field_name: field_lecture_course
+entity_type: node
+bundle: lesson
+label: 'Lecture Course'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product'
+  handler_settings:
+    target_bundles:
+      course: course
+    sort:
+      field: product_id
+      direction: DESC
+    auto_create: false
+    auto_create_bundle: course
+field_type: entity_reference

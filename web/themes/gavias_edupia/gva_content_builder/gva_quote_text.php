@@ -96,8 +96,8 @@ if(!class_exists('element_gva_quote_text')):
             $styles[] = "color:{$color};";
          }
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-            <?php ob_start() ?>
             <div class="widget gsc-quote-text <?php print $el_class ?>" <?php print ($background ? "style=\"background:{$background};\"" : '') ?> <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
                <div class="widget-content">
                   <div class="content" style="<?php print(implode('', $styles)) ?>"><i <?php print ($color ? "style=\"color:{$color};\"" : '') ?> class="icon fa fa-quote-left"></i><?php print $content ?></div>

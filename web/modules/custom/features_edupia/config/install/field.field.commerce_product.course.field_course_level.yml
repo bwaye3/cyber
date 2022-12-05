@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.course
+    - field.storage.commerce_product.field_course_level
+  module:
+    - options
+id: commerce_product.course.field_course_level
+field_name: field_course_level
+entity_type: commerce_product
+bundle: course
+label: 'Course Level'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: begin
+default_value_callback: ''
+settings: {  }
+field_type: list_string

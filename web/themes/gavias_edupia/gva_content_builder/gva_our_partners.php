@@ -95,8 +95,8 @@ if(!class_exists('element_gva_our_partners')):
             $target = false;
          }
          if($animate) $el_class .= ' wow ' . $animate; 
+         ob_start();
          ?>
-         <?php ob_start() ?>
         
             <div class="widget gsc-our-partners <?php print $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
                <?php if($image){ ?>

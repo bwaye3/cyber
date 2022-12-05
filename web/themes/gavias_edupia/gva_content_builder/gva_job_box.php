@@ -90,8 +90,8 @@ if(!class_exists('element_gva_job_box')):
          if($logo) $logo = $base_url . $logo; 
          if($animate) $el_class .= ' wow ' . $animate; 
 
+         ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="widget gva-job-box clearfix <?php print $el_class; ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>>
             <div class="box-content">
                <div class="logo-inner">

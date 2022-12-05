@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lesson_time
+    - node.type.lesson
+id: node.lesson.field_lesson_time
+field_name: field_lesson_time
+entity_type: node
+bundle: lesson
+label: 'Lesson Time'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

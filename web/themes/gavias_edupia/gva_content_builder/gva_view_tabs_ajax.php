@@ -114,8 +114,8 @@ if(!class_exists('element_gva_view_tabs_ajax')):
          $el_class .= ' ' . $style;
          if($animate) $el_class .= ' wow ' . $animate; 
          $_id = gavias_content_builder_makeid();
+               ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="gsc-tab-views block widget gsc-tabs-views-ajax <?php echo $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>> 
             <div class="block-content">
                <div class="list-links-tabs clearfix">

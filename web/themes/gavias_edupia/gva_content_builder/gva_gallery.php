@@ -78,8 +78,8 @@ if(!class_exists('element_gva_gallery')):
 
          $_id = gavias_content_builder_makeid();
          if($animate) $el_class .= ' wow ' . $animate; 
+          ob_start();
          ?>
-         <?php ob_start() ?>
          <div class="gsc-our-gallery <?php echo $el_class ?>" <?php print gavias_content_builder_print_animate_wow_delay($animate, $animate_delay) ?>> 
             <div class="owl-carousel init-carousel-owl owl-loaded owl-drag" data-items="1" data-items_lg="1" data-items_md="1" data-items_sm="2" data-items_xs="1" data-loop="1" data-speed="500" data-auto_play="1" data-auto_play_speed="2000" data-auto_play_timeout="5000" data-auto_play_hover="1" data-navigation="1" data-rewind_nav="0" data-pagination="0" data-mouse_drag="1" data-touch_drag="1">
                <?php for($i=1; $i<=10; $i++){ ?>

@@ -45,7 +45,7 @@ class GaviasContentBuilderFormatter extends FormatterBase {
           }
 
           $content .= gavias_content_builder_frontend($results->params);
-          $content .= '</div>'; 
+          $content .= '</div>';
         }
       }
       $elements[$delta] = array(
