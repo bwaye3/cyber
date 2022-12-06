@@ -12,6 +12,8 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Url;
 use Drupal\Core\FileTransfer\FileTransferException;
 use Drupal\Core\Path\CurrentPathStack;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -50,6 +52,20 @@ class PackageController implements ContainerInjectionInterface {
   protected $currentPathStack;
 
   /**
+   * Messenger service.
+   *
+   * @var Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Logger service.
+   *
+   * @var Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * Constructs a new PackageController object.
    *
    * @param \Drupal\ludwig\PackageManagerInterface $package_manager
@@ -60,15 +76,21 @@ class PackageController implements ContainerInjectionInterface {
    *   The string translation service.
    * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
    *   The module extension list.
-   * @param \Drupal\Core\Path\CurrentPathStack $currentPathStack
+   * @param \Drupal\Core\Path\CurrentPathStack $current_path_stack
    *   The current path stack.
+   * @param Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   * @param Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger.
    */
-  public function __construct(PackageManagerInterface $package_manager, PackageDownloaderInterface $package_downloader, TranslationInterface $string_translation, ModuleExtensionList $module_extension_list, CurrentPathStack $currentPathStack) {
+  public function __construct(PackageManagerInterface $package_manager, PackageDownloaderInterface $package_downloader, TranslationInterface $string_translation, ModuleExtensionList $module_extension_list, CurrentPathStack $current_path_stack, MessengerInterface $messenger, LoggerChannelFactoryInterface $logger_factory) {
     $this->packageManager = $package_manager;
     $this->packageDownloader = $package_downloader;
     $this->setStringTranslation($string_translation);
     $this->moduleExtensionList = $module_extension_list;
-    $this->currentPathStack = $currentPathStack;
+    $this->currentPathStack = $current_path_stack;
+    $this->messenger = $messenger;
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -81,6 +103,8 @@ class PackageController implements ContainerInjectionInterface {
       $container->get('string_translation'),
       $container->get('extension.list.module'),
       $container->get('path.current'),
+      $container->get('messenger'),
+      $container->get('logger.factory'),
     );
   }
 
@@ -95,7 +119,12 @@ class PackageController implements ContainerInjectionInterface {
     $current_path = $this->currentPathStack->getPath();
     $skip_path = Url::fromRoute('ludwig.packages_skip')->toString();
     if ($current_path != $skip_path) {
-      $this->download();
+      if ($this->download()) {
+        // Some missing packages are installed. Cache flush is needed.
+        $this->loggerFactory->get('ludwig')->info($this->t('All caches are flushed.'));
+        $this->messenger->addMessage($this->t('All caches are flushed by Ludwig.'));
+        drupal_flush_all_caches();
+      }
     }
     $info = $this->moduleExtensionList->getAllInstalledInfo();
     $build = [];
@@ -243,36 +272,41 @@ class PackageController implements ContainerInjectionInterface {
 
   /**
    * Downloads missing packages.
+   *
+   * @return bool
+   *   Returns TRUE if any missing package is downloaded.
    */
   public function download() {
+    $cache_flush_need = FALSE;
     $packages = array_filter($this->packageManager->getPackages(), function ($package) {
       return $package['status'] == 'Missing';
     });
     if (!empty($packages)) {
-      $logger = \Drupal::logger('ludwig');
-      $messenger = \Drupal::messenger();
       foreach ($packages as $name => $package) {
         try {
           $this->packageDownloader->download($package);
-          $logger->info($this->t('The @name package has been downloaded and unpacked successfully.', [
+          $cache_flush_need = TRUE;
+          $this->loggerFactory->get('ludwig')->info($this->t('The @name package has been downloaded and unpacked successfully.', [
             '@name' => $name,
           ]));
-          $messenger->addMessage(t('The @name package has been downloaded and unpacked successfully.', [
+          $this->messenger->addMessage($this->t('The @name package has been downloaded and unpacked successfully.', [
             '@name' => $name,
           ]));
         }
         catch (FileTransferException $e) {
-          $logger->error($e->getMessage());
-          $messenger->addMessage($e->getMessage(), 'error');
+          $this->loggerFactory->get('ludwig')->error($e->getMessage());
+          $this->messenger->addMessage($e->getMessage(), 'error');
           continue;
         }
         catch (\Exception $e) {
-          $logger->error($e->getMessage());
-          $messenger->addMessage($e->getMessage(), 'error');
+          $this->loggerFactory->get('ludwig')->error($e->getMessage());
+          $this->messenger->addMessage($e->getMessage(), 'error');
           continue;
         }
       }
     }
+
+    return $cache_flush_need;
   }
 
 }

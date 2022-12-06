@@ -51,3 +51,13 @@ iframe.imce-browser {
   border: 0;
 }
 
+.ckeditor5-toolbar-button.ckeditor5-toolbar-button-imce_image {
+  background-image: url(images/image.png);
+  background-size: 16px;
+}
+
+.ckeditor5-toolbar-button.ckeditor5-toolbar-button-imce_link {
+  background-image: url(images/link.png);
+  background-size: 16px;
+}
+

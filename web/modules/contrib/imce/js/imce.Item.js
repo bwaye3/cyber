@@ -184,6 +184,13 @@
   };
 
   /**
+   * Sets the item path.
+   */
+  Item.setPath = function (path) {
+    this.path = path;
+  };
+
+  /**
    * Returns item uri.
    */
   Item.getUri = function () {
@@ -305,7 +312,7 @@
    * Triggers property change handlers.
    */
   Item.triggerPropertyChange = function (prop, oldval) {
-    var method = 'on' + prop.charAt(0).toUpperCase() + prop.substr(1) + 'Change';
+    var method = 'on' + prop.charAt(0).toUpperCase() + prop.substring(1) + 'Change';
     if (this[method]) {
       this[method](oldval);
       if (this === imce.previewingItem) {

@@ -120,6 +120,7 @@
 }
 .imce-preview-image > img {
   cursor: pointer;
+  display: initial;
 }
 
 /* Form elements */
@@ -129,6 +130,32 @@
 .imce-layer button::-moz-focus-inner {
   border: 0;
   padding: 0;
+}
+.imce-layer input,
+.imce-layer textarea,
+.imce-layer select,
+.imce-layer button,
+.imce-layer input[type="checkbox"],
+.imce-layer input[type="radio"],
+.imce-layer input[type="submit"],
+.imce-layer input[type="button"] {
+  width: initial;
+  height: initial;
+  display: initial;
+  appearance: auto;
+  min-height: initial;
+  min-width: initial;
+  border-radius: initial;
+}
+.imce-layer input:focus,
+.imce-layer textarea:focus,
+.imce-layer select:focus,
+.imce-layer button:focus,
+.imce-layer input[type="checkbox"]:focus,
+.imce-layer input[type="radio"]:focus,
+.imce-layer input[type="submit"]:focus,
+.imce-layer input[type="button"]:focus {
+  outline: initial;
 }
 .imce-layer input,
 .imce-layer textarea,
@@ -367,6 +394,7 @@
 .file-tif > .imce-item-icon:before,
 .file-tiff > .imce-item-icon:before,
 .file-png > .imce-item-icon:before,
+.file-webp > .imce-item-icon:before,
 .file-gif > .imce-item-icon:before {
   content: "\e603";
 }
