@@ -5,12 +5,10 @@
  * Adds the back to top button.
  */
 
-/**
- * Implements hook_page_attachments().
- */use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
- *
+ * Implements hook_page_attachments().
  */
 function back_to_top_page_attachments(array &$attachments) {
   $config = \Drupal::config('back_to_top.settings');
@@ -72,7 +70,8 @@ function back_to_top_page_attachments(array &$attachments) {
   if ($settings['back_to_top_button_place'] == 9) {
     $css .= "top: 50%; left: 50%; margin-left: -50px;";
   }
-  // Check variables and add color from settings - this code could be done a bit nicer.
+  // Check variables and add color from settings - this code could be done a
+  // bit nicer.
   if (($settings['back_to_top_button_type'] == "text") && ($settings['back_to_top_bg_color'] !== '#F7F7F7')) {
     $css .= "background: " . $settings['back_to_top_bg_color'] . ";";
   }
@@ -101,7 +100,10 @@ function back_to_top_page_attachments(array &$attachments) {
 }
 
 /**
- * Check if mobile or touch device with PHP so javascript and css isn't included in that case.
+ * Check mobile.
+ *
+ * Check if mobile or touch device with PHP so javascript and css isn't
+ * included in that case.
  */
 function is_mobile() {
   // Check for mobile device using Browscap module if it is available.
@@ -202,7 +204,10 @@ function is_mobile() {
 }
 
 /**
- * Check if page viewed is in admin section or a node/edit for possible option to not include javascript and css in that case.
+ * Check adminpage.
+ *
+ * Check if page viewed is in admin section or a node/edit for possible option
+ * to not include javascript and css in that case.
  */
 function is_adminpage() {
   $route = \Drupal::routeMatch()->getRouteObject();

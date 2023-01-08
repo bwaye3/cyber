@@ -18,7 +18,7 @@
         "composer/installers": "^1.2",
         "drupal/address": "^1.7",
         "drupal/admin_toolbar": "^3.2",
-        "drupal/back_to_top": "^1.1",
+        "drupal/back_to_top": "^2.0",
         "drupal/body_node_id_class": "^1.1",
         "drupal/captcha": "^1.0@beta",
         "drupal/config_update": "^1.6",

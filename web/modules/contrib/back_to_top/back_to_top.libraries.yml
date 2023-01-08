@@ -20,8 +20,8 @@ back_to_top_js:
     - core/drupal
     - core/drupalSettings
     - core/jquery.once
-    - core/jquery.ui.core
-    - core/jquery.ui.effects.core
+    - jquery_ui/jquery_ui
+    - jquery_ui_effects/fade
 
 back_to_top_text:
   version: VERSION
