@@ -3,7 +3,7 @@
         'name' => 'drupal/recommended-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'e5a312055c64c46dd89dad78a8ce818373985280',
+        'reference' => '83df02aa5cb5b2d4bffc9fe84f35f6e6bc8b0fbb',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -502,15 +502,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'drupal/google_analytics' => array(
-            'pretty_version' => '4.0.2',
-            'version' => '4.0.2.0',
-            'reference' => '4.0.2',
-            'type' => 'drupal-module',
-            'install_path' => __DIR__ . '/../../web/modules/contrib/google_analytics',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'drupal/honeypot' => array(
             'pretty_version' => '2.1.2',
             'version' => '2.1.2.0',
@@ -622,7 +613,7 @@
         'drupal/recommended-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'e5a312055c64c46dd89dad78a8ce818373985280',
+            'reference' => '83df02aa5cb5b2d4bffc9fe84f35f6e6bc8b0fbb',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

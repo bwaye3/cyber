@@ -32,7 +32,6 @@
         "drupal/feeds": "^3.0@alpha",
         "drupal/field_formatter": "^3.0.0-alpha2",
         "drupal/field_formatter_class": "^1.1",
-        "drupal/google_analytics": "^4.0",
         "drupal/honeypot": "^2.0.1",
         "drupal/image_url_formatter": "^1.0@beta",
         "drupal/imce": "^3.0",
