@@ -21,6 +21,7 @@
         "drupal/back_to_top": "^2.0",
         "drupal/body_node_id_class": "^1.1",
         "drupal/captcha": "^1.0@beta",
+        "drupal/color": "^1.0",
         "drupal/config_update": "^1.6",
         "drupal/core-composer-scaffold": "^9.0.0",
         "drupal/core-project-message": "^9.0.0",
