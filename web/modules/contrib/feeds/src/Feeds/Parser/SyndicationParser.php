@@ -27,8 +27,14 @@ class SyndicationParser extends ParserBase implements ParserInterface {
    * {@inheritdoc}
    */
   public function parse(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
+    if (!class_exists('Laminas\Feed\Reader\Reader')) {
+      throw new \RuntimeException($this->t('The library "@library" is not installed. You can install it with Composer or by using the Ludwig module.', [
+        '@library' => 'laminas/laminas-feed',
+      ]));
+    }
+
     $result = new ParserResult();
-    Reader::setExtensionManager(\Drupal::service('feed.bridge.reader'));
+    Reader::setExtensionManager(\Drupal::service('feeds.bridge.reader'));
     Reader::registerExtension('GeoRSS');
     Reader::registerExtension('MediaRSS');
 

@@ -93,6 +93,7 @@ class UpdateExistingTest extends FeedsKernelTestBase {
 
     // Assert that the second vocabulary has two terms now.
     $term_count = $term_storage->getQuery()
+      ->accessCheck(FALSE)
       ->condition('vid', 'vocab2')
       ->count()
       ->execute();

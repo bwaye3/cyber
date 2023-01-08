@@ -24,6 +24,13 @@ namespace Drupal\Tests\feeds\Unit\Feeds\Target {
   class BookTest extends FeedsUnitTestCase {
 
     /**
+     * The ID of the plugin.
+     *
+     * @var string
+     */
+    protected static $pluginId = 'book';
+
+    /**
      * Database Service Object.
      *
      * @var \Drupal\Core\Database\Connection
@@ -124,7 +131,7 @@ namespace Drupal\Tests\feeds\Unit\Feeds\Target {
 
       $book_target = $this->getMockBuilder(Book::class)
         ->setConstructorArgs([
-          $configuration, 'book',
+          $configuration, static::$pluginId,
           [],
           $this->database->reveal(),
           $this->nodeStorage->reveal(),

@@ -265,7 +265,7 @@ class YoastSeoManager {
   public function getConfiguration() {
     $conf = Yaml::parse(
       file_get_contents(
-        drupal_get_path('module', 'yoast_seo') . '/config/yoast_seo.yml'
+        \Drupal::service('extension.list.module')->getPath('yoast_seo') . '/config/yoast_seo.yml'
       )
     );
     return $conf;

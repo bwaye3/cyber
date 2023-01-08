@@ -25,12 +25,15 @@ class SkipNewTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Setup an event dispatcher. We use this to check the number of created and
     // updated items after an import.
-    $this->container->get('event_dispatcher')->addListener(FeedsEvents::IMPORT_FINISHED, [$this, 'importFinished']);
+    $this->container->get('event_dispatcher')->addListener(FeedsEvents::IMPORT_FINISHED, [
+      $this,
+      'importFinished',
+    ]);
 
     // Add body field.
     $this->setUpBodyField();
@@ -202,10 +205,10 @@ class SkipNewTest extends FeedsKernelTestBase {
     // Assert that the existing nodes changed.
     $node1 = $this->reloadEntity($node1);
     $this->assertStringContainsString('a public TV station reaching millions of people in Belgium', $node1->body->value);
-    $this->assertNotEmpty($node1->feeds_item->imported);
+    $this->assertNotEmpty($node1->get('feeds_item')->getItemByFeed($feed)->imported);
     $node2 = $this->reloadEntity($node2);
     $this->assertStringContainsString('FeedAPI has for long been the mainstream solution for this kind of problems.', $node2->body->value);
-    $this->assertNotEmpty($node2->feeds_item->imported);
+    $this->assertNotEmpty($node2->get('feeds_item')->getItemByFeed($feed)->imported);
 
     // Change "insert_new" setting to insert new items to verify if changing the
     // setting later has the effect that new items will be imported as yet.

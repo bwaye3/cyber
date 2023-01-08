@@ -12,7 +12,7 @@ yoast_seo_core:
     js/yoast_seo.js: {}
   dependencies:
       - core/jquery
-      - core/jquery.once
+      - core/once
       - core/drupal
       - core/drupalSettings
   css:

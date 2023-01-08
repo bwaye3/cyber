@@ -379,11 +379,6 @@ class File extends EntityReference {
    *   A file entity, or FALSE on error.
    */
   protected function writeData($data, $destination = NULL, $replace = FileSystemInterface::EXISTS_RENAME) {
-    // @todo Remove file_save_data() when Drupal 9.2 is no longer supported.
-    if (!\Drupal::hasService('file.repository')) {
-      return file_save_data($data, $destination, $replace);
-    }
-
     if (empty($destination)) {
       $destination = \Drupal::config('system.file')->get('default_scheme') . '://';
     }

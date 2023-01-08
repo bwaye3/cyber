@@ -13,7 +13,7 @@ use Drupal\Core\Url;
 function feeds_install() {
   $messenger = \Drupal::messenger();
   $messenger->addStatus(t('To configure feeds, start by adding a <a href=":feed_type_add_url">feed type</a>. For more information <a target="feeds-guide" href=":guide_url">read the guide</a>.', [
-    ':feed_type_add_url' => Url::fromRoute('entity.feeds_feed_type.add_form')->toString(),
+    ':feed_type_add_url' => Url::fromUri('internal:/admin/structure/feeds/add')->toString(),
     ':guide_url' => 'https://www.drupal.org/docs/8/modules/feeds/creating-and-editing-import-feeds',
   ]));
 }
@@ -131,5 +131,22 @@ function feeds_update_8003() {
  * Flush all caches to make plugin type "FeedsCustomSource" available.
  */
 function feeds_update_8004() {
+  drupal_flush_all_caches();
+}
+
+/**
+ * Set the default lock timeout for Feeds imports.
+ */
+function feeds_update_8005() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('feeds.settings');
+  $config->set('lock_timeout', 43200);
+  $config->save(TRUE);
+}
+
+/**
+ * Flush all caches to make the service "feeds.lock" available.
+ */
+function feeds_update_8006() {
   drupal_flush_all_caches();
 }

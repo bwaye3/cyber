@@ -38,7 +38,7 @@ abstract class EntityReferenceTestBase extends FieldTargetTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $referencable_entity_type_id = $this->getReferencableEntityTypeId();
@@ -56,17 +56,6 @@ abstract class EntityReferenceTestBase extends FieldTargetTestBase {
     // Entity finder.
     $this->entityFinder = $this->prophesize(EntityFinderInterface::class);
   }
-
-  /**
-   * Creates a new target plugin instance.
-   *
-   * @param array $configuration
-   *   (optional) The configuration for the target plugin.
-   *
-   * @return \Drupal\feeds\Plugin\Type\Target\TargetInterface
-   *   A FeedsTarget plugin instance.
-   */
-  abstract protected function createTargetPluginInstance(array $configuration = []);
 
   /**
    * Returns the entity storage class name to use in this test.
@@ -142,12 +131,26 @@ abstract class EntityReferenceTestBase extends FieldTargetTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function getTargetProperties(): array {
+    $field_definition_mock = $this->getMockFieldDefinition();
+    $field_definition_mock->expects($this->once())
+      ->method('getSetting')
+      ->will($this->returnValue($this->getReferencableEntityTypeId()));
+
+    $method = $this->getMethod($this->getTargetClass(), 'prepareTarget')->getClosure();
+    return $method($field_definition_mock)
+      ->getProperties();
+  }
+
+  /**
    * Tests prepareValue() without passing values.
    *
    * @covers ::prepareValue
    */
   public function testPrepareValueEmptyFeed() {
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => ''];
     $this->expectException(EmptyFeedException::class);
     $method(0, $values);

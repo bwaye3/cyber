@@ -4,7 +4,7 @@ namespace Drupal\feeds\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\Entity\ConfigEntityStorage;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
@@ -28,7 +28,7 @@ class ExtraLinks extends DeriverBase implements ContainerDeriverInterface {
   /**
    * The storage handler for the config entity type 'feeds_feed_type'.
    *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorage
+   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
    */
   protected $feedTypeStorage;
 
@@ -58,7 +58,7 @@ class ExtraLinks extends DeriverBase implements ContainerDeriverInterface {
    *
    * @param string $base_plugin_id
    *   The base plugin ID for the plugin ID.
-   * @param \Drupal\Core\Config\Entity\ConfigEntityStorage $feed_type_storage
+   * @param \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $feed_type_storage
    *   The storage handler for the config entity type 'feeds_feed_type'.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
@@ -67,7 +67,7 @@ class ExtraLinks extends DeriverBase implements ContainerDeriverInterface {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    */
-  public function __construct($base_plugin_id, ConfigEntityStorage $feed_type_storage, ModuleHandlerInterface $module_handler, RouteProviderInterface $route_provider, ConfigFactoryInterface $config_factory) {
+  public function __construct($base_plugin_id, ConfigEntityStorageInterface $feed_type_storage, ModuleHandlerInterface $module_handler, RouteProviderInterface $route_provider, ConfigFactoryInterface $config_factory) {
     $this->feedTypeStorage = $feed_type_storage;
     $this->moduleHandler = $module_handler;
     $this->routeProvider = $route_provider;

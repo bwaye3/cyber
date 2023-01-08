@@ -40,7 +40,7 @@ class EntityFinderTest extends FeedsUnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Entity type manager.
@@ -70,6 +70,7 @@ class EntityFinderTest extends FeedsUnitTestCase {
   public function testFindEntities() {
     // Entity query.
     $entity_query = $this->prophesize(QueryInterface::class);
+    $entity_query->accessCheck(FALSE)->willReturn($entity_query);
     $entity_query->range(0, 1)->willReturn($entity_query);
     $entity_query->condition('field_ref', 1)->willReturn($entity_query);
     $entity_query->execute()->willReturn([12]);
@@ -85,6 +86,7 @@ class EntityFinderTest extends FeedsUnitTestCase {
   public function testFindEntitiesNotFound() {
     // Entity query.
     $entity_query = $this->prophesize(QueryInterface::class);
+    $entity_query->accessCheck(FALSE)->willReturn($entity_query);
     $entity_query->range(0, 1)->willReturn($entity_query);
     $entity_query->condition('field_ref', 1)->willReturn($entity_query);
     $entity_query->execute()->willReturn([]);
@@ -100,6 +102,7 @@ class EntityFinderTest extends FeedsUnitTestCase {
   public function testFindMultipleEntities() {
     // Entity query.
     $entity_query = $this->prophesize(QueryInterface::class);
+    $entity_query->accessCheck(FALSE)->willReturn($entity_query);
     $entity_query->range(0, 1)->shouldNotBeCalled();
     $entity_query->condition('field_ref', 1)->willReturn($entity_query);
     $entity_query->execute()->willReturn([12, 13, 14]);
@@ -120,6 +123,7 @@ class EntityFinderTest extends FeedsUnitTestCase {
 
     // Entity query.
     $entity_query = $this->prophesize(QueryInterface::class);
+    $entity_query->accessCheck(FALSE)->willReturn($entity_query);
     $entity_query->condition('type', ['qux'], 'IN')->willReturn($entity_query);
     $entity_query->range(0, 1)->willReturn($entity_query);
     $entity_query->condition('field_ref', 1)->willReturn($entity_query);

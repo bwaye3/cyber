@@ -31,6 +31,12 @@ services:
     class: Drupal\feeds\EventSubscriber\LazySubscriber
     tags:
       - { name: event_subscriber }
+  feeds.bridge.reader:
+    class: Drupal\feeds\Component\ZfExtensionManagerSfContainer
+    calls:
+      - [setContainer, ['@service_container']]
+      - [setStandalone, ['\Laminas\Feed\Reader\StandaloneExtensionManager']]
+    arguments: ['feed.reader.']
   feed.reader.georssentry:
     class: Drupal\feeds\Laminas\Extension\Georss\Entry
   feed.reader.mediarssentry:
@@ -45,7 +51,16 @@ services:
   feeds.entity_finder:
     class: Drupal\feeds\EntityFinder
     arguments: ['@entity_type.manager', '@entity.repository']
+  feeds.lock:
+    class: Drupal\feeds\Lock\FeedsLockBackend
+    arguments: ['@database', '@entity_type.manager', '@config.factory', '@logger.channel.feeds']
+    tags:
+      - { name: backend_overridable }
 
   feeds_plugin_form_factory:
     class: Drupal\feeds\Plugin\PluginFormFactory
     arguments: ['@class_resolver']
+
+  logger.channel.feeds:
+    parent: logger.channel_base
+    arguments: ['feeds']

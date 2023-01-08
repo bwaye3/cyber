@@ -117,7 +117,10 @@ class UserRole extends ConfigEntityReference {
     }
 
     // Automatically create a new role.
-    if ($this->configuration['autocreate'] && in_array($this->configuration['reference_by'], ['id', 'label'])) {
+    if ($this->configuration['autocreate'] && in_array($this->configuration['reference_by'], [
+      'id',
+      'label',
+    ])) {
       return $this->createRole($search);
     }
   }
@@ -132,7 +135,7 @@ class UserRole extends ConfigEntityReference {
    *   The ID of the new role or false if the given label is empty.
    */
   protected function createRole($label) {
-    if (!strlen(trim($label))) {
+    if (!is_string($label) || !strlen(trim($label))) {
       return FALSE;
     }
 
@@ -187,7 +190,7 @@ class UserRole extends ConfigEntityReference {
     $delta = 0;
     foreach ($form_state->getValues() as $key => $value) {
       if (strpos($key, 'target-settings-') === 0) {
-        list(, , $delta) = explode('-', $key);
+        [, , $delta] = explode('-', $key);
         break;
       }
     }

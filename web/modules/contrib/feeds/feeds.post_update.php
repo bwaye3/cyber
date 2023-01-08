@@ -6,8 +6,10 @@
  */
 
 use Drupal\Core\Config\Entity\ConfigEntityUpdater;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\feeds\FeedTypeInterface;
 use Drupal\feeds\Feeds\Parser\CsvParser;
+use Drupal\field\FieldStorageConfigInterface;
 
 /**
  * Replace deprecated action ID's for 'update_non_existent' setting.
@@ -59,6 +61,21 @@ function feeds_post_update_custom_sources(&$sandbox = NULL) {
         }
       }
 
+      return TRUE;
+    });
+}
+
+/**
+ * The feeds_item field storage config is updated to unlimited cardinality.
+ */
+function feeds_post_update_ensure_feeds_item_storage_config_cardinality_is_unlimited(&$sandbox = NULL) {
+  \Drupal::classResolver(ConfigEntityUpdater::class)
+    ->update($sandbox, 'field_storage_config', function (FieldStorageConfigInterface $field_storage_config) {
+      if ($field_storage_config->getType() !== 'feeds_item') {
+        return FALSE;
+      }
+
+      $field_storage_config->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
       return TRUE;
     });
 }

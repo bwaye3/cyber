@@ -10,12 +10,20 @@ use Drupal\feeds\Exception\ReferenceNotFoundException;
 use Drupal\feeds\Feeds\Target\EntityReference;
 use Drupal\feeds\FeedTypeInterface;
 use Drupal\feeds\FieldTargetDefinition;
+use Drupal\feeds\Plugin\Type\Target\TargetInterface;
 
 /**
  * @coversDefaultClass \Drupal\feeds\Feeds\Target\EntityReference
  * @group feeds
  */
 class EntityReferenceTest extends EntityReferenceTestBase {
+
+  /**
+   * The ID of the plugin.
+   *
+   * @var string
+   */
+  protected static $pluginId = 'entity_reference';
 
   /**
    * Field manager used in the test.
@@ -27,7 +35,7 @@ class EntityReferenceTest extends EntityReferenceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->entityFieldManager = $this->prophesize(EntityFieldManagerInterface::class);
@@ -39,12 +47,12 @@ class EntityReferenceTest extends EntityReferenceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function createTargetPluginInstance(array $configuration = []) {
+  protected function instantiatePlugin(array $configuration = []): TargetInterface {
     $configuration += [
       'feed_type' => $this->createMock(FeedTypeInterface::class),
       'target_definition' => $this->createTargetDefinitionMock(),
     ];
-    return new EntityReference($configuration, 'entity_reference', [], $this->entityTypeManager->reveal(), $this->entityFieldManager->reveal(), $this->entityFinder->reveal());
+    return new EntityReference($configuration, static::$pluginId, [], $this->entityTypeManager->reveal(), $this->entityFieldManager->reveal(), $this->entityFinder->reveal());
   }
 
   /**
@@ -87,7 +95,7 @@ class EntityReferenceTest extends EntityReferenceTestBase {
       ->willReturn([12, 13, 14])
       ->shouldBeCalled();
 
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => 1];
     $method(0, $values);
     $this->assertSame($values, ['target_id' => 12]);
@@ -99,7 +107,7 @@ class EntityReferenceTest extends EntityReferenceTestBase {
    * Tests prepareValue() without passing values.
    */
   public function testPrepareValueEmptyFeed() {
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => ''];
     $this->expectException(EmptyFeedException::class);
     $method(0, $values);
@@ -116,7 +124,7 @@ class EntityReferenceTest extends EntityReferenceTestBase {
       ->willReturn([])
       ->shouldBeCalled();
 
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => 1];
     $this->expectException(ReferenceNotFoundException::class, "Referenced entity not found for field <em class=\"placeholder\">referenceable_entity_type label</em> with value <em class=\"placeholder\">1</em>.");
     $method(0, $values);

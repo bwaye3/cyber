@@ -48,7 +48,9 @@ class EntityFinder implements EntityFinderInterface {
       }
     }
     else {
-      $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+      $query = $this->entityTypeManager->getStorage($entity_type_id)
+        ->getQuery()
+        ->accessCheck(FALSE);
 
       if (!empty($bundles)) {
         $query->condition($this->getBundleKey($entity_type_id), $bundles, 'IN');

@@ -17,7 +17,7 @@ class FeedsUninstallTest extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Ensure that the queue table exists by making a fake queue item.

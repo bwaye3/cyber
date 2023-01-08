@@ -86,6 +86,11 @@ class Password extends FieldTargetBase implements ConfigurableTargetInterface, C
    * {@inheritdoc}
    */
   protected function prepareValue($delta, array &$values) {
+    // If the value isn't set or isn't a string, we can't work with it.
+    if (!isset($values['value']) || !is_string($values['value'])) {
+      return;
+    }
+
     $values['value'] = trim($values['value']);
     switch ($this->configuration['pass_encryption']) {
       case static::PASS_UNENCRYPTED:

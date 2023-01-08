@@ -23,7 +23,7 @@ class YoastSeoTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'field_ui',
     'metatag',
     'yoast_seo',
@@ -56,7 +56,7 @@ class YoastSeoTest extends BrowserTestBase {
   /**
    * Sets the test up.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->adminUser = $this->drupalCreateUser($this->permissions);
     $this->entityManager = \Drupal::service('entity_type.manager');
@@ -69,7 +69,7 @@ class YoastSeoTest extends BrowserTestBase {
     // Configure yoast seo for the given bundle.
     $this->drupalGet('admin/config/yoast_seo');
     $edit = [$entity_type . '[' . $bundle . ']' => $bundle];
-    json_decode($this->drupalPostForm(NULL, $edit, t('Save')));
+    json_decode($this->submitForm($edit, t('Save')));
     $this->assertSession()->checkboxChecked('edit-node-page');
   }
 
@@ -80,7 +80,7 @@ class YoastSeoTest extends BrowserTestBase {
     // Configure yoast seo for the given bundle.
     $this->drupalGet('admin/config/yoast_seo');
     $edit = [$entity_type . '[' . $bundle . ']' => FALSE];
-    json_decode($this->drupalPostForm(NULL, $edit, t('Save')));
+    json_decode($this->submitForm($edit, t('Save')));
     $this->assertSession()->checkboxNotChecked('edit-node-page');
   }
 

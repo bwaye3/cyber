@@ -5,7 +5,7 @@ type: module
 core_version_requirement: ^9 || ^10
 configure: ludwig.packages
 
-# Information added by Drupal.org packaging script on 2022-10-13
-version: '2.0.5'
+# Information added by Drupal.org packaging script on 2022-12-24
+version: '2.0.6'
 project: 'ludwig'
-datestamp: 1665637424
+datestamp: 1671906563

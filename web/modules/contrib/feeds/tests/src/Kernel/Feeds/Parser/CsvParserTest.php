@@ -26,7 +26,7 @@ class CsvParserTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->setUpBodyField();
   }
@@ -90,7 +90,7 @@ class CsvParserTest extends FeedsKernelTestBase {
 
     // Check the values on the node.
     $node = Node::load(1);
-    $this->assertEquals(1, $node->feeds_item->guid);
+    $this->assertEquals(1, $node->get('feeds_item')->getItemByFeed($feed)->guid);
     $this->assertEquals('Window washer, Chimney sweeper', $node->title->value);
     $this->assertEquals('outside', $node->field_facade->value);
     $this->assertEquals('Having a meal', $node->field_apres_ski->value);
@@ -148,7 +148,7 @@ class CsvParserTest extends FeedsKernelTestBase {
 
     // Check the values on the node.
     $node = Node::load(1);
-    $this->assertEquals(1, $node->feeds_item->guid);
+    $this->assertEquals(1, $node->get('feeds_item')->getItemByFeed($feed)->guid);
     $this->assertSame('window washer, chimney sweeper', $node->title->value);
     $this->assertSame('Salmon', $node->field_a_la_carte->value);
   }

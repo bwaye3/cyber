@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\feeds\Feeds\Target\Text;
 use Drupal\feeds\FeedTypeInterface;
+use Drupal\feeds\Plugin\Type\Target\TargetInterface;
 use Drupal\filter\FilterFormatInterface;
 
 /**
@@ -16,6 +17,13 @@ use Drupal\filter\FilterFormatInterface;
  * @group feeds
  */
 class TextTest extends FieldTargetTestBase {
+
+  /**
+   * The ID of the plugin.
+   *
+   * @var string
+   */
+  protected static $pluginId = 'text';
 
   /**
    * The FeedsTarget plugin being tested.
@@ -34,27 +42,13 @@ class TextTest extends FieldTargetTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->filter = $this->prophesize(FilterFormatInterface::class);
     $this->filter->label()->willReturn('Test filter');
 
-    $method = $this->getMethod(Text::class, 'prepareTarget')->getClosure();
-    $configuration = [
-      'feed_type' => $this->createMock(FeedTypeInterface::class),
-      'target_definition' => $method($this->getMockFieldDefinition()),
-    ];
-
-    $this->target = $this->getMockBuilder(Text::class)
-      ->setConstructorArgs([
-        $configuration,
-        'text',
-        [],
-        $this->createMock(AccountInterface::class),
-      ])
-      ->setMethods(['getFilterFormats'])
-      ->getMock();
+    $this->target = $this->instantiatePlugin();
     $this->target->setStringTranslation($this->getStringTranslationStub());
   }
 
@@ -63,6 +57,27 @@ class TextTest extends FieldTargetTestBase {
    */
   protected function getTargetClass() {
     return Text::class;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function instantiatePlugin(array $configuration = []): TargetInterface {
+    $method = $this->getMethod(Text::class, 'prepareTarget')->getClosure();
+    $configuration = [
+      'feed_type' => $this->createMock(FeedTypeInterface::class),
+      'target_definition' => $method($this->getMockFieldDefinition()),
+    ];
+
+    return $this->getMockBuilder(Text::class)
+      ->setConstructorArgs([
+        $configuration,
+        static::$pluginId,
+        [],
+        $this->createMock(AccountInterface::class),
+      ])
+      ->setMethods(['getFilterFormats'])
+      ->getMock();
   }
 
   /**

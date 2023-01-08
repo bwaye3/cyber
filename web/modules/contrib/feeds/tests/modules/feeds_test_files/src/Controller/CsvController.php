@@ -56,7 +56,7 @@ class CsvController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('state'),
-      $container->has('extension.list.module') ? $container->get('extension.list.module') : NULL,
+      $container->get('extension.list.module')
     );
   }
 
@@ -166,11 +166,6 @@ class CsvController extends ControllerBase {
    *   If the module does not exist.
    */
   protected function getModulePath(string $module_name): string {
-    // @todo Remove drupal_get_path() when Drupal 9.2 is no longer supported.
-    if ($this->extensionList == NULL) {
-      return drupal_get_path('module', $module_name);
-    }
-
     return $this->extensionList->getPath($module_name);
   }
 

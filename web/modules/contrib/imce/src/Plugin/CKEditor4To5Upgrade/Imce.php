@@ -29,6 +29,8 @@ use Drupal\filter\FilterFormatInterface;
  */
 class Imce extends PluginBase implements CKEditor4To5UpgradePluginInterface {
 
+  // phpcs:disable Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
   /**
    * {@inheritdoc}
    */

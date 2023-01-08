@@ -125,7 +125,14 @@ class Imce {
     $meta = new BubbleableMetadata();
     $token_data = ['user' => User::load($user->id())];
     foreach ($folders as $folder) {
-      $path = $token_service->replace($folder['path'], $token_data, [], $meta);
+      $path = $folder['path'];
+      if (strpos($path, '[') !== FALSE) {
+        $path = $token_service->replace($path, $token_data, [], $meta);
+        // Unable to resolve a token.
+        if (strpos($path, ':') !== FALSE) {
+          continue;
+        }
+      }
       if (static::regularPath($path)) {
         $ret[$path] = $folder;
         unset($ret[$path]['path']);

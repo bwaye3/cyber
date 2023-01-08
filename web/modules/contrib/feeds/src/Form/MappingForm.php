@@ -82,21 +82,33 @@ class MappingForm extends FormBase {
     $feed_type = $this->feedType = $feeds_feed_type;
     $this->targets = $targets = $feed_type->getMappingTargets();
 
-    // Denormalize targets.
-    $source_options = [];
-    foreach ($feed_type->getMappingSources() as $key => $info) {
-      $source_options[$key] = $info['label'];
+    // Determine available mapping sources.
+    $this->sourceOptions = [];
+    foreach ($this->getMappingSourcesPerType() as $type => $sources) {
+      foreach ($sources as $key => $source) {
+        $this->sourceOptions[$type][$key] = $source['label'];
+        // Add machine name between parentheses to the option label in case it's
+        // not equal to the source label.
+        if (isset($source['machine_name']) && $source['label'] != $source['machine_name']) {
+          $this->sourceOptions[$type][$key] .= ' (' . $source['machine_name'] . ')';
+        }
+      }
+    }
+    // Sort sources on label within each group.
+    foreach ($this->sourceOptions as $type => $values) {
+      $this->sourceOptions[$type] = $this->sortOptions($values);
     }
 
-    $this->sourceOptions = $this->sortOptions($source_options);
-
+    // Determine available mapping targets.
     $target_options = [];
     foreach ($targets as $key => $target) {
       $target_options[$key] = $target->getLabel() . ' (' . $key . ')';
     }
+    // Sort targets on label.
     $target_options = $this->sortOptions($target_options);
 
-    // Check if two mappings are exactly the same.
+    // Check if two mappings are exactly the same. If so, display a warning
+    // about that to the user.
     $this->checkDuplicateMappings($feed_type, $target_options);
 
     if ($form_state->getValues()) {
@@ -426,7 +438,8 @@ class MappingForm extends FormBase {
     // Add the appropriate new custom source options to the select source
     // dropdown.
     $options = $element['select']['#options'] ?? [];
-    $element['select']['#options'] = $this->getCustomSourceOptions() + $options;
+    $new = (string) $this->t('New...');
+    $element['select']['#options'] = [$new => $this->getCustomSourceOptions()] + $options;
   }
 
   /**
@@ -504,6 +517,7 @@ class MappingForm extends FormBase {
         '#header' => [
           $this->t('Name'),
           $this->t('Machine name'),
+          $this->t('Type'),
           $this->t('Description'),
         ],
         '#rows' => [],
@@ -520,14 +534,16 @@ class MappingForm extends FormBase {
       ],
     ];
 
-    foreach ($this->feedType->getMappingSources() as $key => $info) {
-      $element['sources']['#rows'][$key] = [
-        'label' => $info['label'],
-        'name' => $key,
-        'description' => $info['description'] ?? NULL,
-      ];
+    foreach ($this->getMappingSourcesPerType() as $type => $sources) {
+      foreach ($sources as $key => $source) {
+        $element['sources']['#rows'][$key] = [
+          'label' => $source['label'],
+          'name' => $key,
+          'type' => $source['type'],
+          'description' => $source['description'] ?? NULL,
+        ];
+      }
     }
-    asort($element['sources']['#rows']);
 
     /** @var \Drupal\feeds\TargetDefinitionInterface $definition */
     foreach ($this->targets as $key => $definition) {
@@ -615,15 +631,7 @@ class MappingForm extends FormBase {
       ]);
     }
 
-    // In the UI, clearly separate the options for adding new sources from the
-    // options for existing sources.
-    if (!empty($custom_sources)) {
-      $custom_sources_delimiter = ['----' => '----'];
-    }
-    else {
-      $custom_sources_delimiter = [];
-    }
-    return $custom_sources + $custom_sources_delimiter;
+    return $custom_sources;
   }
 
   /**
@@ -819,6 +827,50 @@ class MappingForm extends FormBase {
     // There might turn out to be other things that need to be copied and passed
     // into plugins. This works for now.
     return (new FormState())->setValues($form_state->getValue($key, []));
+  }
+
+  /**
+   * Returns available mapping sources, categorized per type.
+   *
+   * @return array
+   *   An array of mapping sources, grouped by type.
+   *   Each mapping source contains the following:
+   *   - label (string): the source's label.
+   *   - type (string): the source's type. This can refer to the custom source
+   *     type, in case the source is a custom source.
+   *   - description (string, optional): if available, the source's description.
+   *   - machine_name (string, optional): for custom sources, a machine name is
+   *     defined.
+   *   Each source can have more properties, this can differ per type.
+   */
+  protected function getMappingSourcesPerType(): array {
+    $sources = [];
+    foreach ($this->feedType->getMappingSources() as $key => $source) {
+      if (!strlen($key)) {
+        continue;
+      }
+
+      // Determine the type of the source. This is used to group sources of the
+      // same type.
+      if (!isset($source['type'])) {
+        $type = (string) $this->t('Predefined');
+      }
+      else {
+        $type = $source['type'];
+
+        // If a source is custom, get the label of the custom source type and
+        // use that to group custom sources of the same type.
+        $definition = $this->customSourcePluginManager->getDefinition($type, FALSE);
+        if (isset($definition['title'])) {
+          $type = (string) $definition['title'];
+        }
+      }
+
+      $source['type'] = $type;
+      $sources[$type][$key] = $source;
+    }
+
+    return $sources;
   }
 
   /**

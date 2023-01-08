@@ -18,7 +18,7 @@ class LudwigIntegrationTest extends KernelTestBase implements ServiceModifierInt
    *
    * @var array
    */
-  public static $modules = ['system', 'ludwig', 'ludwig_test'];
+  protected static $modules = ['system', 'ludwig', 'ludwig_test'];
 
   /**
    * Tests that packages are downloaded, added to namespaces, classes available.

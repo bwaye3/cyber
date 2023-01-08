@@ -1,3 +1,13 @@
+# Feeds global settings.
+feeds.settings:
+  type: config_object
+  label: 'Feeds settings'
+  mapping:
+    lock_timeout:
+      type: integer
+      label: 'Feed lock timeout'
+
+# Feed type configuration.
 feeds.feed_type.*:
   type: config_entity
   label: 'Feed type'
@@ -52,7 +62,6 @@ feeds.feed_type.*:
             type: ignore
           unique:
             type: ignore
-
 
 action.configuration.feeds_feed_delete_action:
   type: action_configuration_default
@@ -187,6 +196,8 @@ feeds.processor.entity:
     skip_hash_check:
       type: boolean
     authorize:
+      type: boolean
+    revision:
       type: boolean
     expire:
       type: integer

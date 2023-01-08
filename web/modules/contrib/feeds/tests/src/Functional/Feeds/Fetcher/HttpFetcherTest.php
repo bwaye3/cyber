@@ -37,7 +37,7 @@ class HttpFetcherTest extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Flush all caches to make table "cache_feeds_download" available.
@@ -116,7 +116,7 @@ class HttpFetcherTest extends FeedsBrowserTestBase {
 
     $this->drupalGet('feed/' . $feed->id());
     $this->clickLink(t('Import'));
-    $this->drupalPostForm(NULL, [], t('Import'));
+    $this->submitForm([], t('Import'));
     $this->assertSession()->pageTextContains('Created 6');
     $this->assertNodeCount(6);
 
@@ -136,8 +136,11 @@ class HttpFetcherTest extends FeedsBrowserTestBase {
       $node = Node::load($nid);
       $this->assertEquals($node->title->value, (string) $item->title);
       $this->assertEquals($node->body->value, (string) $item->description);
-      $this->assertEquals($node->feeds_item->guid, (string) $item->guid);
-      $this->assertEquals($node->feeds_item->url, (string) $item->link);
+
+      $feeds_item = $node->get('feeds_item')->getItemByFeed($feed);
+      $this->assertEquals($feeds_item->guid, (string) $item->guid);
+      $this->assertEquals($feeds_item->url, (string) $item->link);
+
       $this->assertEquals($node->created->value, strtotime((string) $item->pubDate));
 
       $terms = [];
@@ -148,12 +151,14 @@ class HttpFetcherTest extends FeedsBrowserTestBase {
     }
 
     // Test cache.
-    $this->drupalPostForm('feed/' . $feed->id() . '/import', [], t('Import'));
+    $this->drupalGet('feed/' . $feed->id() . '/import');
+    $this->submitForm([], t('Import'));
     $this->assertSession()->pageTextContains('The feed has not been updated.');
 
     // Import again.
     \Drupal::cache('feeds_download')->deleteAll();
-    $this->drupalPostForm('feed/' . $feed->id() . '/import', [], t('Import'));
+    $this->drupalGet('feed/' . $feed->id() . '/import');
+    $this->submitForm([], t('Import'));
     $this->assertSession()->pageTextContains('There are no new');
 
     // Test force-import.
@@ -163,13 +168,14 @@ class HttpFetcherTest extends FeedsBrowserTestBase {
     $configuration['update_existing'] = ProcessorInterface::UPDATE_EXISTING;
     $this->feedType->getProcessor()->setConfiguration($configuration);
     $this->feedType->save();
-    $this->drupalPostForm('feed/' . $feed->id() . '/import', [], t('Import'));
+    $this->drupalGet('feed/' . $feed->id() . '/import');
+    $this->submitForm([], t('Import'));
     $this->assertNodeCount(6);
     $this->assertSession()->pageTextContains('Updated 6');
 
     // Delete items.
     $this->clickLink(t('Delete items'));
-    $this->drupalPostForm(NULL, [], t('Delete items'));
+    $this->submitForm([], t('Delete items'));
     $this->assertNodeCount(0);
     $this->assertSession()->pageTextContains('Deleted 6');
   }

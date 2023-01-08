@@ -44,7 +44,7 @@ class Feed {
    *   Returns true if this is a parsable feed, false if not.
    */
   public static function isFeed($data) {
-    Reader::setExtensionManager(\Drupal::service('feed.bridge.reader'));
+    Reader::setExtensionManager(\Drupal::service('feeds.bridge.reader'));
 
     try {
       $feed_type = Reader::detectType($data);

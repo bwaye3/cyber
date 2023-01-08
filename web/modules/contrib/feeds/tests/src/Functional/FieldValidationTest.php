@@ -134,7 +134,8 @@ class FieldValidationTest extends FeedsBrowserTestBase {
     $this->drupalLogin($account);
 
     // And import!
-    $this->drupalPostForm('feed/1/import', [], 'Import');
+    $this->drupalGet('feed/1/import');
+    $this->submitForm([], 'Import');
 
     // Assert that 2 nodes have been created.
     $this->assertNodeCount(2);

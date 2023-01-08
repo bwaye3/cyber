@@ -57,6 +57,8 @@ class BlankSource extends CustomSourceBase {
       ];
     }
 
+    $form['value']['#description'] = $this->configSourceDescription();
+
     return $form;
   }
 
@@ -66,6 +68,16 @@ class BlankSource extends CustomSourceBase {
   public function supportsParserType($parser_type) {
     // All parsers are supported by this custom source type.
     return TRUE;
+  }
+
+  /**
+   * Returns the description for a single source.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
+   *   A translated string if there's a description. Null otherwise.
+   */
+  protected function configSourceDescription() {
+    return $this->t('Ignored by parsers. Use this as a placeholder to either give it a value programmatically or set a value on it with Feeds Tamper.');
   }
 
 }

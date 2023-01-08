@@ -59,7 +59,7 @@ abstract class KernelTestBasePlugin extends KernelTestBase {
    * @return \Drupal\imce\ImceFM
    *   Return the file manager.
    */
-  public function getImceFM() {
+  public function getImceFm() {
     $imceFM = Imce::userFM(
       $this->container->get('current_user'), NULL, $this->getRequest()
     );

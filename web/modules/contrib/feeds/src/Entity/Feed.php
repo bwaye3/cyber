@@ -111,7 +111,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public function id() {
-    return $this->get('fid')->value;
+    return (int) $this->get('fid')->value;
   }
 
   /**
@@ -306,8 +306,35 @@ class Feed extends ContentEntityBase implements FeedInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasQueueTasks(): bool {
+    return $this->entityTypeManager()
+      ->getHandler('feeds_feed', 'feed_import')
+      ->hasQueueTasks($this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearQueueTasks(): void {
+    $this->entityTypeManager()
+      ->getHandler('feeds_feed', 'feed_import')
+      ->clearQueueTasks($this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasRecentProgress(int $seconds = 3600): bool {
+    return $this->entityTypeManager()
+      ->getHandler('feeds_feed', 'feed_import')
+      ->hasRecentProgress($this, $seconds);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function dispatchEntityEvent($event, EntityInterface $entity, ItemInterface $item) {
-    return $this->eventDispatcher()->dispatch($event, new EntityEvent($this, $entity, $item));
+    return $this->eventDispatcher()->dispatch(new EntityEvent($this, $entity, $item), $event);
   }
 
   /**
@@ -328,11 +355,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
     }
 
     // Allow other modules to react upon finishing importing.
-    $this->eventDispatcher()->dispatch(FeedsEvents::IMPORT_FINISHED, new ImportFinishedEvent($this));
-
-    // Cleanup.
-    $this->clearStates();
-    $this->setQueuedTime(0);
+    $this->eventDispatcher()->dispatch(new ImportFinishedEvent($this), FeedsEvents::IMPORT_FINISHED);
 
     $this->set('imported', $time);
 
@@ -341,8 +364,8 @@ class Feed extends ContentEntityBase implements FeedInterface {
       $this->set('next', $interval + $time);
     }
 
-    $this->save();
     $this->unlock();
+    $this->save();
   }
 
   /**
@@ -411,6 +434,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
    */
   public function saveStates() {
     \Drupal::keyValue('feeds_feed.' . $this->id())->setMultiple($this->states);
+    \Drupal::keyValue('feeds_feed.' . $this->id())->set('last_activity', time());
   }
 
   /**
@@ -438,7 +462,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
       return StateInterface::BATCH_COMPLETE;
     }
     // Fetching envelops parsing.
-    // @todo: this assumes all fetchers neatly use total. May not be the case.
+    // @todo This assumes all fetchers neatly use total. May not be the case.
     $fetcher_fraction = $fetcher->total ? 1.0 / $fetcher->total : 1.0;
     $parser_progress = $parser->progress * $fetcher_fraction;
     $result = $fetcher->progress - $fetcher_fraction + $parser_progress;
@@ -482,7 +506,8 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public function lock() {
-    if (!\Drupal::service('lock.persistent')->acquire("feeds_feed_{$this->id()}", 3600 * 12)) {
+    $timeout = \Drupal::config('feeds.settings')->get('lock_timeout') ?? 3600 * 12;
+    if (!\Drupal::service('feeds.lock')->acquire("feeds_feed:{$this->id()}", $timeout)) {
       $args = ['@id' => $this->bundle(), '@fid' => $this->id()];
       throw new LockException(new FormattableMarkup('Cannot acquire lock for feed @id / @fid.', $args));
     }
@@ -493,15 +518,21 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public function unlock() {
-    \Drupal::service('lock.persistent')->release("feeds_feed_{$this->id()}");
+    \Drupal::service('feeds.lock')->release("feeds_feed:{$this->id()}");
     Cache::invalidateTags(['feeds_feed_locked']);
+
+    // Clean up import states and stale queue tasks.
+    $this->clearStates();
+    $this->setQueuedTime(0);
+    $this->clearQueueTasks();
+    $this->save();
   }
 
   /**
    * {@inheritdoc}
    */
   public function isLocked() {
-    return !\Drupal::service('lock.persistent')->lockMayBeAvailable("feeds_feed_{$this->id()}");
+    return !\Drupal::service('feeds.lock')->lockMayBeAvailable("feeds_feed:{$this->id()}");
   }
 
   /**
@@ -585,7 +616,7 @@ class Feed extends ContentEntityBase implements FeedInterface {
       ->condition('feed_id', $ids, 'IN')
       ->execute();
 
-    \Drupal::service('event_dispatcher')->dispatch(FeedsEvents::FEEDS_DELETE, new DeleteFeedsEvent($feeds));
+    \Drupal::service('event_dispatcher')->dispatch(new DeleteFeedsEvent($feeds), FeedsEvents::FEEDS_DELETE);
   }
 
   /**

@@ -35,7 +35,7 @@ class LanguageTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $language = $this->container->get('entity_type.manager')->getStorage('configurable_language')->create([

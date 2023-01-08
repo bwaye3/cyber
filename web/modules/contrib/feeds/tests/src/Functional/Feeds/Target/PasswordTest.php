@@ -37,7 +37,7 @@ class PasswordTest extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Create a feed type for importing users with passwords.

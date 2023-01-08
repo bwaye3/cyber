@@ -14,7 +14,7 @@ class AdminFunctionalityTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'ludwig'];
+  protected static $modules = ['system', 'ludwig'];
 
   /**
    * {@inheritdoc}

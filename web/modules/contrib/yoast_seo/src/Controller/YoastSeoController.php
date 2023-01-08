@@ -153,7 +153,7 @@ class YoastSeoController extends ControllerBase {
       '#type' => 'details',
       '#title' => 'Configure Real-time SEO by bundles',
       '#description' => 'Select the bundles Real-time SEO will be enabled for',
-      '#markup' => render($config_form),
+      '#markup' => \Drupal::service('renderer')->render($config_form),
       '#open' => TRUE,
     ];
 

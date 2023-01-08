@@ -7,6 +7,7 @@ use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\feeds\Exception\ReferenceNotFoundException;
 use Drupal\feeds\Feeds\Target\ConfigEntityReference;
 use Drupal\feeds\FeedTypeInterface;
+use Drupal\feeds\Plugin\Type\Target\TargetInterface;
 
 /**
  * @coversDefaultClass \Drupal\feeds\Feeds\Target\ConfigEntityReference
@@ -15,9 +16,16 @@ use Drupal\feeds\FeedTypeInterface;
 class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
 
   /**
+   * The ID of the plugin.
+   *
+   * @var string
+   */
+  protected static $pluginId = 'config_entity_reference';
+
+  /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->buildContainer();
@@ -26,13 +34,13 @@ class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function createTargetPluginInstance(array $configuration = []) {
+  protected function instantiatePlugin(array $configuration = []): TargetInterface {
     $configuration += [
       'feed_type' => $this->createMock(FeedTypeInterface::class),
       'target_definition' => $this->createTargetDefinitionMock(),
       'reference_by' => 'id',
     ];
-    return new ConfigEntityReference($configuration, 'config_entity_reference', [], $this->entityTypeManager->reveal(), $this->entityFinder->reveal(), $this->transliteration->reveal(), $this->typedConfigManager->reveal());
+    return new ConfigEntityReference($configuration, static::$pluginId, [], $this->entityTypeManager->reveal(), $this->entityFinder->reveal(), $this->transliteration->reveal(), $this->typedConfigManager->reveal());
   }
 
   /**
@@ -65,7 +73,7 @@ class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
       ->willReturn(['foo'])
       ->shouldBeCalled();
 
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => 'foo'];
     $method(0, $values);
     $this->assertSame($values, ['target_id' => 'foo']);
@@ -82,7 +90,7 @@ class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
       ->willReturn([])
       ->shouldBeCalled();
 
-    $method = $this->getProtectedClosure($this->createTargetPluginInstance(), 'prepareValue');
+    $method = $this->getProtectedClosure($this->instantiatePlugin(), 'prepareValue');
     $values = ['target_id' => 'bar'];
     $this->expectException(ReferenceNotFoundException::class);
     $this->expectExceptionMessage("Referenced entity not found for field <em class=\"placeholder\">id</em> with value <em class=\"placeholder\">bar</em>.");
@@ -96,7 +104,7 @@ class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
     $expected = [
       'Reference by: <em class="placeholder">ID</em>',
     ];
-    $summary = $this->createTargetPluginInstance()->getSummary();
+    $summary = $this->instantiatePlugin()->getSummary();
     foreach ($summary as $key => $value) {
       $summary[$key] = (string) $value;
     }
@@ -107,7 +115,7 @@ class ConfigEntityReferenceTest extends ConfigEntityReferenceTestBase {
    * @covers ::getSummary
    */
   public function testGetSummaryNoReferenceBySet() {
-    $target_plugin = $this->createTargetPluginInstance([
+    $target_plugin = $this->instantiatePlugin([
       'reference_by' => NULL,
     ]);
 

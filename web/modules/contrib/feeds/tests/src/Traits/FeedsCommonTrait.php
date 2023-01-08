@@ -212,11 +212,6 @@ trait FeedsCommonTrait {
    *   If the module does not exist.
    */
   protected function getModulePath(string $module_name): string {
-    // @todo Remove drupal_get_path() when Drupal 9.2 is no longer supported.
-    if (!\Drupal::hasService('extension.list.module')) {
-      return drupal_get_path('module', $module_name);
-    }
-
     return \Drupal::service('extension.list.module')->getPath($module_name);
   }
 

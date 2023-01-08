@@ -25,7 +25,7 @@ class UpdateNonExistentTest extends FeedsBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create a feed type.
@@ -309,7 +309,8 @@ class UpdateNonExistentTest extends FeedsBrowserTestBase {
     }
 
     // Listen to process event.
-    $this->container->get('event_dispatcher')->addListener(FeedsEvents::PROCESS, [$this, 'onProcess'], FeedsEvents::AFTER);
+    $this->container->get('event_dispatcher')
+      ->addListener(FeedsEvents::PROCESS, [$this, 'onProcess'], FeedsEvents::AFTER);
 
     // Process another item.
     $item = $queue->claimItem();

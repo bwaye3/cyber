@@ -23,7 +23,7 @@ class BookTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'book',
     'text',
@@ -34,7 +34,7 @@ class BookTest extends FeedsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->installSchema('book', 'book');

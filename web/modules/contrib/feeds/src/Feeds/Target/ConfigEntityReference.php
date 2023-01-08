@@ -131,7 +131,7 @@ class ConfigEntityReference extends FieldTargetBase implements ConfigurableTarge
         // import process more efficient by ignoring items it has already seen.
         // In this case we need to destroy the hash in order to be able to
         // import the reference on a next import.
-        $entity->get('feeds_item')->hash = NULL;
+        $entity->get('feeds_item')->getItemByFeed($feed)->hash = NULL;
         $feed->getState(StateInterface::PROCESS)->setMessage($e->getFormattedMessage(), 'warning', TRUE);
       }
       catch (EmptyFeedException $e) {
@@ -286,7 +286,7 @@ class ConfigEntityReference extends FieldTargetBase implements ConfigurableTarge
     // Hack to find out the target delta.
     foreach ($form_state->getValues() as $key => $value) {
       if (strpos($key, 'target-settings-') === 0) {
-        list(, , $delta) = explode('-', $key);
+        [, , $delta] = explode('-', $key);
         break;
       }
     }

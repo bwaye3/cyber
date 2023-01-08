@@ -88,15 +88,18 @@ class ItemListController extends ControllerBase {
       return $build;
     }
 
-    $entity_ids = $this->entityTypeManager()->getStorage($processor->entityType())->getQuery()
-      ->condition('feeds_item.target_id', $feeds_feed->id())
+    $entity_ids = $this->entityTypeManager()->getStorage($processor->entityType())
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('feeds_item', [$feeds_feed->id()], 'IN')
       ->pager(50)
       ->sort('feeds_item.imported', 'DESC')
       ->execute();
 
     $storage = $this->entityTypeManager()->getStorage($processor->entityType());
     foreach ($storage->loadMultiple($entity_ids) as $entity) {
-      $ago = $this->dateFormatter->formatInterval($this->time->getRequestTime() - $entity->get('feeds_item')->imported);
+      $feed_item = $entity->get('feeds_item')->getItemByFeed($feeds_feed);
+      $ago = $this->dateFormatter->formatInterval($this->time->getRequestTime() - $feed_item->imported);
       $row = [];
 
       // Entity ID.
@@ -118,14 +121,14 @@ class ItemListController extends ControllerBase {
 
       // Item GUID.
       $row[] = [
-        'data' => $this->getPropertyFromFeedsItem($entity, 'guid'),
-        'title' => $entity->get('feeds_item')->guid,
+        'data' => $this->getPropertyFromFeedsItem($entity, 'guid', $feeds_feed),
+        'title' => $feed_item->guid,
       ];
 
       // Item URL.
       $row[] = [
-        'data' => $this->getPropertyFromFeedsItem($entity, 'url'),
-        'title' => $entity->get('feeds_item')->url,
+        'data' => $this->getPropertyFromFeedsItem($entity, 'url', $feeds_feed),
+        'title' => $feed_item->url,
       ];
 
       $build['table']['#rows'][] = $row;
@@ -144,6 +147,8 @@ class ItemListController extends ControllerBase {
    *   The imported entity that is being listed.
    * @param string $property
    *   The property to get from the feeds item.
+   * @param \Drupal\feeds\FeedInterface $feed
+   *   The feed entity associate with the feed item.
    *
    * @return string|null|mixed
    *   If the value on the feed is a string, it will be returned truncated to 30
@@ -151,8 +156,8 @@ class ItemListController extends ControllerBase {
    *   value will be returned as is. Null is returned when it is not a scalar
    *   value.
    */
-  protected function getPropertyFromFeedsItem(EntityInterface $entity, string $property) {
-    $value = $entity->get('feeds_item')->{$property};
+  protected function getPropertyFromFeedsItem(EntityInterface $entity, string $property, FeedInterface $feed) {
+    $value = $entity->get('feeds_item')->getItemByFeed($feed)->{$property};
     if (!is_scalar($value)) {
       return NULL;
     }

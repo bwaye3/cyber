@@ -16,7 +16,7 @@
       if (typeof settings.yoast_seo != 'undefined') {
         var yoast_settings = settings.yoast_seo;
         // Making sure we only initiate Yoast SEO once.
-        $('body', context).once('yoast_seo').each(function () {
+        once('yoast_seo', 'body', context).forEach(function () {
           YoastSEO.analyzerArgs = {
             source: YoastSEO_DrupalSource,
             analyzer: yoast_settings.analyzer,
