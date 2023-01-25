@@ -1,0 +1,10 @@
+name: Token Or Test
+description: Token Or Test
+hidden: true
+type: module
+package: Testing
+
+# Information added by Drupal.org packaging script on 2023-01-06
+version: '2.1.0'
+project: 'token_or'
+datestamp: 1673019100

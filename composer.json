@@ -46,6 +46,7 @@
         "drupal/schema_metatag": "^2.4",
         "drupal/state_machine": "^1.0@RC",
         "drupal/token": "^1.6",
+        "drupal/token_or": "^2.1",
         "drupal/tvi": "^1.0@beta",
         "drupal/views_infinite_scroll": "^1.6",
         "drupal/webform": "^6.1",

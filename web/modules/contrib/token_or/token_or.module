@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Use case: Open Graph image with default fallback.
+ */
+
+/**
+ * Implements hook_tokens_pre_alter().
+ */
+function token_or_tokens_pre_alter(&$text, $data, $options) {
+  \Drupal::service('token_or.tokens_pre_alter')->tokensPreAlter($text, $data, $options);
+}
