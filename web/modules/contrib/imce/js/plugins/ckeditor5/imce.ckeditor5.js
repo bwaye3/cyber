@@ -107,6 +107,13 @@
       win.close();
       el.focus();
       el.dispatchEvent(new CustomEvent('input'));
+      // Auto submit.
+      if (el.form) {
+        const button = el.form.getElementsByClassName('ck-button-save')[0];
+        if (button) {
+          button.click();
+        }
+      }
     };
     const button = imceInput.createUrlButton(el.id, type);
     button.className += ' imce-selector-button';

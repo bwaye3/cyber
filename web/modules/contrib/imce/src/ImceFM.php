@@ -325,7 +325,11 @@ class ImceFM {
    * Returns value of a posted parameter.
    */
   public function getPost($key, $default = NULL) {
-    return $this->request ? $this->request->request->get($key, $default) : $default;
+    if ($this->request) {
+      $params = $this->request->request->all();
+      return $params[$key] ?? $default;
+    }
+    return $default;
   }
 
   /**
