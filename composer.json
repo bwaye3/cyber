@@ -74,9 +74,7 @@
                 "web-root": "web/"
             },
             "file-mapping": {
-                "[web-root]/.htaccess": false
-            },
-            "file-mapping": {
+                "[web-root]/.htaccess": false,
                 "[web-root]/robots.txt": false
             }
         },
