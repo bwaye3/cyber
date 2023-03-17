@@ -26,7 +26,7 @@ class GuardsPass implements CompilerPassInterface {
 
       $group_id = $attributes[0]['group'];
       $guards[$group_id][$id] = $id;
-      $priorities[$group_id][$id] = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+      $priorities[$group_id][$id] = $attributes[0]['priority'] ?? 0;
     }
 
     // Sort the guards by priority.

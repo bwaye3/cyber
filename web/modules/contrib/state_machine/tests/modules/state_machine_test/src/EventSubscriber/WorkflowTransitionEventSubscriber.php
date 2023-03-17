@@ -111,7 +111,7 @@ class WorkflowTransitionEventSubscriber implements EventSubscriberInterface {
    */
   protected function setMessage(WorkflowTransitionEvent $event, $phase) {
     $this->messenger->addMessage(new TranslatableMarkup('@entity_label (@field_name) - @state_label at @phase (workflow: @workflow, transition: @transition).', [
-      '@entity_label' => $event->getEntity()->label(),
+      '@entity_label' => (string) $event->getEntity()->label(),
       '@field_name' => $event->getFieldName(),
       '@state_label' => $event->getTransition()->getToState()->getLabel(),
       '@workflow' => $event->getWorkflow()->getId(),

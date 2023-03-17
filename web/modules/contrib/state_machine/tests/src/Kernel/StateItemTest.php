@@ -37,7 +37,10 @@ class StateItemTest extends FieldKernelTestBase {
    * @covers ::applyTransitionById
    */
   public function testInvalidTransitionApply() {
-    $entity = EntityTestWithBundle::create(['type' => 'first']);
+    $entity = EntityTestWithBundle::create([
+      'name' => 'first',
+      'type' => 'first',
+    ]);
     /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
     $state_item = $entity->get('field_state')->first();
     $this->expectException(\InvalidArgumentException::class);
@@ -49,6 +52,7 @@ class StateItemTest extends FieldKernelTestBase {
    */
   public function testField($initial_state, $allowed_transitions, $invalid_new_state, $valid_transition, $expected_new_state) {
     $entity = EntityTestWithBundle::create([
+      'name' => 'second',
       'type' => 'second',
       'field_state' => $initial_state,
     ]);
@@ -82,7 +86,7 @@ class StateItemTest extends FieldKernelTestBase {
     $workflow = $state_item->getWorkflow();
     $all_transitions = $workflow->getTransitions();
     // Pick a random invalid transition and assert it throws an Exception.
-    $invalid_transitions = array_diff_key($all_transitions, $allowed_transitions);
+    $invalid_transitions = array_diff_key($all_transitions, $transitions);
     if ($invalid_transitions) {
       $random_key = array_rand($invalid_transitions);
       $this->expectException(\InvalidArgumentException::class);
@@ -123,6 +127,7 @@ class StateItemTest extends FieldKernelTestBase {
    */
   public function testSettableOptions($initial_state, $available_options) {
     $entity = EntityTestWithBundle::create([
+      'name' => 'second',
       'type' => 'second',
       'field_state' => $initial_state,
     ]);
@@ -150,6 +155,7 @@ class StateItemTest extends FieldKernelTestBase {
    */
   public function testGenerateSampleValue() {
     $entity = EntityTestWithBundle::create([
+      'name' => 'first',
       'type' => 'first',
     ]);
     $entity->field_state->generateSampleItems();
@@ -161,6 +167,7 @@ class StateItemTest extends FieldKernelTestBase {
     $this->entityValidateAndSave($entity);
 
     $entity = EntityTestWithBundle::create([
+      'name' => 'second',
       'type' => 'second',
     ]);
     $entity->field_state->generateSampleItems();
@@ -171,6 +178,7 @@ class StateItemTest extends FieldKernelTestBase {
     $this->entityValidateAndSave($entity);
 
     $entity = EntityTestWithBundle::create([
+      'name' => 'third',
       'type' => 'third',
     ]);
     $entity->field_state->generateSampleItems();

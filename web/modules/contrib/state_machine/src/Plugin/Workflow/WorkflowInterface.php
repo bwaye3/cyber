@@ -111,4 +111,19 @@ interface WorkflowInterface {
    */
   public function findTransition($from_state_id, $to_state_id);
 
+  /**
+   * Gets whether the given transition is allowed by the transition guards.
+   *
+   * Note that this method assumes the given transition is "possible".
+   *
+   * @param \Drupal\state_machine\Plugin\Workflow\WorkflowTransition $transition
+   *   The transition.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The parent entity.
+   *
+   * @return bool
+   *   TRUE if the transition is allowed, FALSE otherwise.
+   */
+  public function isTransitionAllowed(WorkflowTransition $transition, EntityInterface $entity);
+
 }

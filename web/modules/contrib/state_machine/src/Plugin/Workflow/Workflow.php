@@ -109,7 +109,7 @@ class Workflow extends PluginBase implements WorkflowInterface, ContainerFactory
    * {@inheritdoc}
    */
   public function getState($id) {
-    return isset($this->states[$id]) ? $this->states[$id] : NULL;
+    return $this->states[$id] ?? NULL;
   }
 
   /**
@@ -123,7 +123,7 @@ class Workflow extends PluginBase implements WorkflowInterface, ContainerFactory
    * {@inheritdoc}
    */
   public function getTransition($id) {
-    return isset($this->transitions[$id]) ? $this->transitions[$id] : NULL;
+    return $this->transitions[$id] ?? NULL;
   }
 
   /**
@@ -171,17 +171,9 @@ class Workflow extends PluginBase implements WorkflowInterface, ContainerFactory
   }
 
   /**
-   * Gets whether the given transition is allowed.
-   *
-   * @param \Drupal\state_machine\Plugin\Workflow\WorkflowTransition $transition
-   *   The transition.
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The parent entity.
-   *
-   * @return bool
-   *   TRUE if the transition is allowed, FALSE otherwise.
+   * {@inheritdoc}
    */
-  protected function isTransitionAllowed(WorkflowTransition $transition, EntityInterface $entity) {
+  public function isTransitionAllowed(WorkflowTransition $transition, EntityInterface $entity) {
     foreach ($this->guardFactory->get($this->getGroup()) as $guard) {
       if ($guard->allowed($transition, $this, $entity) === FALSE) {
         return FALSE;
