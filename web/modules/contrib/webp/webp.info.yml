@@ -1,13 +1,13 @@
 name: WebP
 type: module
 description: Generates WebP copies of image style derivatives.
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 package: Other
 configure: webp.settings_form
 dependencies:
   - drupal:image
 
-# Information added by Drupal.org packaging script on 2022-01-14
-version: '8.x-1.0-beta6'
+# Information added by Drupal.org packaging script on 2023-04-06
+version: '8.x-1.0-beta7'
 project: 'webp'
-datestamp: 1642191514
+datestamp: 1680802365

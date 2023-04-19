@@ -4,8 +4,8 @@ namespace Drupal\webp;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\Exception\FileException;
-use Drupal\Core\File\FileSystem;
 use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -44,7 +44,7 @@ class Webp {
   /**
    * The file system service.
    *
-   * @var \Drupal\Core\File\FileSystem
+   * @var Drupal\Core\File\FileSystemInterface;
    */
   protected $fileSystem;
 
@@ -59,10 +59,10 @@ class Webp {
    *   String translation interface.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Configuration factory.
-   * @param \Drupal\Core\File\FileSystem $fileSystem
+   * @param Drupal\Core\File\FileSystemInterface $fileSystem
    *   The file system service.
    */
-  public function __construct(ImageFactory $imageFactory, LoggerChannelFactoryInterface $loggerFactory, TranslationInterface $stringTranslation, ConfigFactoryInterface $configFactory, FileSystem $fileSystem) {
+  public function __construct(ImageFactory $imageFactory, LoggerChannelFactoryInterface $loggerFactory, TranslationInterface $stringTranslation, ConfigFactoryInterface $configFactory, FileSystemInterface $fileSystem) {
     $this->imageFactory = $imageFactory;
     $this->logger = $loggerFactory->get('webp');
     $this->setStringTranslation($stringTranslation);
@@ -89,7 +89,7 @@ class Webp {
     if (!extension_loaded('imagick')) {
       $toolkit = 'gd';
     }
-    elseif ($toolkit == 'imagemagick' && !in_array('WEBP', Imagick::queryFormats())) {
+    elseif (($toolkit == 'imagemagick' || $toolkit == 'imagick') && !in_array('WEBP', Imagick::queryFormats())) {
       $toolkit = 'gd';
     }
 
@@ -97,8 +97,8 @@ class Webp {
       $quality = $this->defaultQuality;
     }
 
-    if ($toolkit == 'imagemagick') {
-      $webp = $this->createImageMagickImage($uri, $quality);
+    if ($toolkit == 'imagemagick' || $toolkit == 'imagick') {
+      $webp = $this->createImageMagickImage($uri, $quality, $toolkit);
     }
     else {
       // We assume $toolkit == 'gd'.
@@ -181,15 +181,17 @@ class Webp {
    * @param string $uri
    *   Image URI.
    * @param int $quality
-   *   Image quality factor (optional).
+   *   Image quality factor.
+   * @param string $toolkit
+   *   The toolkit ID of the image factory to use.
    *
    * @return bool|string
    *   The location of the WebP image if successful, FALSE if not successful.
    */
-  private function createImageMagickImage($uri, $quality = NULL) {
+  private function createImageMagickImage($uri, $quality, $toolkit) {
     $webp = FALSE;
 
-    $ImageMagickImg = $this->imageFactory->get($uri, 'imagemagick');
+    $ImageMagickImg = $this->imageFactory->get($uri, $toolkit);
     // We'll convert the image into webp.
     $ImageMagickImg->apply('convert', ['extension' => 'webp', 'quality' => $quality]);
 
@@ -197,7 +199,13 @@ class Webp {
     if ($ImageMagickImg->save($destination)) {
       $webp = $destination;
 
-      $msg = $this->t('Generated WebP image with Image Magick. Quality: ' . $destination);
+      $msg = $this->t(
+        'Generated WebP image with Image Magick. Quality: @quality Destination: @destination',
+        [
+          '@quality' => $quality,
+          '@destination' => $destination,
+        ]
+      );
       $this->logger->info($msg);
     }
     else {

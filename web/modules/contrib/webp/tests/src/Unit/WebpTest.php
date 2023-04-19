@@ -16,12 +16,9 @@ class WebpTest extends UnitTestCase {
    *
    * Create new unit object.
    */
-  public function setUp() {
+  public function setUp(): void {
     // Mock the class to avoid the constructor.
-    $this->webp = $this->getMockBuilder('\Drupal\webp\Webp')
-      ->disableOriginalConstructor()
-      ->setMethods(NULL)
-      ->getMock();
+    $this->webp = $this->createMock('\Drupal\webp\Webp');
   }
 
   /**

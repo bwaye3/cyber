@@ -180,10 +180,10 @@ class FileDownloadController extends ControllerBase {
    *   The transferred file as response.
    */
   protected function webpResponse($file, array $headers, $scheme) {
-    $headers += [
+    $headers = array_merge($headers, [
       'Content-Type' => 'image/webp',
       'Content-Length' => filesize($file),
-    ];
+    ]);
     // \Drupal\Core\EventSubscriber\FinishResponseSubscriber::onRespond()
     // sets response as not cacheable if the Cache-Control header is not
     // already modified. We pass in FALSE for non-private schemes for the
