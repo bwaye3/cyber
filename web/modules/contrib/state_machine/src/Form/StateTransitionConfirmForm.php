@@ -49,6 +49,16 @@ class StateTransitionConfirmForm extends ContentEntityConfirmFormBase {
   }
 
   /**
+   * Returns the transition object.
+   *
+   * @return \Drupal\state_machine\Plugin\Workflow\WorkflowTransition
+   *   The transition object.
+   */
+  public function getTransition() {
+    return $this->transition;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $field_name = '', $transition_id = '') {

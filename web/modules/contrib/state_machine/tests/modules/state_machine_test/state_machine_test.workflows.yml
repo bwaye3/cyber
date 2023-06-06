@@ -76,3 +76,26 @@ two_transitions:
       label: Complete2
       from: [new]
       to:   completed
+
+same_transition:
+  id: same_transition
+  label: Contains transition to same state.
+  group: entity_test_with_bundle
+  states:
+    new:
+      label: New
+    completed:
+      label: Completed
+  transitions:
+    complete1:
+      label: Complete1
+      from: [new]
+      to:   completed
+    complete2:
+      label: Complete2
+      from: [new]
+      to:   completed
+    same:
+      label: Stay same
+      from: [new]
+      to: new

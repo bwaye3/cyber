@@ -5,7 +5,10 @@ package: Media
 core_version_requirement: ^9.3 || ^10
 configure: imce.admin
 
-# Information added by Drupal.org packaging script on 2023-01-31
-version: '3.0.7'
+test_dependencies:
+  - ckeditor:ckeditor
+
+# Information added by Drupal.org packaging script on 2023-05-13
+version: '3.0.8'
 project: 'imce'
-datestamp: 1675193636
+datestamp: 1683975054

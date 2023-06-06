@@ -129,12 +129,6 @@ class WorkflowManager extends DefaultPluginManager implements WorkflowManagerInt
       if (!isset($definition['states'][$to_state])) {
         throw new PluginException(sprintf('The workflow transition %s specified an invalid "to" property.', $transition_id));
       }
-      // Don't allow transitions to the same state.
-      foreach ($transition_definition['from'] as $from_state) {
-        if ($from_state == $transition_definition['to']) {
-          throw new PluginException(sprintf('Invalid workflow transition %s: the "from" and "to" properties cannot overlap.', $transition_id));
-        }
-      }
     }
   }
 

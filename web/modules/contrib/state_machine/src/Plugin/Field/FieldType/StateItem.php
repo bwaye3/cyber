@@ -376,7 +376,7 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
    * {@inheritdoc}
    */
   public function preSave() {
-    if ($this->value != $this->originalValue) {
+    if ($this->value != $this->originalValue || $this->transitionToApply !== NULL) {
       $this->dispatchTransitionEvent('pre_transition');
     }
   }
@@ -385,7 +385,7 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
    * {@inheritdoc}
    */
   public function postSave($update) {
-    if ($this->value != $this->originalValue) {
+    if ($this->value != $this->originalValue || $this->transitionToApply !== NULL) {
       $this->dispatchTransitionEvent('post_transition');
     }
     $this->originalValue = $this->value;

@@ -16,11 +16,11 @@ use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'image_url' formatter.
+ * Plugin implementation of the 'image_url_formatter'.
  *
  * @FieldFormatter(
- *   id = "image_url",
- *   label = @Translation("Image URL"),
+ *   id = "image_url_formatter",
+ *   label = @Translation("Image URL Formatter"),
  *   field_types = {
  *     "image"
  *   }
@@ -233,7 +233,7 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
     foreach ($files as $delta => $file) {
       if (isset($link_file)) {
         $image_uri = $file->getFileUri();
-        $url = Url::fromUri(file_create_url($image_uri));
+        $url = \Drupal::service('file_url_generator')->generate($image_uri);
       }
       $cache_tags = Cache::mergeTags($cache_tags, $file->getCacheTags());
 
