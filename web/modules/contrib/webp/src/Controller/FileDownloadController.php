@@ -152,7 +152,7 @@ class FileDownloadController extends ControllerBase {
 
       if (count($headers)) {
         $image = $this->imageFactory->get($uri);
-        if (($webp = $this->webp->createWebpCopy($image->getSource())) && in_array('image/webp', $request->getAcceptableContentTypes())) {
+        if ($image->isValid() && in_array('image/webp', $request->getAcceptableContentTypes()) && ($webp = $this->webp->createWebpCopy($image->getSource()))) {
           return $this->webpResponse($webp, $headers, $scheme);
         }
         else {

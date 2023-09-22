@@ -7,7 +7,7 @@ configure: webp.settings_form
 dependencies:
   - drupal:image
 
-# Information added by Drupal.org packaging script on 2023-04-06
-version: '8.x-1.0-beta7'
+# Information added by Drupal.org packaging script on 2023-08-15
+version: '8.x-1.0-rc1'
 project: 'webp'
-datestamp: 1680802365
+datestamp: 1692124380

@@ -19,7 +19,7 @@
         "drupal/address": "^1.7",
         "drupal/admin_toolbar": "^3.2",
         "drupal/back_to_top": "^2.0",
-        "drupal/body_node_id_class": "^1.1",
+        "drupal/body_node_id_class": "^2.0",
         "drupal/captcha": "^1.0@beta",
         "drupal/color": "^1.0",
         "drupal/config_update": "^1.6",

@@ -32,6 +32,10 @@ class TokenOrTokensPreAlter {
   public function tokensPreAlter(&$text, $data, $options) {
     $matches = [];
 
+    if (!$text) {
+      return;
+    }
+
     preg_match_all("/\[[^\[\]]+\]/", $text, $matches);
 
     if (empty($matches)) {

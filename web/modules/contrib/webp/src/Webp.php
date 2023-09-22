@@ -108,7 +108,6 @@ class Webp {
       $sourceImage = $this->imageFactory->get($uri, 'gd');
       /** @var \Drupal\system\Plugin\ImageToolkit\GDToolkit $toolkit */
       $toolkit = $sourceImage->getToolkit();
-      $mimeType = $sourceImage->getMimeType();
       $sourceImage = $toolkit->getResource();
 
       // If we can generate a GD resource from the source image, generate the URI
@@ -120,6 +119,8 @@ class Webp {
         imagealphablending($sourceImage, TRUE);
         imagesavealpha($sourceImage, TRUE);
         if (@imagewebp($sourceImage, $destination, $quality)) {
+          // Clear cache to have correct value of filesize.
+          clearstatcache(TRUE, $destination);
           // In some cases, libgd generates broken images. See
           // https://stackoverflow.com/questions/30078090/imagewebp-php-creates-corrupted-webp-files
           // for more information.

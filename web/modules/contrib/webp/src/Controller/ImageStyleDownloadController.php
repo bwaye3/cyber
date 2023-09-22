@@ -160,7 +160,7 @@ class ImageStyleDownloadController extends FileDownloadController {
     // starts with styles/.
     $valid = !empty($image_style) && $this->streamWrapperManager->isValidScheme($scheme);
     if (!$this->config('image.settings')->get('allow_insecure_derivatives') || strpos(ltrim($target, '\/'), 'styles/') === 0) {
-      $valid &= hash_equals($request->query->get(IMAGE_DERIVATIVE_TOKEN), $image_style->getPathToken($image_uri));
+      $valid &= hash_equals($request->query->get(IMAGE_DERIVATIVE_TOKEN, ''), $image_style->getPathToken($image_uri));
 
 			// ImageAPI Optimize case: generator searches for a WEBP, but image style
 			// returns a non-WEBP (!= tokens). Sanity checks that image_style returns a token.

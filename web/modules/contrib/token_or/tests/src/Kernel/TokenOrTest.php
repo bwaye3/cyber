@@ -95,4 +95,12 @@ class TokenOrTest extends KernelTestBase {
     $this->assertEquals('test test', $value);
   }
 
+  /**
+   * Tests the null replacement functionality.
+   */
+  public function testNullReplacement() {
+    $value = $this->tokenService->replace(NULL);
+    $this->assertEquals(NULL, $value);
+  }
+
 }
