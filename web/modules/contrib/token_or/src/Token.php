@@ -2,8 +2,8 @@
 
 namespace Drupal\token_or;
 
-use Drupal\token\Token as OriginalToken;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\token\Token as OriginalToken;
 
 /**
  * Overrride class for tokens.

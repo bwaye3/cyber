@@ -169,7 +169,7 @@ class State extends InOperator {
     $bundle_key = $entity_type->getKey('bundle');
     if ($bundle_key && isset($this->view->filter[$bundle_key])) {
       $filter = $this->view->filter[$bundle_key];
-      if (!$filter->isExposed() && !empty($filter->value)) {
+      if (!$filter->isExposed() && !empty($filter->value) && $filter->getEntityType() === $entity_type->id()) {
         // 'all' is added by Views and isn't a bundle.
         $bundles = array_diff($filter->value, ['all']);
       }

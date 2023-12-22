@@ -2,10 +2,10 @@
 
 namespace Drupal\state_machine\Plugin\Workflow;
 
-use Drupal\state_machine\Guard\GuardFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\state_machine\Guard\GuardFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

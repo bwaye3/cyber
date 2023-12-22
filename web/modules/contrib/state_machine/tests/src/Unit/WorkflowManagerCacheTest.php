@@ -4,12 +4,12 @@ namespace Drupal\Tests\state_machine\Unit;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Tests\UnitTestCase;
 use Drupal\state_machine\Guard\GuardFactoryInterface;
 use Drupal\state_machine\Plugin\Workflow\Workflow;
 use Drupal\state_machine\Plugin\Workflow\WorkflowInterface;
 use Drupal\state_machine\WorkflowGroupManagerInterface;
 use Drupal\state_machine\WorkflowManager;
+use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

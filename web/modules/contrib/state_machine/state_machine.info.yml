@@ -4,9 +4,9 @@ description: Provides code-driven workflow functionality.
 package: Other
 core_version_requirement: ^9.2 || ^10
 dependencies:
-    - drupal:options
+  - drupal:options
 
-# Information added by Drupal.org packaging script on 2023-05-16
-version: '8.x-1.8'
+# Information added by Drupal.org packaging script on 2023-11-29
+version: '8.x-1.10'
 project: 'state_machine'
-datestamp: 1684226803
+datestamp: 1701253629

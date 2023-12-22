@@ -157,6 +157,7 @@ class StateItemTest extends FieldKernelTestBase {
     $entity = EntityTestWithBundle::create([
       'name' => 'first',
       'type' => 'first',
+      'field_state' => NULL,
     ]);
     $entity->field_state->generateSampleItems();
     /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
@@ -169,6 +170,7 @@ class StateItemTest extends FieldKernelTestBase {
     $entity = EntityTestWithBundle::create([
       'name' => 'second',
       'type' => 'second',
+      'field_state' => NULL,
     ]);
     $entity->field_state->generateSampleItems();
     /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
@@ -180,6 +182,7 @@ class StateItemTest extends FieldKernelTestBase {
     $entity = EntityTestWithBundle::create([
       'name' => 'third',
       'type' => 'third',
+      'field_state' => NULL,
     ]);
     $entity->field_state->generateSampleItems();
     /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */

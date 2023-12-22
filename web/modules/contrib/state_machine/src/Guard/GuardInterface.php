@@ -2,9 +2,9 @@
 
 namespace Drupal\state_machine\Guard;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\state_machine\Plugin\Workflow\WorkflowInterface;
 use Drupal\state_machine\Plugin\Workflow\WorkflowTransition;
-use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Defines the interface for guards.

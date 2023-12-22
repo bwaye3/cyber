@@ -2,6 +2,7 @@
 
 namespace Drupal\state_machine\Form;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -83,6 +84,10 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
     /** @var \Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface $state_item */
     $state_item = $this->entity->get($this->fieldName)->first();
 
+    if (!isset($state_item)) {
+      return;
+    }
+
     $form['actions'] = [
       '#type' => 'container',
     ];
@@ -120,6 +125,9 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
       if ($form_state->get('use_modal')) {
         $form['actions'][$transition_id]['#attributes']['class'][] = 'use-ajax';
         $form['actions'][$transition_id]['#attributes']['data-dialog-type'] = 'modal';
+        $form['actions'][$transition_id]['#attributes']['data-dialog-options'] = Json::encode([
+          'width' => 'auto',
+        ]);
         $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
       }
     }

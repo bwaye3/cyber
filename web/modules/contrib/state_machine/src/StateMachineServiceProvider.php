@@ -2,8 +2,8 @@
 
 namespace Drupal\state_machine;
 
-use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\state_machine\DependencyInjection\Compiler\GuardsPass;
 
 /**

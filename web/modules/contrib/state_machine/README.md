@@ -38,7 +38,7 @@ default:
     create:
       label: Create
       from: [new]
-      to:   fulfillment
+      to: fulfillment
     fulfill:
       label: Fulfill
       from: [fulfillment]
@@ -46,7 +46,7 @@ default:
     cancel:
       label: Cancel
       from: [new, fulfillment]
-      to:   canceled
+      to: canceled
 ```
 
 Transitions can be further restricted by [guards](https://github.com/bojanz/state_machine/blob/8.x-1.x/src/Guard/GuardInterface.php), which are implemented as tagged services:

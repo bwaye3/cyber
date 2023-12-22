@@ -15,7 +15,7 @@ default:
     create:
       label: Create
       from: [new]
-      to:   fulfillment
+      to: fulfillment
     fulfill:
       label: Fulfill
       from: [fulfillment]
@@ -23,7 +23,7 @@ default:
     cancel:
       label: Cancel
       from: [new, fulfillment]
-      to:   canceled
+      to: canceled
 
 validation:
   id: validation
@@ -44,11 +44,11 @@ validation:
     create:
       label: Create
       from: [new]
-      to:   validation
+      to: validation
     validate:
       label: Validate
       from: [validation]
-      to:   fulfillment
+      to: fulfillment
     fulfill:
       label: Fulfill
       from: [fulfillment]
@@ -56,7 +56,7 @@ validation:
     cancel:
       label: Cancel
       from: [new, validation, fulfillment]
-      to:   canceled
+      to: canceled
 
 two_transitions:
   id: two_transitions

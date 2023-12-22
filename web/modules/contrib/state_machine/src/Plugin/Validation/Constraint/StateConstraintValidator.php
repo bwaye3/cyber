@@ -16,7 +16,7 @@ class StateConstraintValidator extends ConstraintValidator {
    * {@inheritdoc}
    */
   public function validate($value, Constraint $constraint) {
-    if (!$value->getEntity()->isNew() && !$value->isValid()) {
+    if (!$value->isValid()) {
       $this->context->addViolation($constraint->message, ['@state' => $value->value]);
     }
   }

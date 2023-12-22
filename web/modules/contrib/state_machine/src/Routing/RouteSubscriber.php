@@ -44,8 +44,8 @@ class RouteSubscriber extends RouteSubscriberBase {
         ])
         ->setRequirement('_state_transition_access', "TRUE")
         ->setRequirement($entity_type_id, '\d+')
-        ->setRequirement('transition_id', '[a-z_]+')
-        ->setRequirement('field_name', '[a-z_]+')
+        ->setRequirement('transition_id', '[a-z0-9_]+')
+        ->setRequirement('field_name', '[a-z0-9_]+')
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
         ]);
