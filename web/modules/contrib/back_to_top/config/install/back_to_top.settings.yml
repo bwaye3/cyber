@@ -1,4 +1,4 @@
-back_to_top_prevent_on_mobile: TRUE
+back_to_top_prevent_on_mobile: FALSE
 back_to_top_prevent_in_admin: FALSE
 back_to_top_prevent_in_front: FALSE
 back_to_top_button_trigger: 100

@@ -12,23 +12,23 @@ interface TaxonomyViewsIntegratorManagerInterface {
   /**
    * Return the taxonomy term View per taxonomy view integrator settings.
    *
-   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   * @param TermInterface $taxonomy_term
    *   The term to render the view for.
    *
    * @return array
    *   Views results render array.
    */
-  public function getTaxonomyTermView(TermInterface $taxonomy_term);
+  public function getTaxonomyTermView(TermInterface $taxonomy_term): array;
 
   /**
    * Return array with view and display id for current term based on settings.
    *
-   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   * @param TermInterface $taxonomy_term
    *   An object with term entity.
    *
    * @return array
    *   An array with view_id and display_id for current term.
    */
-  public function getTaxonomyTermViewAndDisplayId(TermInterface $taxonomy_term);
+  public function getTaxonomyTermViewAndDisplayId(TermInterface $taxonomy_term): array;
 
 }

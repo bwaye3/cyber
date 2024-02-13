@@ -9,13 +9,31 @@ use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\Views;
+use Drupal\Core\Routing\RouteMatchInterface;
 
+/**
+ * Implements hook_help().
+ */
+function tvi_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the tvi module.
+    case 'help.page.tvi':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The TVI (Taxonomy Views Integrator) module allows selective
+      overriding of taxonomy terms and/or vocabulary with the view of your choice. Using
+      TVI you can easily create custom views to output all terms in X vocabulary.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
 /**
  * Implements hook_entity_extra_field_info().
  */
 function tvi_entity_extra_field_info() {
   $extra = [];
-  /** @var \Drupal\Core\Entity\EntityInterface $bundle */
+  /** @var EntityInterface $bundle */
   foreach (Vocabulary::loadMultiple() as $bundle) {
     $extra['taxonomy_term'][$bundle->id()]['form']['tvi'] = [
       'label' => t('TVI settings'),
@@ -32,7 +50,7 @@ function tvi_entity_extra_field_info() {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function _tvi_settings_form(array &$form, FormStateInterface $form_state) {
@@ -167,7 +185,7 @@ function _tvi_settings_form(array &$form, FormStateInterface $form_state) {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function tvi_form_config_validate(array $form, FormStateInterface $form_state) {
@@ -211,7 +229,7 @@ function tvi_form_taxonomy_vocabulary_form_alter(array &$form, FormStateInterfac
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  *
  * @return mixed
@@ -250,7 +268,7 @@ function tvi_get_view_displays(string $view_id) {
  *
  * @param array $form
  *   Settings form render array.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param FormStateInterface $form_state
  *   Submitted form state.
  */
 function tvi_submit_handler(array $form, FormStateInterface $form_state) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c51899250e092dc999d429dc916276a",
+    "content-hash": "e293642fa1192b87ae64f30569286427",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1574,28 +1574,26 @@
         },
         {
             "name": "drupal/back_to_top",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/back_to_top.git",
-                "reference": "2.0.0"
+                "reference": "3.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/back_to_top-2.0.0.zip",
-                "reference": "2.0.0",
-                "shasum": "a95add76833f63e613842dc552f9b5fd6c8a3b7e"
+                "url": "https://ftp.drupal.org/files/projects/back_to_top-3.0.0.zip",
+                "reference": "3.0.0",
+                "shasum": "1f65dfba56243f8a551847fa1a45e0e0ee192e3d"
             },
             "require": {
-                "drupal/core": "^8 || ^9",
-                "drupal/jquery_ui": "*",
-                "drupal/jquery_ui_effects": "*"
+                "drupal/core": "^8 || ^9 || ^10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.0",
-                    "datestamp": "1629465392",
+                    "version": "3.0.0",
+                    "datestamp": "1674218226",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1629,10 +1627,10 @@
                 }
             ],
             "description": "Back To Top adds a button that hovers in the bottom of your screen and allow users to smoothly scroll up the page using jQuery.",
-            "homepage": "https://www.drupal.org/project/back_top_top",
+            "homepage": "https://www.drupal.org/project/back_to_top",
             "support": {
                 "source": "https://git.drupalcode.org/project/back_to_top",
-                "issues": "https://www.drupal.org/project/issues/back_top_top"
+                "issues": "https://www.drupal.org/project/issues/back_to_top"
             }
         },
         {
@@ -1816,29 +1814,29 @@
         },
         {
             "name": "drupal/config_update",
-            "version": "1.7.0",
+            "version": "2.0.0-alpha3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/config_update.git",
-                "reference": "8.x-1.7"
+                "reference": "2.0.0-alpha3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/config_update-8.x-1.7.zip",
-                "reference": "8.x-1.7",
-                "shasum": "8f079abf7c2ea826a27fa5224b0770a26404c968"
+                "url": "https://ftp.drupal.org/files/projects/config_update-2.0.0-alpha3.zip",
+                "reference": "2.0.0-alpha3",
+                "shasum": "c35e81e8fb77efdff5ddca3a87116ea0c522a7e2"
             },
             "require": {
-                "drupal/core": "^8 || ^9"
+                "drupal/core": "^9.4 || ^10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.7",
-                    "datestamp": "1586355587",
+                    "version": "2.0.0-alpha3",
+                    "datestamp": "1683807608",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -1856,7 +1854,7 @@
                     "homepage": "https://www.drupal.org/user/80733"
                 }
             ],
-            "description": "Provides basic revert and update functionality for other modules",
+            "description": "Provides basic revert and update functionality for other modules.",
             "homepage": "https://www.drupal.org/project/config_update",
             "support": {
                 "source": "https://git.drupalcode.org/project/config_update"
@@ -3054,155 +3052,6 @@
             }
         },
         {
-            "name": "drupal/jquery_ui",
-            "version": "1.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/jquery_ui.git",
-                "reference": "8.x-1.6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/jquery_ui-8.x-1.6.zip",
-                "reference": "8.x-1.6",
-                "shasum": "0ddccdcf35a066de1843e1d9670677ee1a2faac0"
-            },
-            "require": {
-                "drupal/core": "^9.2 || ^10"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.6",
-                    "datestamp": "1668521197",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "bnjmnm",
-                    "homepage": "https://www.drupal.org/user/2369194"
-                },
-                {
-                    "name": "jjeff",
-                    "homepage": "https://www.drupal.org/user/17190"
-                },
-                {
-                    "name": "lauriii",
-                    "homepage": "https://www.drupal.org/user/1078742"
-                },
-                {
-                    "name": "litwol",
-                    "homepage": "https://www.drupal.org/user/78134"
-                },
-                {
-                    "name": "mfb",
-                    "homepage": "https://www.drupal.org/user/12302"
-                },
-                {
-                    "name": "mfer",
-                    "homepage": "https://www.drupal.org/user/25701"
-                },
-                {
-                    "name": "mikelutz",
-                    "homepage": "https://www.drupal.org/user/2972409"
-                },
-                {
-                    "name": "nod_",
-                    "homepage": "https://www.drupal.org/user/598310"
-                },
-                {
-                    "name": "phenaproxima",
-                    "homepage": "https://www.drupal.org/user/205645"
-                },
-                {
-                    "name": "RobLoach",
-                    "homepage": "https://www.drupal.org/user/61114"
-                },
-                {
-                    "name": "sun",
-                    "homepage": "https://www.drupal.org/user/54136"
-                },
-                {
-                    "name": "webchick",
-                    "homepage": "https://www.drupal.org/user/24967"
-                },
-                {
-                    "name": "Wim Leers",
-                    "homepage": "https://www.drupal.org/user/99777"
-                },
-                {
-                    "name": "zrpnr",
-                    "homepage": "https://www.drupal.org/user/1448368"
-                }
-            ],
-            "description": "Provides jQuery UI library.",
-            "homepage": "https://www.drupal.org/project/jquery_ui",
-            "support": {
-                "source": "https://git.drupalcode.org/project/jquery_ui"
-            }
-        },
-        {
-            "name": "drupal/jquery_ui_effects",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/jquery_ui_effects.git",
-                "reference": "2.0.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/jquery_ui_effects-2.0.0.zip",
-                "reference": "2.0.0",
-                "shasum": "d4d439e15690d9337758fe01bf6c16c4ec4ca6e6"
-            },
-            "require": {
-                "drupal/core": "^9.2 || ^10",
-                "drupal/jquery_ui": "^1.6"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0",
-                    "datestamp": "1670871539",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "bnjmnm",
-                    "homepage": "https://www.drupal.org/user/2369194"
-                },
-                {
-                    "name": "lauriii",
-                    "homepage": "https://www.drupal.org/user/1078742"
-                },
-                {
-                    "name": "zrpnr",
-                    "homepage": "https://www.drupal.org/user/1448368"
-                }
-            ],
-            "description": "Provides jQuery UI Effects library.",
-            "homepage": "https://www.drupal.org/project/jquery_ui_effects",
-            "support": {
-                "source": "https://git.drupalcode.org/project/jquery_ui_effects"
-            }
-        },
-        {
             "name": "drupal/ludwig",
             "version": "2.0.6",
             "source": {
@@ -3975,29 +3824,29 @@
         },
         {
             "name": "drupal/tvi",
-            "version": "1.0.0-rc4",
+            "version": "2.0.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/tvi.git",
-                "reference": "8.x-1.0-rc4"
+                "reference": "2.0.0-alpha2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/tvi-8.x-1.0-rc4.zip",
-                "reference": "8.x-1.0-rc4",
-                "shasum": "1acdc0e671fd977a16d5c88d3b4f531286224c7e"
+                "url": "https://ftp.drupal.org/files/projects/tvi-2.0.0-alpha2.zip",
+                "reference": "2.0.0-alpha2",
+                "shasum": "cbe5946f6da3b75b757498e10368ff6c6848ef5f"
             },
             "require": {
-                "drupal/core": "^8 || ^9"
+                "drupal/core": "^8 || ^9 || ^10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.0-rc4",
-                    "datestamp": "1623332223",
+                    "version": "2.0.0-alpha2",
+                    "datestamp": "1690429394",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
+                        "message": "Alpha releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -9255,12 +9104,13 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "drupal/captcha": 10,
+        "drupal/config_update": 15,
         "drupal/feeds": 10,
         "drupal/image_url_formatter": 10,
         "drupal/inline_entity_form": 5,
         "drupal/rules": 15,
         "drupal/state_machine": 5,
-        "drupal/tvi": 10,
+        "drupal/tvi": 15,
         "drupal/webp": 10,
         "drupal/xmlsitemap": 5
     },

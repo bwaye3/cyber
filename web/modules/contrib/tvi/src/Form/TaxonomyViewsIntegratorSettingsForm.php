@@ -2,6 +2,8 @@
 
 namespace Drupal\tvi\Form;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -15,29 +17,22 @@ use Drupal\views\Views;
 class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
 
   /**
-   * The config factory service.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * TaxonomyViewsIntegratorSettingsForm constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param ConfigFactoryInterface $config_factory
    *   The config factory service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
-    $this->configFactory = $config_factory;
+    parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
   }
 
@@ -206,8 +201,10 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
    *
    * @return array
    *   Drupal render array options values.
+   * @throws InvalidPluginDefinitionException
+   * @throws PluginNotFoundException
    */
-  protected function getViewDisplayOptions(string $view_id) {
+  protected function getViewDisplayOptions(string $view_id): array {
     $display_options = [];
     $view = $this->entityTypeManager->getStorage('view')->load($view_id);
 
@@ -228,7 +225,7 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
    *
    * @param array $form
    *   Ajax form render array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param FormStateInterface $form_state
    *   Submitted form state.
    *
    * @return array
@@ -237,7 +234,7 @@ class TaxonomyViewsIntegratorSettingsForm extends ConfigFormBase {
    * @see https://www.drupal.org/node/1446510
    * @see https://www.drupal.org/node/752056
    */
-  public function loadDisplayOptions(array &$form, FormStateInterface $form_state) {
+  public function loadDisplayOptions(array &$form, FormStateInterface $form_state): array {
     $form['tvi']['view_display']['#value'] = '';
     $form_state->setRebuild();
     return $form;

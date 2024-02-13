@@ -126,7 +126,7 @@ class TaxonomyViewsIntegratorManager implements TaxonomyViewsIntegratorManagerIn
   /**
    * {@inheritdoc}
    */
-  public function getTaxonomyTermView(TermInterface $taxonomy_term) {
+  public function getTaxonomyTermView(TermInterface $taxonomy_term): array {
     $view_info = $this->getTaxonomyTermViewAndDisplayId($taxonomy_term);
 
     $config = $this->getTermConfigSettings($taxonomy_term);
@@ -159,7 +159,7 @@ class TaxonomyViewsIntegratorManager implements TaxonomyViewsIntegratorManagerIn
   /**
    * {@inheritdoc}
    */
-  public function getTaxonomyTermViewAndDisplayId(TermInterface $taxonomy_term) {
+  public function getTaxonomyTermViewAndDisplayId(TermInterface $taxonomy_term): array {
     // If we have no matches, we are going to call the default core term view.
     $view_name = 'taxonomy_term';
     $view_id = 'page_1';

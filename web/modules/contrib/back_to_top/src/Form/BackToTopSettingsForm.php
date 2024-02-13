@@ -31,14 +31,12 @@ class BackToTopSettingsForm extends ConfigFormBase {
     $config = $this->config('back_to_top.settings');
     $settings = $config->get();
 
-    // Include Farbtastic color picker library and other necessary resources.
-    $form['#attached']['library'][] = 'core/jquery.farbtastic';
     $form['#attached']['library'][] = 'back_to_top/back_to_top';
 
     $form['back_to_top_prevent_on_mobile'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Prevent on mobile and touch devices'),
-      '#description' => $this->t('Do you want to prevent Back To Top on touch devices?'),
+      '#description' => $this->t('Don´t show Back To Top-button on screen width up to 760px.'),
       '#default_value' => $settings['back_to_top_prevent_on_mobile'],
     ];
     $form['back_to_top_prevent_in_admin'] = [
@@ -68,7 +66,7 @@ class BackToTopSettingsForm extends ConfigFormBase {
       '#options' => [
         1 => $this->t('Bottom right'),
         2 => $this->t('Bottom left'),
-        3 => $this->t('Botton center'),
+        3 => $this->t('Bottom center'),
         4 => $this->t('Top right'),
         5 => $this->t('Top left'),
         6 => $this->t('Top center'),

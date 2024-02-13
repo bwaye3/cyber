@@ -21,7 +21,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     // Update the term router to use the TVI controller.
     if ($route = $collection->get('entity.taxonomy_term.canonical')) {
       $route->setDefault('_controller', '\Drupal\tvi\Controller\TaxonomyViewsIntegratorTermPageController::render');
@@ -31,8 +31,8 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
-    // Run after Views subscriber has ran.
+  public static function getSubscribedEvents() : array {
+    // After the Views subscriber has run, start running.
     $events[RoutingEvents::ALTER] = ['onAlterRoutes', -200];
     return $events;
   }

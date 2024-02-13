@@ -1,22 +1,17 @@
 #backtotop {
   background: #f7f7f7;
   border: 1px solid #cccccc;
-  /*border-radius: 5px 5px 5px 5px;*/
   border-radius: 10px;
-  bottom: 10px;
+  bottom: 20px;
   color: #333333;
   cursor: pointer;
   display: none;
-  height: 30px;
   width: max-content;
-  line-height: 30px;
-  padding: 0px 15px;
+  padding: 10px 15px;
   position: fixed;
-  right: 10px;
+  right: 20px;
   text-align: center;
-  z-index: 1;
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
+  z-index: 10;
 }
 
 #backtotop:hover {

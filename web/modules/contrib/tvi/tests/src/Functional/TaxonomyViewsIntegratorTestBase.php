@@ -34,7 +34,7 @@ abstract class TaxonomyViewsIntegratorTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'tvi',
     'tvi_test',
@@ -130,7 +130,7 @@ abstract class TaxonomyViewsIntegratorTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->vocabulary1 = $this->createVocabulary([

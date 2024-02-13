@@ -8,6 +8,6 @@ services:
       - { name: 'event_subscriber' }
   tvi.route_enhancer:
     class: Drupal\tvi\Enhancer\RouteEnhancer
-    arguments: ['@tvi.tvi_manager']
+    arguments: ['@tvi.tvi_manager', '@entity_type.manager']
     tags:
       - { name: route_enhancer }

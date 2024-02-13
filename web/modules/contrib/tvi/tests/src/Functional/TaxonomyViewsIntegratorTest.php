@@ -12,7 +12,7 @@ class TaxonomyViewsIntegratorTest extends TaxonomyViewsIntegratorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $permissions = [
