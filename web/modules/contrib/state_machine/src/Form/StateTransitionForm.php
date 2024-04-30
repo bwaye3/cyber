@@ -7,8 +7,16 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class StateTransitionForm extends FormBase implements StateTransitionFormInterface {
+
+  /**
+   * The redirect destination.
+   *
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
+   */
+  protected $redirectDestination;
 
   /**
    * The entity.
@@ -23,6 +31,15 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
    * @var string
    */
   protected $fieldName;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->redirectDestination = $container->get('redirect.destination');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -114,7 +131,9 @@ class StateTransitionForm extends FormBase implements StateTransitionFormInterfa
       $form['actions'][$transition_id] = [
         '#type' => 'link',
         '#title' => $transition->getLabel(),
-        '#url' => Url::fromRoute("entity.{$this->entity->getEntityTypeId()}.state_transition_form", $route_parameters),
+        '#url' => Url::fromRoute("entity.{$this->entity->getEntityTypeId()}.state_transition_form", $route_parameters, [
+          'query' => $this->redirectDestination->getAsArray(),
+        ]),
         '#attributes' => [
           'class' => [
             'button',

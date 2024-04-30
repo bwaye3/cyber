@@ -126,7 +126,7 @@ class StateTransitionFormTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Test entity with bundle: First');
     $this->assertSession()->pageTextContains('This action cannot be undone.');
     $this->assertSession()->linkExists('Cancel');
-    $this->submitForm([], t('Confirm'));
+    $this->submitForm([], 'Confirm');
 
     $buttons = $this->xpath('//form[@id="state-machine-transition-form-entity-test-with-bundle-field-state-1"]/div/a');
     $this->assertCount(1, $buttons);

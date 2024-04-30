@@ -48,6 +48,7 @@
         "drupal/token": "^1.6",
         "drupal/token_or": "^2.1",
         "drupal/tvi": "^2.0@alpha",
+        "drupal/upgrade_status": "^4.3",
         "drupal/views_infinite_scroll": "^2.0",
         "drupal/webform": "^6.1",
         "drupal/webp": "^1.0@beta",

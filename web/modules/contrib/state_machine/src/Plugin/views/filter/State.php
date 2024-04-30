@@ -167,11 +167,33 @@ class State extends InOperator {
   protected function getBundles(EntityTypeInterface $entity_type, $field_name) {
     $bundles = [];
     $bundle_key = $entity_type->getKey('bundle');
-    if ($bundle_key && isset($this->view->filter[$bundle_key])) {
-      $filter = $this->view->filter[$bundle_key];
-      if (!$filter->isExposed() && !empty($filter->value) && $filter->getEntityType() === $entity_type->id()) {
-        // 'all' is added by Views and isn't a bundle.
-        $bundles = array_diff($filter->value, ['all']);
+    if ($bundle_key) {
+      // Get any bundle filters for this entity type and bundle.
+      // It is unlikely, but there could be multiple.
+      /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase[] $bundle_filters */
+      $bundle_filters = array_filter($this->view->filter ?? [], static function ($filter) use ($entity_type, $bundle_key) {
+        return $filter->getEntityType() === $entity_type->id() && $filter->realField === $bundle_key;
+      });
+      foreach ($bundle_filters as $bundle_filter) {
+        if ($bundle_filter->isExposed()) {
+          // If any bundle filters are exposed,
+          // we cannot return a subset of bundles.
+          $bundles = [];
+          break;
+        }
+        switch ($bundle_filter->operator) {
+          case 'in':
+            $bundles = array_merge($bundles, $bundle_filter->value);
+            break;
+
+          case 'not in':
+            $bundles = array_diff($bundles, $bundle_filter->value);
+            break;
+        }
+      }
+      // Remove the "all" option, if present.
+      if (array_key_exists('all', $bundles)) {
+        unset($bundles['all']);
       }
     }
     // Fallback to the list of bundles the field is attached to.

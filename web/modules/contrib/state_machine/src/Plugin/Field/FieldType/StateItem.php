@@ -208,6 +208,9 @@ class StateItem extends FieldItemBase implements StateItemInterface, OptionsProv
   public function getSettableOptions(AccountInterface $account = NULL) {
     // $this->value is unpopulated due to https://www.drupal.org/node/2629932
     $field_name = $this->getFieldDefinition()->getName();
+    if (!$this->getEntity()->hasField($field_name)) {
+      return [];
+    }
     $value = $this->getEntity()->get($field_name)->value;
     $allowed_states = $this->getAllowedStates($value);
     $state_labels = array_map(function (WorkflowState $state) {
