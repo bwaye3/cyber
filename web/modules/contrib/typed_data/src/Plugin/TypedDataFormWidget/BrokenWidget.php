@@ -24,14 +24,14 @@ class BrokenWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + ['label' => NULL];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isApplicable(DataDefinitionInterface $definition) {
+  public function isApplicable(DataDefinitionInterface $definition): bool {
     return TRUE;
   }
 

@@ -9,7 +9,7 @@ use Drupal\metatag\Entity\MetatagDefaults;
 use Drupal\schema_metatag\SchemaMetatagManager;
 
 /**
- * Implementions of hook_update_N().
+ * Implementations of hook_update_N().
  */
 
 /**

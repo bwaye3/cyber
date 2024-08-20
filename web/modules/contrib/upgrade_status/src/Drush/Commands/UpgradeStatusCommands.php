@@ -97,6 +97,7 @@ class UpgradeStatusCommands extends DrushCommands {
    * @option ignore-uninstalled Ignore uninstalled projects.
    * @option ignore-contrib Ignore contributed projects.
    * @option ignore-custom Ignore custom projects.
+   * @option ignore-list Ignore a list of comma-separated projects.
    * @option phpstan-memory-limit Set memory limit for PHPStan.
    * @option format Set the format: plain, checkstyle or codeclimate.
    * @aliases us-a
@@ -104,7 +105,7 @@ class UpgradeStatusCommands extends DrushCommands {
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  public function analyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M', 'format' => 'plain']) {
+  public function analyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'ignore-list' => '', 'phpstan-memory-limit' => '1500M', 'format' => 'plain']) {
     $extensions = $this->doAnalyze($projects, $options);
 
     $found_issue = FALSE;
@@ -136,13 +137,14 @@ class UpgradeStatusCommands extends DrushCommands {
    * @option ignore-uninstalled Ignore uninstalled projects.
    * @option ignore-contrib Ignore contributed projects.
    * @option ignore-custom Ignore custom projects.
+   * @option ignore-list Ignore a list of comma-separated projects.
    * @option phpstan-memory-limit Set memory limit for PHPStan.
    * @aliases us-cs
    *
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  public function checkstyle(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M']) {
+  public function checkstyle(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'ignore-list' => '', 'phpstan-memory-limit' => '1500M']) {
 
     $this->logger()->notice('The checkstyle (us-cs) drush command is deprecated and will be removed. Use the analyze command with --format=checkstyle instead.');
     $options['format'] = 'checkstyle';
@@ -245,7 +247,7 @@ class UpgradeStatusCommands extends DrushCommands {
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  protected function doAnalyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M']) {
+  protected function doAnalyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'ignore-list' => '', 'phpstan-memory-limit' => '1500M']) {
     // Group by type here so we can tell loader what is type of each one of
     // these.
     $extensions = [];
@@ -260,6 +262,7 @@ class UpgradeStatusCommands extends DrushCommands {
     $available_projects = $this->projectCollector->collectProjects();
 
     if ($options['all']) {
+      $projects_to_ignore = explode(',', $options['ignore-list']);
       foreach ($available_projects as $name => $project) {
         if ($options['ignore-uninstalled'] && $project->status === 0) {
           continue;
@@ -268,6 +271,9 @@ class UpgradeStatusCommands extends DrushCommands {
           continue;
         }
         if ($options['ignore-custom'] && $project->info['upgrade_status_type'] == ProjectCollector::TYPE_CUSTOM) {
+          continue;
+        }
+        if (in_array($name, $projects_to_ignore)) {
           continue;
         }
         $extensions[$project->getType()][$name] = $project;
@@ -417,11 +423,6 @@ class UpgradeStatusCommands extends DrushCommands {
       }
 
       $table[] = str_pad('', 80, '-');
-    }
-
-    if (!empty($result['plans'])) {
-      $table[] = '';
-      $table[] = DrupalUtil::drushRender($result['plans']);
     }
     $table[] = '';
 

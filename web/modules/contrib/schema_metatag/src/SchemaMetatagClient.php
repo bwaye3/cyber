@@ -4,6 +4,8 @@ namespace Drupal\schema_metatag;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,6 +32,13 @@ class SchemaMetatagClient implements SchemaMetatagClientInterface {
   protected $cacheBackend;
 
   /**
+   * A logger instance.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * The scheme used in the provided Schema.org data.
    *
    * @var string
@@ -53,10 +62,13 @@ class SchemaMetatagClient implements SchemaMetatagClientInterface {
    *   The module handler.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
    *   The cache backend.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logger instance.
    */
-  public function __construct(ModuleHandlerInterface $moduleHandler, CacheBackendInterface $cache_backend) {
+  public function __construct(ModuleHandlerInterface $moduleHandler, CacheBackendInterface $cache_backend, LoggerInterface $logger) {
     $this->moduleHandler = $moduleHandler;
     $this->cacheBackend = $cache_backend;
+    $this->logger = $logger;
   }
 
   /**
@@ -65,7 +77,8 @@ class SchemaMetatagClient implements SchemaMetatagClientInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('module_handler'),
-      $container->get('schema_metatag.cache')
+      $container->get('schema_metatag.cache'),
+      $container->get('logger.channel.schema_metatag')
     );
   }
 
@@ -85,7 +98,7 @@ class SchemaMetatagClient implements SchemaMetatagClientInterface {
       }
     }
     catch (RequestException $e) {
-      watchdog_exception('schema_metatag', $e);
+      $this->logger->error($e);
     }
     return FALSE;
   }
@@ -312,7 +325,7 @@ class SchemaMetatagClient implements SchemaMetatagClientInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getParents($child_name) {
     $parents = [];

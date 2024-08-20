@@ -15,7 +15,7 @@ class SchemaSpecialAnnouncementTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_special_announcement'];
+  protected static $modules = ['schema_metatag_test', 'schema_special_announcement'];
 
   /**
    * {@inheritdoc}

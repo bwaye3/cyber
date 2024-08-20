@@ -15,7 +15,7 @@ class SchemaOrganizationTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_organization'];
+  protected static $modules = ['schema_metatag_test', 'schema_organization'];
 
   /**
    * {@inheritdoc}

@@ -28,18 +28,6 @@ class Duration extends PropertyTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function output() {
-    $element = parent::output();
-    if (!empty($element)) {
-      $input_value = $element['#attributes']['content'];
-      $element['#attributes']['content'] = static::outputValue($input_value);
-    }
-    return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function outputValue($input_value) {
     $is_integer = ctype_digit($input_value) || is_int($input_value);
     if (!empty($input_value) && $is_integer && $input_value > 0) {

@@ -22,20 +22,20 @@ class LowerFilter extends DataFilterBase {
    * {@inheritdoc}
    */
   public function filter(DataDefinitionInterface $definition, $value, array $arguments, BubbleableMetadata $bubbleable_metadata = NULL) {
-    return mb_strtolower($value);
+    return mb_strtolower((string) $value);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canFilter(DataDefinitionInterface $definition) {
+  public function canFilter(DataDefinitionInterface $definition): bool {
     return is_subclass_of($definition->getClass(), StringInterface::class);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function filtersTo(DataDefinitionInterface $definition, array $arguments) {
+  public function filtersTo(DataDefinitionInterface $definition, array $arguments): DataDefinitionInterface {
     return DataDefinition::create('string');
   }
 

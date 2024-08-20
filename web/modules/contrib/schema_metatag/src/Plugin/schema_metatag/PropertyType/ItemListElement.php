@@ -141,6 +141,7 @@ class ItemListElement extends PropertyTypeBase {
       }
 
       // Allow modules to alter the arguments passed to the view.
+      // @phpstan-ignore-next-line as its used on purpose.
       \Drupal::moduleHandler()->alter('schema_item_list_views_args', $args);
 
       if (!empty($args)) {

@@ -37,6 +37,9 @@ Requirements
 The Metatag module is required:
 https://www.drupal.org/project/metatag
 
+The module requires PHP 8.0 or newer, as of Schema Metatag v3.0.0 it will not
+work with PHP 7.
+
 
 Validation
 --------------------------------------------------------------------------------
@@ -123,6 +126,15 @@ Using this module, the code in the head might end up looking like this:
     ]
 }</script>
 </code>
+
+
+Contributing
+--------------------------------------------------------------------------------
+The composer.json file should be kept normalized using
+ergebnis/composer-normalize:
+
+* composer require --dev ergebnis/composer-normalize
+* composer normalize modules/contrib/schema_metatag/composer.json
 
 
 Credits

@@ -7,7 +7,7 @@ use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\OptionsProviderInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
-use Drupal\typed_data\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\typed_data\Form\SubformState;
 use Drupal\typed_data\Widget\FormWidgetBase;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -26,7 +26,7 @@ class SelectWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + [
       'label' => NULL,
       'description' => NULL,
@@ -37,7 +37,7 @@ class SelectWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function isApplicable(DataDefinitionInterface $definition) {
+  public function isApplicable(DataDefinitionInterface $definition): bool {
     return is_subclass_of($definition->getClass(), OptionsProviderInterface::class);
   }
 

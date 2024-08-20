@@ -29,7 +29,7 @@ class TextareaWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + [
       'label' => NULL,
       'description' => NULL,
@@ -43,10 +43,10 @@ class TextareaWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function isApplicable(DataDefinitionInterface $definition) {
+  public function isApplicable(DataDefinitionInterface $definition): bool {
     if (is_subclass_of($definition->getClass(), StringInterface::class)) {
       $result = TRUE;
-      // Never use textarea for editing dates, durations, e-mail or URIs.
+      // Never use textarea for editing dates, durations, emails or URIs.
       $classes = [
         DateTimeInterface::class,
         DurationInterface::class,

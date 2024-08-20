@@ -15,7 +15,7 @@ class SchemaProductTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_product'];
+  protected static $modules = ['schema_metatag_test', 'schema_product'];
 
   /**
    * {@inheritdoc}

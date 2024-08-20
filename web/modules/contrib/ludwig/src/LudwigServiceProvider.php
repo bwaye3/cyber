@@ -20,7 +20,7 @@ class LudwigServiceProvider extends ServiceProviderBase {
     $root = \Drupal::hasService('app.root') ? \Drupal::root() : DRUPAL_ROOT;
     $package_manager = new PackageManager($root);
     $namespaces = $container->getParameter('container.namespaces');
-    foreach ($package_manager->getPackages() as $package_name => $package) {
+    foreach ($package_manager->getPackages() as $package) {
       if ($package['status'] == 'Installed') {
         if ($package['resource'] == 'psr-4' || $package['resource'] == 'psr-0') {
           $namespace = $package['namespace'];

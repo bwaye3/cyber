@@ -15,7 +15,7 @@ class SchemaVideoObjectTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_video_object'];
+  protected static $modules = ['schema_metatag_test', 'schema_video_object'];
 
   /**
    * {@inheritdoc}

@@ -21,28 +21,28 @@ class FormatTextFilter extends DataFilterBase {
   /**
    * {@inheritdoc}
    */
-  public function canFilter(DataDefinitionInterface $definition) {
+  public function canFilter(DataDefinitionInterface $definition): bool {
     return is_subclass_of($definition->getClass(), StringInterface::class);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function filtersTo(DataDefinitionInterface $definition, array $arguments) {
+  public function filtersTo(DataDefinitionInterface $definition, array $arguments): DataDefinitionInterface {
     return DataDefinition::create('string');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getNumberOfRequiredArguments() {
+  public function getNumberOfRequiredArguments(): int {
     return 1;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateArguments(DataDefinitionInterface $definition, array $arguments) {
+  public function validateArguments(DataDefinitionInterface $definition, array $arguments): array {
     $errors = parent::validateArguments($definition, $arguments);
     if (isset($arguments[0])) {
       // Ensure the provided value is given for this data.

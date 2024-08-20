@@ -33,7 +33,7 @@ class SchemaRecipeAggregateRating extends SchemaNameBase {
   /**
    * {@inheritdoc}
    */
-  public function output() {
+  public function output(): array {
     $return = parent::output();
     if (empty($return['#attributes']['content']['ratingValue']) || empty($return['#attributes']['content']['ratingCount'])) {
       return [];

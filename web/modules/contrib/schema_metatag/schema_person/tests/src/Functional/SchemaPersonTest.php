@@ -15,7 +15,7 @@ class SchemaPersonTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_person'];
+  protected static $modules = ['schema_metatag_test', 'schema_person'];
 
   /**
    * {@inheritdoc}

@@ -23,7 +23,7 @@ interface FormWidgetInterface extends ConfigurableInterface, PluginInspectionInt
    * @return bool
    *   Whether the data can be edited with the widget.
    */
-  public function isApplicable(DataDefinitionInterface $definition);
+  public function isApplicable(DataDefinitionInterface $definition): bool;
 
   /**
    * Creates the widget's form elements for editing the given data.
@@ -86,7 +86,7 @@ interface FormWidgetInterface extends ConfigurableInterface, PluginInspectionInt
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $definition
    *   The definition of the edited data.
    *
-   * @return \Drupal\typed_data\Context\ContextDefinitionInterface[]
+   * @return \Drupal\Core\Plugin\Context\ContextDefinitionInterface[]
    *   An array of context definitions describing the configuration values,
    *   keyed by configuration setting name. The keys must match the actual keys
    *   of the supported configuration.

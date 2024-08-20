@@ -33,7 +33,7 @@ trait FormWidgetManagerTrait {
    * @return \Drupal\typed_data\Widget\FormWidgetManagerInterface
    *   The widget manager.
    */
-  public function getFormWidgetManager() {
+  public function getFormWidgetManager(): FormWidgetManagerInterface {
     if (empty($this->widgetManager)) {
       $this->widgetManager = \Drupal::service('plugin.manager.typed_data_form_widget');
     }

@@ -15,7 +15,7 @@ class SchemaRecipeTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_recipe'];
+  protected static $modules = ['schema_metatag_test', 'schema_recipe'];
 
   /**
    * {@inheritdoc}

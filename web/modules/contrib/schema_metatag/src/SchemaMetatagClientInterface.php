@@ -3,7 +3,7 @@
 namespace Drupal\schema_metatag;
 
 /**
- * The SchemaMetatg Client Interface.
+ * The SchemaMetatag Client Interface.
  *
  * A class to parse Schema.org data.
  *

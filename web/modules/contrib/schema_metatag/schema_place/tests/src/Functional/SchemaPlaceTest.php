@@ -15,7 +15,7 @@ class SchemaPlaceTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_place'];
+  protected static $modules = ['schema_metatag_test', 'schema_place'];
 
   /**
    * {@inheritdoc}

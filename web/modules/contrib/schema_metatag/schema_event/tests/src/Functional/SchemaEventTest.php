@@ -15,7 +15,7 @@ class SchemaEventTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_event'];
+  protected static $modules = ['schema_metatag_test', 'schema_event'];
 
   /**
    * {@inheritdoc}

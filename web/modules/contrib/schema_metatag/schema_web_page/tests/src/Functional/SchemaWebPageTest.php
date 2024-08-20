@@ -15,7 +15,7 @@ class SchemaWebPageTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_web_page'];
+  protected static $modules = ['schema_metatag_test', 'schema_web_page'];
 
   /**
    * {@inheritdoc}

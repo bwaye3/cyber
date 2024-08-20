@@ -15,7 +15,7 @@ class SchemaImageObjectTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_image_object'];
+  protected static $modules = ['schema_metatag_test', 'schema_image_object'];
 
   /**
    * {@inheritdoc}

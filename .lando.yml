@@ -1,0 +1,21 @@
+name: cyber
+recipe: drupal9
+config:
+  php: '8.2'
+  webroot: web
+
+# Services
+services:
+  database:
+    portforward: 54447
+    creds:
+      user: drupal9
+      password: drupal9
+      database: drupal9
+  cyber-phpmyadmin:
+    type: phpmyadmin
+
+# Proxy
+proxy:
+  cyber-phpmyadmin:
+    - cyber-phpmyadmin.lndo.site

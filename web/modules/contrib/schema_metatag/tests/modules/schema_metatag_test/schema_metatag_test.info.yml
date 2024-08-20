@@ -4,9 +4,10 @@ description: 'Support module for testing handling of all the base tags.'
 package: Testing
 hidden: true
 dependencies:
+  - drupal:node
   - schema_metatag:schema_metatag
 
-# Information added by Drupal.org packaging script on 2023-06-22
-version: '8.x-2.5'
+# Information added by Drupal.org packaging script on 2024-07-16
+version: '3.0.3'
 project: 'schema_metatag'
-datestamp: 1687460394
+datestamp: 1721141810

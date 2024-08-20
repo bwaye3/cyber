@@ -94,25 +94,25 @@ class FormatDateFilter extends DataFilterBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function canFilter(DataDefinitionInterface $definition) {
+  public function canFilter(DataDefinitionInterface $definition): bool {
     return is_subclass_of($definition->getClass(), DateTimeInterface::class);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function filtersTo(DataDefinitionInterface $definition, array $arguments) {
+  public function filtersTo(DataDefinitionInterface $definition, array $arguments): DataDefinitionInterface {
     return DataDefinition::create('string');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateArguments(DataDefinitionInterface $definition, array $arguments) {
+  public function validateArguments(DataDefinitionInterface $definition, array $arguments): array {
     $fails = parent::validateArguments($definition, $arguments);
     $arguments += [0 => 'medium', 1 => '', 2 => NULL, 3 => NULL];
     if ($arguments[0] != 'custom' && $this->dateFormatStorage->load($arguments[0]) === NULL) {
-      $fails[] = $this->t('Unkown date format %format given.', ['%format' => $arguments[0]]);
+      $fails[] = $this->t('Unknown date format %format given.', ['%format' => $arguments[0]]);
     }
     if ($arguments[0] != 'custom' && $arguments[1]) {
       $fails[] = $this->t("If a custom date format is supplied, 'custom' must be passed as date format.");

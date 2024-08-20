@@ -346,36 +346,73 @@ class DataFetcherAutocompleteTest extends KernelTestBase {
     // A multi-valued field should show numeric indices suggestions.
     $results = $this->dataFetcher
       ->autocompletePropertyPath($definitions, 'node.field_integer.');
-    $this->assertSame([
-      [
-        'value' => 'node.field_integer.0',
-        'label' => 'node.field_integer.0',
-      ],
-      [
-        'value' => 'node.field_integer.0.',
-        'label' => 'node.field_integer.0...',
-      ],
-      [
-        'value' => 'node.field_integer.1',
-        'label' => 'node.field_integer.1',
-      ],
-      [
-        'value' => 'node.field_integer.1.',
-        'label' => 'node.field_integer.1...',
-      ],
-      [
-        'value' => 'node.field_integer.2',
-        'label' => 'node.field_integer.2',
-      ],
-      [
-        'value' => 'node.field_integer.2.',
-        'label' => 'node.field_integer.2...',
-      ],
-      [
-        'value' => 'node.field_integer.value',
-        'label' => 'node.field_integer.value (Integer value)',
-      ],
-    ], $results);
+
+    // Multi-valued field labels changed in Drupal 10.3.
+    if (version_compare(\Drupal::VERSION, '10.3', '<')) {
+      $field_integer = [
+        [
+          'value' => 'node.field_integer.0',
+          'label' => 'node.field_integer.0',
+        ],
+        [
+          'value' => 'node.field_integer.0.',
+          'label' => 'node.field_integer.0...',
+        ],
+        [
+          'value' => 'node.field_integer.1',
+          'label' => 'node.field_integer.1',
+        ],
+        [
+          'value' => 'node.field_integer.1.',
+          'label' => 'node.field_integer.1...',
+        ],
+        [
+          'value' => 'node.field_integer.2',
+          'label' => 'node.field_integer.2',
+        ],
+        [
+          'value' => 'node.field_integer.2.',
+          'label' => 'node.field_integer.2...',
+        ],
+        [
+          'value' => 'node.field_integer.value',
+          'label' => 'node.field_integer.value (Integer value)',
+        ],
+      ];
+    }
+    else {
+      $field_integer = [
+        [
+          'value' => 'node.field_integer.0',
+          'label' => 'node.field_integer.0 (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.0.',
+          'label' => 'node.field_integer.0... (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.1',
+          'label' => 'node.field_integer.1 (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.1.',
+          'label' => 'node.field_integer.1... (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.2',
+          'label' => 'node.field_integer.2 (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.2.',
+          'label' => 'node.field_integer.2... (Number (integer))',
+        ],
+        [
+          'value' => 'node.field_integer.value',
+          'label' => 'node.field_integer.value (Integer value)',
+        ],
+      ];
+    }
+    $this->assertSame($field_integer, $results);
 
     // A single-valued field should not show numeric indices suggestions.
     $results = $this->dataFetcher

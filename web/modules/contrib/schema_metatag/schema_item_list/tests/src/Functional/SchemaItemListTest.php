@@ -15,7 +15,7 @@ class SchemaItemListTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_item_list'];
+  protected static $modules = ['schema_metatag_test', 'schema_item_list'];
 
   /**
    * {@inheritdoc}

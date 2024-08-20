@@ -15,7 +15,7 @@ class SchemaBookTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_book'];
+  protected static $modules = ['schema_metatag_test', 'schema_book'];
 
   /**
    * {@inheritdoc}

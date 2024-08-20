@@ -141,6 +141,7 @@ class DataFilterTest extends KernelTestBase {
     $this->assertEquals('This value should be of the correct primitive type.', $fails[0]);
     $this->assertEquals('This value should be of the correct primitive type.', $fails[1]);
 
+    // cspell:ignore mispeling
     $this->assertEquals('Text with misspelling to correct', $filter->filter($data->getDataDefinition(), $data->getValue(), ['mispeling', 'misspelling']));
   }
 

@@ -118,8 +118,19 @@ class BreadcrumbList extends ItemListElement {
         if (empty($url)) {
           $url = Url::fromRoute('<current>')->setAbsolute()->toString(TRUE)->getGeneratedUrl();
         }
+
         $text = $item->getText();
-        $text = is_array($text) ? $this->renderer->renderPlain($text) : $text;
+        if (is_array($text)) {
+          // Handling backward compatibility.
+          if (method_exists($this->renderer, 'renderPlain')) {
+            // @phpstan-ignore-next-line as it is deprecated in D10.3 and removed from D12.
+            $text = $this->renderer->renderPlain($text);
+          }
+          else {
+            $text = $this->renderer->renderInIsolation($text);
+          }
+        }
+
         $values[$key] = [
           '@id' => $url,
           'name' => $text,

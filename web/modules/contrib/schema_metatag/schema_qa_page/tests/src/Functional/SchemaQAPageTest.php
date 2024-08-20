@@ -15,7 +15,7 @@ class SchemaQAPageTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_qa_page'];
+  protected static $modules = ['schema_metatag_test', 'schema_qa_page'];
 
   /**
    * {@inheritdoc}

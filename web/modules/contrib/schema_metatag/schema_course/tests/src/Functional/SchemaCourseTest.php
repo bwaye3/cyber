@@ -15,7 +15,7 @@ class SchemaCourseTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_course'];
+  protected static $modules = ['schema_metatag_test', 'schema_course'];
 
   /**
    * {@inheritdoc}

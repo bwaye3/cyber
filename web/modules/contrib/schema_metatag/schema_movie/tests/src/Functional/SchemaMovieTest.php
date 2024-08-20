@@ -15,7 +15,7 @@ class SchemaMovieTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_movie'];
+  protected static $modules = ['schema_metatag_test', 'schema_movie'];
 
   /**
    * {@inheritdoc}

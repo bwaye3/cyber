@@ -149,8 +149,7 @@ class DataFetcher implements DataFetcherInterface {
         }
       }
 
-      // If an accessed property is not existing, $data_definition will be
-      // NULL.
+      // If an accessed property does not exist, $data_definition will be NULL.
       if (!isset($data_definition)) {
         $selector_string = implode('.', $sub_paths);
         $current_selector_string = implode('.', $current_selector);

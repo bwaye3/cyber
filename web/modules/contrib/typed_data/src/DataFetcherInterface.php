@@ -56,8 +56,8 @@ interface DataFetcherInterface {
    *   Thrown if the data cannot be fetched due to missing data; e.g., unset
    *   properties or list items.
    * @throws \Drupal\typed_data\Exception\InvalidArgumentException
-   *   Thrown if the given path is not valid for the given data; e.g., a not
-   *   existing property is referenced.
+   *   Thrown if the given path is not valid for the given data; e.g., a non-
+   *   existent property is referenced.
    */
   public function fetchDataBySubPaths(TypedDataInterface $typed_data, array $sub_paths, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL);
 
@@ -105,7 +105,7 @@ interface DataFetcherInterface {
    * Provides autocomplete suggestions for an incomplete property path.
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $data_definitions
-   *   A map of available data definitions that should be seareched. The array
+   *   A map of available data definitions that should be searched. The array
    *   keys are the first part of the property path.
    * @param string $partial_property_path
    *   The partial property path, example: "node.uid.ent".

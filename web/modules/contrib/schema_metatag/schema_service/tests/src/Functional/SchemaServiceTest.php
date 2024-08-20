@@ -15,7 +15,7 @@ class SchemaServiceTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_service'];
+  protected static $modules = ['schema_metatag_test', 'schema_service'];
 
   /**
    * {@inheritdoc}

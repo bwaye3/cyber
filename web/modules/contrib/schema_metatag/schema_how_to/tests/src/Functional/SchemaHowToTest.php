@@ -15,7 +15,7 @@ class SchemaHowToTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_how_to'];
+  protected static $modules = ['schema_metatag_test', 'schema_how_to'];
 
   /**
    * {@inheritdoc}

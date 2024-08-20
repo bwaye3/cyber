@@ -4,6 +4,8 @@ namespace Drupal\typed_data\Commands;
 
 use Drush\Commands\DrushCommands;
 
+// cspell:ignore datafilter datafilters formwidget formwidgets
+
 /**
  * Drush 9+ commands for the Typed Data API Enhancements module.
  */

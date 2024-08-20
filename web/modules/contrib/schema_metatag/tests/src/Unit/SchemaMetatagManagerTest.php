@@ -32,6 +32,15 @@ class SchemaMetatagManagerTest extends UnitTestCase {
   }
 
   /**
+   * @covers ::explode
+   * @dataProvider stringDataCustomSeparator
+   */
+  public function testExplodeWithCustomSeparator($separator, $original, $desired) {
+    $processed = SchemaMetatagManager::explode($original, $separator);
+    $this->assertEquals($desired, $processed);
+  }
+
+  /**
    * @covers ::arrayTrim
    * @dataProvider arrayData
    */
@@ -94,7 +103,7 @@ class SchemaMetatagManagerTest extends UnitTestCase {
    */
   public function testEncodeJsonld($original, $desired) {
     $processed = SchemaMetatagManager::encodeJsonld($original);
-    // Elmininate spacing and line breaks that don't matter.
+    // Eliminate spacing and line breaks that don't matter.
     $processed = str_replace(["\n", '  '], "", $processed);
     $this->assertEquals($desired, $processed);
   }
@@ -351,6 +360,36 @@ class SchemaMetatagManagerTest extends UnitTestCase {
       ],
       'Needs trimming' => [
         ' First, Second , Third',
+        ['First', 'Second', 'Third'],
+      ],
+    ];
+    return $values;
+  }
+
+  /**
+   * Provides string data for explode with custom separator.
+   *
+   * @return array
+   *   - name: name of the data set.
+   *    - separator: the separator string.
+   *    - original: original data.
+   *    - desired: desired result.
+   */
+  public function stringDataCustomSeparator() {
+    $values = [
+      'Comma separated' => [
+        ',',
+        'First,Second,Third',
+        ['First', 'Second', 'Third'],
+      ],
+      'Pipe character' => [
+        '|',
+        'First|Second|Third',
+        ['First', 'Second', 'Third'],
+      ],
+      'Multiple characters' => [
+        'Custom.Separator',
+        'FirstCustom.SeparatorSecondCustom.SeparatorThird',
         ['First', 'Second', 'Third'],
       ],
     ];

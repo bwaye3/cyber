@@ -42,20 +42,20 @@ interface DataFilterInterface {
    * @return bool
    *   Whether the data can be filtered.
    */
-  public function canFilter(DataDefinitionInterface $definition);
+  public function canFilter(DataDefinitionInterface $definition): bool;
 
   /**
    * Describes the data after applying the filter.
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $definition
    *   The definition of the filtered data.
-   * @param string[] $arguments
+   * @param array $arguments
    *   The array of filter arguments.
    *
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   The definition of the resulting data.
    */
-  public function filtersTo(DataDefinitionInterface $definition, array $arguments);
+  public function filtersTo(DataDefinitionInterface $definition, array $arguments): DataDefinitionInterface;
 
   /**
    * Gets the number of required arguments.
@@ -63,7 +63,7 @@ interface DataFilterInterface {
    * @return int
    *   The number of required arguments.
    */
-  public function getNumberOfRequiredArguments();
+  public function getNumberOfRequiredArguments(): int;
 
   /**
    * Defines whether the filter is able to process NULL values.
@@ -71,7 +71,7 @@ interface DataFilterInterface {
    * @return bool
    *   Whether the filter is able to process NULL values.
    */
-  public function allowsNullValues();
+  public function allowsNullValues(): bool;
 
   /**
    * Suggests some possible argument values based on user input.
@@ -80,7 +80,7 @@ interface DataFilterInterface {
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $definition
    *   The definition of the filtered data.
-   * @param string[] $arguments
+   * @param array $arguments
    *   The array of filter arguments, which have been already inputted.
    * @param string $input
    *   (optional) The filter argument currently being input. Defaults to an
@@ -89,7 +89,7 @@ interface DataFilterInterface {
    * @return string[]
    *   An array of possible argument strings.
    */
-  public function suggestArgument(DataDefinitionInterface $definition, array $arguments, $input = '');
+  public function suggestArgument(DataDefinitionInterface $definition, array $arguments, string $input = ''): array;
 
   /**
    * Validates the inputted arguments.
@@ -99,13 +99,13 @@ interface DataFilterInterface {
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $definition
    *   The definition of the filtered data.
-   * @param string[] $arguments
+   * @param array $arguments
    *   The array of filter arguments.
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup[]|string[]
    *   An array of translated validation error messages. If the arguments are
    *   valid, an empty array must be returned.
    */
-  public function validateArguments(DataDefinitionInterface $definition, array $arguments);
+  public function validateArguments(DataDefinitionInterface $definition, array $arguments): array;
 
 }

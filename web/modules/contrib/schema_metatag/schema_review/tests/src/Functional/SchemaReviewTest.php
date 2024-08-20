@@ -15,7 +15,7 @@ class SchemaReviewTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_review'];
+  protected static $modules = ['schema_metatag_test', 'schema_review'];
 
   /**
    * {@inheritdoc}

@@ -17,7 +17,7 @@ abstract class SchemaMetatagTagsTestBase extends BrowserTestBase {
   protected $propertyTypeManager;
 
   /**
-   * The Metatg Manager.
+   * The Metatag Manager.
    *
    * @var \Drupal\metatag\MetatagTagPluginManager
    */
@@ -32,6 +32,13 @@ abstract class SchemaMetatagTagsTestBase extends BrowserTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    // For submodules that extend this it isn't possible to easily extend this
+    // array with more modules like was possible with Drupal 7's setUp() method.
+    // Instead the dependencies for this test class are simplified by first
+    // enabling the 'node' module in 'schema_metatag_test' so that the access
+    // permission noted below is made available, and then by adding the relevant
+    // submodule for the individual test.
+    //
     // This is needed for the 'access content' permission.
     'node',
 
@@ -154,8 +161,8 @@ abstract class SchemaMetatagTagsTestBase extends BrowserTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-
     parent::setUp();
+
     $this->propertyTypeManager = \Drupal::service('plugin.manager.schema_property_type');
     $this->metatagTagManager = \Drupal::service('plugin.manager.metatag.tag');
     $this->propertyTypes = $this->getPropertyTypes();
@@ -316,7 +323,7 @@ abstract class SchemaMetatagTagsTestBase extends BrowserTestBase {
    * // Global options.
    * [
    *   'admin/config/search/metatag/global',
-   *   'somepath/that/must/exist',
+   *   'path/that/must/exist',
    *   'Saved the Global Metatag defaults.',
    * ],
    * // The front page.

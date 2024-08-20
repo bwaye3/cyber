@@ -28,7 +28,6 @@ function schema_metatag_help($route_name, RouteMatchInterface $route_match) {
  * Load all meta tags for this page, then separate out the structured data.
  */
 function schema_metatag_page_attachments_alter(array &$attachments) {
-
   if (empty($attachments['#attached']['html_head'])) {
     return;
   }

@@ -28,7 +28,7 @@ class DatetimeRangeWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + [
       'label' => NULL,
       'description' => NULL,
@@ -38,7 +38,7 @@ class DatetimeRangeWidget extends FormWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function isApplicable(DataDefinitionInterface $definition) {
+  public function isApplicable(DataDefinitionInterface $definition): bool {
     return is_subclass_of($definition->getClass(), DateTimeInterface::class);
   }
 

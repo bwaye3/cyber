@@ -15,7 +15,7 @@ class SchemaJobPostingTest extends SchemaMetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['schema_job_posting'];
+  protected static $modules = ['schema_metatag_test', 'schema_job_posting'];
 
   /**
    * {@inheritdoc}
