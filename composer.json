@@ -38,6 +38,7 @@
         "drupal/imce": "^3.0",
         "drupal/inline_entity_form": "^1.0@RC",
         "drupal/ludwig": "^2.0",
+        "drupal/metatag": "^2.0",
         "drupal/paragraphs": "^1.11",
         "drupal/pathauto": "^1.8",
         "drupal/profile": "^1.0",
